@@ -1,5 +1,7 @@
 package com.zhou03.distribute.configuration
 
+import com.zhou03.distribute.interceptor.LoginInterceptor
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.web.server.ErrorPage
 import org.springframework.boot.web.server.ErrorPageRegistrar
 import org.springframework.boot.web.server.ErrorPageRegistry
@@ -35,8 +37,12 @@ class MvcConfiguration : WebMvcConfigurer, ErrorPageRegistrar {
             .addResourceLocations("file:${File(getProperty("user.dir")).parent}/distribute-ui/dist/")
     }
 
+    @Autowired
+    lateinit var loginInterceptor: LoginInterceptor
 
     override fun addInterceptors(registry: InterceptorRegistry) {
-
+        registry.addInterceptor(loginInterceptor).addPathPatterns(
+            "/user/**","/device/**"
+        ).excludePathPatterns("/user/login", "/user/register", "/device/check")
     }
 }
