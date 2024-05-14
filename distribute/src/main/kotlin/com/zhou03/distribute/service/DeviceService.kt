@@ -4,7 +4,6 @@ import com.zhou03.distribute.dao.DeviceDao
 import com.zhou03.distribute.dao.ProfileDao
 import com.zhou03.distribute.domain.Auth
 import com.zhou03.distribute.domain.Device
-import com.zhou03.distribute.domain.Profile
 import com.zhou03.distribute.dto.DeviceCheckDTO
 import com.zhou03.distribute.dto.DeviceDeleteDTO
 import com.zhou03.distribute.dto.DeviceGenerateDTO
