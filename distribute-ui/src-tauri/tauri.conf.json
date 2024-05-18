@@ -12,6 +12,15 @@
     "tauri": {
         "allowlist": {
             "all": false,
+            "http": {
+                "all": true,
+                "scope": [
+                    "http://**","https://**"
+                ]
+            },
+            "window": {
+                "all": true
+            },
             "shell": {
                 "all": false,
                 "open": true
@@ -24,9 +33,11 @@
         },
         "windows": [
             {
-                "title": "distribute-ui",
-                "width": 800,
-                "height": 600
+                "title": "distribute",
+                "width": 1240,
+                "height": 680,
+                "decorations": false,
+                "theme": "Dark"
             }
         ],
         "security": {
