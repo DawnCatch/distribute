@@ -1,12 +1,13 @@
 package com.zhou03.distribute.util
 
 import com.google.gson.Gson
-import com.zhou03.distribute.domain.User
+import com.zhou03.distribute.model.Token
 import jakarta.servlet.http.HttpServletRequest
 import java.util.*
 
-fun HttpServletRequest.getUser() = this.getAttribute("user") as User
-fun HttpServletRequest.setUser(user: User) = this.setAttribute("user", user)
+fun HttpServletRequest.getToken() = this.getAttribute("token") as Token
+
+fun HttpServletRequest.setToken(token: Token) = this.setAttribute("token", token)
 
 inline fun <reified T> fromJson(msg: String) = Gson().fromJson<T>(msg, T::class.java)
 

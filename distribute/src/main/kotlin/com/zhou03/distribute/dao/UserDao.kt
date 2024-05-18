@@ -3,7 +3,6 @@ package com.zhou03.distribute.dao
 import com.zhou03.distribute.domain.User
 import com.zhou03.distribute.domain.Users
 import com.zhou03.distribute.util.aesDecrypt
-import com.zhou03.distribute.util.toMd5
 import com.zhou03.phase.dao.BaseDao
 import jakarta.servlet.http.Cookie
 import org.ktorm.dsl.and
@@ -45,5 +44,14 @@ class UserDao : BaseDao<User, Users>(Users) {
             where { it.email eq email }
         }
         return updatedRows > 0
+    }
+
+    fun emailIsEmpty(id: Int) = count { (it.id eq id) and (it.email eq "") } != 0
+
+    fun setEmail(id: Int, email: String) {
+        database.update(Users) {
+            set(it.email, email)
+            where { (it.email eq "") }
+        }
     }
 }

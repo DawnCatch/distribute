@@ -2,8 +2,14 @@ package com.zhou03.distribute.interceptor
 
 import com.zhou03.distribute.dao.DeviceDao
 import com.zhou03.distribute.dao.UserDao
-import com.zhou03.distribute.domain.Auth
-import com.zhou03.distribute.util.setUser
+import com.zhou03.distribute.util.TokenUtil
+import com.zhou03.distribute.util.TokenUtil.SUBJECT
+import com.zhou03.distribute.util.getToken
+import com.zhou03.distribute.util.refreshToken
+import com.zhou03.distribute.util.setToken
+import io.jsonwebtoken.Claims
+import io.jsonwebtoken.ExpiredJwtException
+import io.jsonwebtoken.security.SignatureException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,16 +26,21 @@ class LoginInterceptor : HandlerInterceptor {
     lateinit var deviceDao: DeviceDao
 
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
-        var user = userDao.check(request.cookies)
-        val device = deviceDao.check(request.cookies)
-        if (user == null && device == null) return false
-        if (user != null) {
-            request.setUser(user)
-            return true
-        } else if (device != null) {
-            user = userDao.getById(device.userId) ?: return false
-            request.setUser(user.changeAuth(Auth.DEVICE))
-            return true
-        } else return false
+        val authorization = request.getHeader(SUBJECT).refreshToken()
+        if (authorization == request.getHeader(SUBJECT)) return false
+        val claims: Claims
+        try {
+            claims = TokenUtil.parsePayload(authorization)
+        } catch (_: SignatureException) {
+            //密钥被篡改
+            return false
+        } catch (_: ExpiredJwtException) {
+            //密钥过期
+            return false
+        }
+        val token = claims.getToken() ?: return false
+        request.setToken(token)
+        response.setHeader(SUBJECT, authorization)
+        return true
     }
 }

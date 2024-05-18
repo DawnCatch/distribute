@@ -8,10 +8,7 @@ import com.zhou03.distribute.dto.DeviceCheckDTO
 import com.zhou03.distribute.dto.DeviceDeleteDTO
 import com.zhou03.distribute.dto.DeviceGenerateDTO
 import com.zhou03.distribute.dto.DeviceModifyDTO
-import com.zhou03.distribute.util.aesEncrypt
-import com.zhou03.distribute.util.device
-import com.zhou03.distribute.util.getUser
-import com.zhou03.distribute.util.uuid
+import com.zhou03.distribute.util.*
 import com.zhou03.distribute.vo.*
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -44,10 +41,9 @@ class DeviceServiceImpl : DeviceService {
     lateinit var profileDao: ProfileDao
 
     override fun generate(deviceGenerateDTO: DeviceGenerateDTO, request: HttpServletRequest): Result<DeviceOnceVO?> {
-        val user = request.getUser()
-        if (user.auth < Auth.USER) return error("权限错误")
+        val token = request.getToken()
         val device = Device().apply {
-            this.userId = user.id
+            this.userId = token.userId
             this.title = deviceGenerateDTO.title
             this.code = uuid().aesEncrypt()
             this.status = true
@@ -57,9 +53,8 @@ class DeviceServiceImpl : DeviceService {
     }
 
     override fun modify(deviceModifyDTO: DeviceModifyDTO, request: HttpServletRequest): Result<DeviceVO?> {
-        val user = request.getUser()
-        if (user.auth < Auth.USER) return error("权限错误")
-        val device = deviceDao.getOwnById(deviceModifyDTO.id, user.id) ?: return error("修改失败")
+        val token = request.getToken()
+        val device = deviceDao.getOwnById(deviceModifyDTO.id, token.userId) ?: return error("修改失败")
         device.apply {
             this.title = deviceModifyDTO.title
             flushChanges()
@@ -68,9 +63,8 @@ class DeviceServiceImpl : DeviceService {
     }
 
     override fun delete(deviceDeleteDTO: DeviceDeleteDTO, request: HttpServletRequest): Result<DeviceVO?> {
-        val user = request.getUser()
-        if (user.auth < Auth.USER) return error("权限错误")
-        val device = deviceDao.getOwnById(deviceDeleteDTO.id, user.id) ?: return error("删除失败")
+        val token = request.getToken()
+        val device = deviceDao.getOwnById(deviceDeleteDTO.id, token.userId) ?: return error("删除失败")
         device.apply {
             this.status = false
             flushChanges()
@@ -79,9 +73,8 @@ class DeviceServiceImpl : DeviceService {
     }
 
     override fun list(request: HttpServletRequest): Result<List<DeviceVO>?> {
-        val user = request.getUser()
-        if (user.auth < Auth.USER) return error("权限错误")
-        val devices = deviceDao.listOwn(user.id)
+        val token = request.getToken()
+        val devices = deviceDao.listOwn(token.userId)
         return success(devices.map { DeviceVO.from(it) })
     }
 
