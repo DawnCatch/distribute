@@ -2,13 +2,13 @@
     <div data-tauri-drag-region class="title_bar">
         <div class="window_tool">
             <div class="option" @click.left="windowMinimize">
-                <Icon name="minimize" />
+                <Icon name="minimize" custom-class="option_icon"/>
             </div>
             <div class="option" @click.left="windowMaximize">
-                <Icon :name="maxState ? 'enlarge' : 'narrow'" />
+                <Icon :name="maxState ? 'enlarge' : 'narrow'" custom-class="option_icon"/>
             </div>
             <div class="option highlight" @click.left="windowClose">
-                <Icon name="close" />
+                <Icon name="close" custom-class="option_icon"/>
             </div>
         </div>
     </div>
@@ -42,7 +42,7 @@ function windowMaximize() {
 }
 
 async function windowClose() {
-    await appWindow.close()
+    await appWindow.hide()
 }
 </script>
 
@@ -71,5 +71,12 @@ async function windowClose() {
 
 .highlight:hover {
     background-color: var(--color-warning)
+}
+</style>
+
+<style>
+.option_icon {
+    width: 1rem;
+    height: 1rem;
 }
 </style>

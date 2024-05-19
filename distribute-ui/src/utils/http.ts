@@ -1,22 +1,15 @@
 import { Body, fetch, HttpVerb, ResponseType } from "@tauri-apps/api/http";
+import { notification } from "./notification";
+import { getToken, setToken } from "./secure";
 
-function getToken(): string | null {
-    return window.localStorage.getItem("token");
-}
-
-function setToken(value: string): void {
-    window.localStorage.setItem("token", value);
-}
-
-type TauriFetch = (opts?: HttpOption) => Promise<unknown>;
+type TauriFetch = (opts?: HttpOption) => Promise<HttpResponse>;
 
 interface HttpOption {
     url: string;
     method?: HttpVerb | null;
     query?: Record<string, any>;
-    data: Record<string, any>;
+    data?: Record<string, any>;
     headers?: Record<string, any>;
-    callback: (res: HttpResponse) => void;
 }
 
 interface HttpResponse {
@@ -27,41 +20,31 @@ interface HttpResponse {
 
 const baseURL = "http://127.0.0.1";
 
-const http = (opts = {} as HttpOption) => {
-    return new Promise((resolve, reject) => {
-        const { url, method, query, data, headers, callback } = opts;
-        console.log({
-            "Content-Type": "application/json;charset=utf-8",
-            Authorization: getToken(),
-            ...headers,
-        });
+const http = (opts = {} as HttpOption): Promise<HttpResponse> => {
+    return new Promise((resolve) => {
+        const { url, method, query, data, headers } = opts;
         fetch(baseURL + url, {
             method: method || "GET",
             headers: {
                 "Content-Type": "application/json;charset=utf-8",
-                // Authorization: getToken(),
+                Authorization: getToken(),
                 ...headers,
             },
             responseType: ResponseType.JSON,
             timeout: 10000,
             query: query,
-            body: Body.json(data),
-        })
-            .then((res) => {
-                const token = res.headers.authorization;
-                if (token) setToken(token);
-                console.log(res.data);
-                callback(res.data as HttpResponse);
-                resolve(res.data as HttpResponse);
-            })
-            // .catch(() => {
-            //     const res = {
-            //         status: false,
-            //         message: "error",
-            //         data: {},
-            //     } as HttpResponse;
-            //     reject(res);
-            // });
+            body: Body.json({
+                ...data,
+            }),
+        }).then((res) => {
+            const token = res.headers.authorization;
+            if (token) setToken(token);
+            let data = res.data as HttpResponse;
+            if (!data.status) {
+                notification(data.message as string);
+            }
+            resolve(data);
+        });
     });
 };
 

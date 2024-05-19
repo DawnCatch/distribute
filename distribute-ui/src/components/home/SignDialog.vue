@@ -12,26 +12,24 @@
 </template>
 
 <script setup lang="ts">
-import { getCurrentInstance, onMounted, onUnmounted, reactive, ref, watch } from "vue";
-import type { ComponentInternalInstance } from 'vue'
+import { onMounted, onUnmounted, reactive, ref, watch } from "vue";
 
 import { Profile, useAppStore } from "../../stores/appStore";
-import { HttpResponse } from "../../utils/http";
 
 import Dialog from "../Dialog.vue";
 import EditText from "../EditText.vue"
 import Button from "../Button.vue";
-
-const { proxy } = getCurrentInstance() as ComponentInternalInstance
+import { http } from "../../utils/http";
+import mitt from "../../utils/mitt";
 
 onMounted(() => {
-    proxy?.$mitt.on("SignDialog:open", open)
-    proxy?.$mitt.on("SignDialog:close", close)
+    mitt.on("SignDialog:open", open)
+    mitt.on("SignDialog:close", close)
 })
 
 onUnmounted(() => {
-    proxy?.$mitt.off("SignDialog:open")
-    proxy?.$mitt.off("SignDialog:close")
+    mitt.off("SignDialog:open")
+    mitt.off("SignDialog:close")
 })
 
 const appStore = useAppStore()
@@ -43,17 +41,16 @@ const loginButton = ref<InstanceType<typeof Button> | null>()
 
 function login() {
     loginButton.value?.wait()
-    proxy?.$http({
+    http({
         method: "POST",
         url: "/user/login",
-        data: user,
-        callback: (res) => {
-            if (res.status) {
-                appStore.setProfile(res.data as Profile)
-                close()
-            }
-            loginButton.value?.release()
+        data: user
+    }).then((res) => {
+        if (res.status) {
+            appStore.setProfile(res.data as Profile)
+            close()
         }
+        loginButton.value?.release()
     })
 }
 
@@ -67,7 +64,7 @@ function close() {
 
 watch(visible, (newValue) => {
     console.log(newValue)
-    proxy?.$mitt.emit("SignDialog:visible", newValue)
+    mitt.emit("SignDialog:visible", newValue)
 }, {
     immediate: false,
     deep: false,

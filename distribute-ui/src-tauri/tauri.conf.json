@@ -14,22 +14,22 @@
             "all": false,
             "http": {
                 "all": true,
-                "scope": [
-                    "http://**","https://**"
-                ]
+                "scope": ["http://**", "https://**"]
             },
             "window": {
                 "all": true
             },
-            "shell": {
-                "all": false,
-                "open": true
-            },
             "clipboard": {
-                "all": true,
                 "writeText": true,
                 "readText": true
+            },
+            "notification": {
+                "all": true
             }
+        },
+        "systemTray": {
+            "iconPath": "icons/icon.png",
+            "iconAsTemplate": true
         },
         "windows": [
             {
