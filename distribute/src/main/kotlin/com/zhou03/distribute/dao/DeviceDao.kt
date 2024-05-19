@@ -3,7 +3,6 @@ package com.zhou03.distribute.dao
 import com.zhou03.distribute.domain.Device
 import com.zhou03.distribute.domain.Devices
 import com.zhou03.distribute.util.aesDecrypt
-import com.zhou03.phase.dao.BaseDao
 import jakarta.servlet.http.Cookie
 import org.ktorm.dsl.and
 import org.ktorm.dsl.eq

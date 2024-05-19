@@ -42,7 +42,7 @@ class MvcConfiguration : WebMvcConfigurer, ErrorPageRegistrar {
 
     override fun addInterceptors(registry: InterceptorRegistry) {
         registry.addInterceptor(loginInterceptor).addPathPatterns(
-            "/user/**","/device/**"
-        ).excludePathPatterns("/user/login", "/user/register", "/device/check")
+            "/user/**", "/device/**", "/message/**"
+        ).excludePathPatterns("/user/login", "/user/register", "/device/check", "/message/send/**")
     }
 }
