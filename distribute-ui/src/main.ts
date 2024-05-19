@@ -6,7 +6,6 @@ import { createPinia } from "pinia";
 import App from "./App.vue";
 
 import router from "./router";
-import mitt from "./utils/mitt";
 
 const app = createApp(App);
 

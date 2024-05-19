@@ -11,7 +11,6 @@ import { Message } from 'tauri-plugin-websocket-api';
 
 const appStore = useAppStore()
 
-
 onMounted(() => {
   http({
     method: "POST",

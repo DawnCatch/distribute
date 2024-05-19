@@ -1,6 +1,7 @@
 import { Body, fetch, HttpVerb, ResponseType } from "@tauri-apps/api/http";
 import { notification } from "./notification";
 import { getToken, setToken } from "./secure";
+import { ip, security } from "./env";
 
 type TauriFetch = (opts?: HttpOption) => Promise<HttpResponse>;
 
@@ -18,7 +19,7 @@ interface HttpResponse {
     data: Record<string, any>;
 }
 
-const baseURL = "http://127.0.0.1";
+const baseURL = `http${security ? "" : "s"}://${ip}`;
 
 const http = (opts = {} as HttpOption): Promise<HttpResponse> => {
     return new Promise((resolve) => {

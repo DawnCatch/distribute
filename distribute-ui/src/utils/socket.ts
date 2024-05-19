@@ -1,8 +1,9 @@
 import WebSocket, { Message } from "tauri-plugin-websocket-api";
 import mitt from "mitt";
 import { getToken } from "./secure";
+import { ip, security } from "./env";
 
-const baseURL = "ws://127.0.0.1";
+const baseURL = `ws${security ? "" : "s"}://${ip}`;
 
 interface SocketOption {
     url: string;
