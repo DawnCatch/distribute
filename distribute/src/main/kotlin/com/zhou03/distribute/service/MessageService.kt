@@ -54,6 +54,7 @@ class MessageServiceImpl : MessageService {
             from = token.userId
             to = messageSendDTO.to
             content = toJson(messageSendDTO.content)
+            date = LocalDateTime.now()
         })
         ChatUtil.sendMessage(message.to())
         return success(null, "发送成功")

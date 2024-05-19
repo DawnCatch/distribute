@@ -12,7 +12,7 @@ data class MessageVO(
     val from: Int,
     val to: Int,
     val content: List<Content>,
-    val date: LocalDateTime = LocalDateTime.now(),
+    val date: LocalDateTime? = LocalDateTime.now(),
 ) {
     companion object {
         fun from(message: WebSocketMessage<*>) = fromJson<MessageVO>(message.payload as String)
@@ -27,7 +27,11 @@ data class MessageVO(
         this.from = this@MessageVO.from
         this.to = this@MessageVO.to
         this.content = toJson(this@MessageVO.content)
-        this.date = this@MessageVO.date
+        if (this@MessageVO.date == null) {
+            this.date = LocalDateTime.now()
+        } else {
+            this.date = this@MessageVO.date
+        }
     }
 }
 
