@@ -1,4 +1,4 @@
-package com.zhou03.phase.dao
+package com.zhou03.distribute.dao
 
 import org.ktorm.database.Database
 import org.ktorm.entity.*
