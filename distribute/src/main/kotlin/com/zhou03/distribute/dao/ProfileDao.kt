@@ -2,7 +2,6 @@ package com.zhou03.distribute.dao
 
 import com.zhou03.distribute.domain.Profile
 import com.zhou03.distribute.domain.Profiles
-import com.zhou03.phase.dao.BaseDao
 import org.ktorm.dsl.eq
 import org.springframework.stereotype.Component
 
