@@ -52,6 +52,7 @@ object ChatUtil {
             if (userId != message.to && userId != message.from) return@forEach
             sessions.forEach { session ->
                 if (session.isOpen) session.sendMessage(message.to())
+                else remove(session)
             }
         }
     }

@@ -46,6 +46,6 @@ class ChatWebSocketInterceptor : HandshakeInterceptor {
         wsHandler: WebSocketHandler,
         exception: Exception?,
     ) {
-        println("链接成功")
+
     }
 }

@@ -13,5 +13,7 @@ import java.time.LocalDateTime
 class MessageDao : BaseDao<Message, Messages>(Messages) {
 
     fun getListOfDate(userId: Int, from: LocalDateTime, to: LocalDateTime) =
-        findList { (from less it.date) and (it.date less to) and (it.from eq userId) or (it.to eq userId) }
+        findList { (from less it.date) and (it.date less to) and ((it.from eq userId) or (it.to eq userId)) }
+
+    fun getList(userId: Int) = findList { (it.from eq userId) }
 }

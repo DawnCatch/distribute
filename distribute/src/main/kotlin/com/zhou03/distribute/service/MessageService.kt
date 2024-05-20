@@ -40,7 +40,6 @@ class MessageServiceImpl : MessageService {
         val token = request.getToken()
         val from = messageHistoryDTO.from.toLocalDateTime()
         val to = messageHistoryDTO.to.toLocalDateTime()
-        println("$from/$to")
         val messages = messageDao.getListOfDate(token.userId, from, to).map {
             MessageVO.from(it)
         }

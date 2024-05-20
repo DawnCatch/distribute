@@ -1,8 +1,11 @@
 package com.zhou03.distribute.vo
 
+import com.google.gson.reflect.TypeToken
 import com.zhou03.distribute.domain.Message
 import com.zhou03.distribute.util.fromJson
 import com.zhou03.distribute.util.toJson
+import com.zhou03.distribute.util.toLocalDateTime
+import com.zhou03.distribute.util.toMilliSecond
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketMessage
 import java.time.LocalDateTime
@@ -12,13 +15,19 @@ data class MessageVO(
     val from: Int,
     val to: Int,
     val content: List<Content>,
-    val date: LocalDateTime? = LocalDateTime.now(),
+    val date: Long? = LocalDateTime.now().toMilliSecond(),
 ) {
     companion object {
         fun from(message: WebSocketMessage<*>) = fromJson<MessageVO>(message.payload as String)
 
-        fun from(message: Message) =
-            MessageVO(message.id, message.from, message.to, fromJson(message.content), message.date)
+        fun from(message: Message) = MessageVO(
+            message.id,
+            message.from,
+            message.to,
+            fromJson<List<Content>>(message.content, object : TypeToken<List<Content>>() {}.type),
+            message.date.toMilliSecond()
+        )
+
     }
 
     fun to() = TextMessage(toJson(this))
@@ -30,7 +39,7 @@ data class MessageVO(
         if (this@MessageVO.date == null) {
             this.date = LocalDateTime.now()
         } else {
-            this.date = this@MessageVO.date
+            this.date = this@MessageVO.date.toLocalDateTime()
         }
     }
 }

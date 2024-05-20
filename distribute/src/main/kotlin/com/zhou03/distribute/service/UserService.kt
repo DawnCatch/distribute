@@ -84,7 +84,7 @@ class UserServiceImpl : UserService {
         val token = request.getToken()
         if (!userDao.emailIsEmpty(token.userId)) return error("已设置邮箱")
         if (userDao.countEmailByValue(userSetEmailDTO.email) > 0) return error("邮箱已被使用")
-        val code = TokenUtil.genAccessToken("email", Email(token.userId, userSetEmailDTO.email))/*
+        TokenUtil.genAccessToken("email", Email(token.userId, userSetEmailDTO.email))/*
             发送验证链接到指定邮箱
          */
         return success()
