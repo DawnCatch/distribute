@@ -8,9 +8,14 @@ import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.server.ServerHttpRequest
 import org.springframework.http.server.ServerHttpResponse
 import org.springframework.web.socket.WebSocketSession
+import java.lang.reflect.Type
+import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.util.*
+
 
 fun HttpServletRequest.getToken() = this.getAttribute("token") as Token
 
@@ -33,12 +38,25 @@ fun gsonCreate(): Gson =
 
 inline fun <reified T> fromJson(msg: String): T = gsonCreate().fromJson<T>(msg, T::class.java)
 
+inline fun <reified T> fromJson(json: String, typeToken: Type): T {
+    return gsonCreate().fromJson<T>(json, typeToken)
+}
+
 fun toJson(value: Any): String = gsonCreate().toJson(value)
 
 fun uuid() = UUID.randomUUID().toString().replace("-", "")
 
-fun String.toLocalDateTime(): LocalDateTime =
-    LocalDateTime.parse(this, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+fun String.toLocalDateTime(): LocalDateTime {
+    return try {
+        LocalDateTime.parse(this, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+    } catch (e: DateTimeParseException) {
+        LocalDateTime.now()
+    }
+}
 
 fun LocalDateTime.toString(value: LocalDateTime): String =
     DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(value)
+
+fun LocalDateTime.toMilliSecond() = this.toInstant(ZoneOffset.of("+8")).toEpochMilli()
+
+fun Long.toLocalDateTime(): LocalDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(this), ZoneOffset.of("+8"))
