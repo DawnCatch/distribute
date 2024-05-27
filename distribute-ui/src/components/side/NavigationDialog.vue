@@ -17,7 +17,7 @@
 
         </div>
         <div class="option_box box">
-            111
+            <div @click="signOut">退出登录</div>
         </div>
     </Dialog>
 </template>
@@ -30,6 +30,7 @@ import { useAppStore } from '../../stores/appStore';
 import Dialog from '../Dialog.vue'
 import Icon from "../Icon.vue"
 import mitt from '../../utils/mitt';
+import { setToken } from '../../utils/secure';
 
 const appStore = useAppStore()
 
@@ -62,12 +63,15 @@ function extend() {
 }
 
 watch(visible, (newValue) => {
-    console.log(newValue)
     mitt.emit("NavigationDialog:visible", newValue)
 }, {
     immediate: false,
     deep: false,
 })
+
+function signOut() {
+    setToken("")
+}
 
 </script>
 

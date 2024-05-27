@@ -63,7 +63,6 @@ function close() {
 }
 
 watch(visible, (newValue) => {
-    console.log(newValue)
     mitt.emit("SignDialog:visible", newValue)
 }, {
     immediate: false,
@@ -116,9 +115,8 @@ p {
 <style>
 .sign_box {
     margin: auto;
-    width: 25%;
+    width: 19rem;
     height: 26rem;
-    max-height: 80%;
     border-radius: 2rem;
     background-color: var(--color-background-soft);
     padding: 2rem;

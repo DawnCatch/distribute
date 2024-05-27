@@ -1,5 +1,5 @@
 <template>
-    <div class="sider_bar">
+    <div class="side_bar">
         <div class="top_bar">
             <div class="avatar_box"
                 :class="{ avatar_navigation: navigationDialogVisible, avatar_sign: signDialogVisible }">
@@ -10,7 +10,9 @@
             <div>搜索</div>
             <div>添加</div>
         </div>
-        <div class="session_list"></div>
+        <div class="session_list">
+            <SideBarItem v-for="(item, index) in appStore.relations" :profile="item" :index />
+        </div>
         <NavigationDialog />
         <SignDialog />
     </div>
@@ -22,6 +24,7 @@ import { onMounted, onUnmounted, ref } from "vue";
 import { useAppStore } from "../../stores/appStore"
 
 import Icon from "../Icon.vue"
+import SideBarItem from "./SideBarItem.vue"
 
 import NavigationDialog from "./NavigationDialog.vue"
 import SignDialog from "./SignDialog.vue";
@@ -56,10 +59,12 @@ function openSignDialog() {
 </script>
 
 <style scoped>
-.sider_bar {
+.side_bar {
     height: 100%;
     width: 20%;
-    background-color: var(--color-background-soft)
+    background-color: var(--color-background-soft);
+    /* resize: horizontal; */
+    /* overflow: hidden; */
 }
 
 .top_bar {

@@ -19,7 +19,7 @@ interface HttpResponse {
     data: Record<string, any>;
 }
 
-const baseURL = `http${security ? "" : "s"}://${ip}`;
+const baseURL = `http${security ? "s" : ""}://${ip}`;
 
 const http = (opts = {} as HttpOption): Promise<HttpResponse> => {
     return new Promise((resolve) => {
