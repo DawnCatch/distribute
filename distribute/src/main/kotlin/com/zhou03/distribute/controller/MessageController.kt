@@ -30,7 +30,7 @@ class MessageController {
         request: HttpServletRequest,
     ) = messageService.send(messageSendDTO, request)
 
-    @RequestMapping("/send/{key}")
+    @RequestMapping("/key/send/{key}")
     fun send(
         @PathVariable("key") key: String,
         @RequestBody messageSendDTO: MessageSendDTO,

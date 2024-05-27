@@ -1,6 +1,8 @@
 package com.zhou03.distribute.controller
 
 import com.zhou03.distribute.util.ChatUtil
+import com.zhou03.distribute.util.getToken
+import com.zhou03.distribute.vo.MessageVO
 import org.springframework.web.socket.CloseStatus
 import org.springframework.web.socket.WebSocketHandler
 import org.springframework.web.socket.WebSocketMessage
@@ -13,7 +15,12 @@ class ChatWebSocket : WebSocketHandler {
     }
 
     override fun handleMessage(session: WebSocketSession, message: WebSocketMessage<*>) {
-        ChatUtil.sendMessage(message)
+//        val token = session.getToken()
+//        val messageVO = MessageVO.from(message)
+//        messageVO.apply {
+//            this.from = token.userId
+//        }
+//        ChatUtil.sendMessage(messageVO)
     }
 
     override fun handleTransportError(session: WebSocketSession, exception: Throwable) {

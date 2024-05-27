@@ -12,9 +12,9 @@ import java.time.LocalDateTime
 
 data class MessageVO(
     val id: Int = 0,
-    val from: Int,
+    var from: Int = 0,
     val to: Int,
-    val content: List<Content>,
+    val contents: List<Content>,
     val date: Long? = LocalDateTime.now().toMilliSecond(),
 ) {
     companion object {
@@ -28,6 +28,7 @@ data class MessageVO(
             message.date.toMilliSecond()
         )
 
+        fun from(from: Int, to: Int, content: List<Content>) = MessageVO(from = from, to = to, contents = content)
     }
 
     fun to() = TextMessage(toJson(this))
@@ -35,7 +36,7 @@ data class MessageVO(
     fun toDomain(): Message = Message().apply {
         this.from = this@MessageVO.from
         this.to = this@MessageVO.to
-        this.content = toJson(this@MessageVO.content)
+        this.content = toJson(this@MessageVO.contents)
         if (this@MessageVO.date == null) {
             this.date = LocalDateTime.now()
         } else {

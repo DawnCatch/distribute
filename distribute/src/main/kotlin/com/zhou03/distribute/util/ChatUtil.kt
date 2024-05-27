@@ -51,8 +51,29 @@ object ChatUtil {
         sessionsMap.forEach { (userId, sessions) ->
             if (userId != message.to && userId != message.from) return@forEach
             sessions.forEach { session ->
-                if (session.isOpen) session.sendMessage(message.to())
-                else remove(session)
+                try {
+                    if (session.isOpen) session.sendMessage(message.to())
+                    else remove(session)
+                } catch (e: Exception) {
+                    remove(session)
+                }
+            }
+        }
+    }
+
+    fun sendMessage(message: MessageVO) {
+        val messageDomain = message.toDomain()
+        messageDao.add(messageDomain)
+        val messageVO = MessageVO.from(messageDomain)
+        sessionsMap.forEach { (userId, sessions) ->
+            if (userId != message.to && userId != message.from) return@forEach
+            sessions.forEach { session ->
+                try {
+                    if (session.isOpen) session.sendMessage(messageVO.to())
+                    else remove(session)
+                } catch (e: Exception) {
+                    remove(session)
+                }
             }
         }
     }

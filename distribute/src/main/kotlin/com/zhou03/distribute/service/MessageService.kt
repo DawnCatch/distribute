@@ -2,6 +2,7 @@ package com.zhou03.distribute.service
 
 import com.zhou03.distribute.dao.DeviceDao
 import com.zhou03.distribute.dao.MessageDao
+import com.zhou03.distribute.dao.RelationDao
 import com.zhou03.distribute.domain.Message
 import com.zhou03.distribute.dto.MessageHistoryDTO
 import com.zhou03.distribute.dto.MessageSendDTO
@@ -36,6 +37,9 @@ class MessageServiceImpl : MessageService {
     @Autowired
     lateinit var deviceDao: DeviceDao
 
+    @Autowired
+    lateinit var relationDao: RelationDao
+
     override fun history(messageHistoryDTO: MessageHistoryDTO, request: HttpServletRequest): Result<List<MessageVO>?> {
         val token = request.getToken()
         val from = messageHistoryDTO.from.toLocalDateTime()
@@ -49,6 +53,8 @@ class MessageServiceImpl : MessageService {
     override fun send(messageSendDTO: MessageSendDTO, request: HttpServletRequest): Result<Nothing?> {
         if (messageSendDTO.to == 0 || messageSendDTO.content.isEmpty()) return error("错误格式")
         val token = request.getToken()
+        val ids = relationDao.listRelation(token.userId).map { it.tagetId }
+        if (ids.isEmpty() || messageSendDTO.to !in ids && messageSendDTO.to != -1) return error("发送失败")
         val message = MessageVO.from(Message().apply {
             from = token.userId
             to = messageSendDTO.to
@@ -62,6 +68,8 @@ class MessageServiceImpl : MessageService {
     override fun send(key: String, messageSendDTO: MessageSendDTO): Result<Nothing?> {
         if (messageSendDTO.to == 0 || messageSendDTO.content.isEmpty()) return error("错误格式")
         val device = deviceDao.check(key) ?: return error("验证失败")
+        val ids = relationDao.listRelation(device.userId).map { it.tagetId }
+        if (ids.isEmpty() || messageSendDTO.to !in ids && messageSendDTO.to != -1) return error("发送失败")
         val message = MessageVO.from(Message().apply {
             from = device.userId
             to = if (messageSendDTO.to == -1) device.userId else messageSendDTO.to
