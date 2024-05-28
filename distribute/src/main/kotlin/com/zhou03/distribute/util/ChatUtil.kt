@@ -49,13 +49,16 @@ object ChatUtil {
         messageDao.add(messageDomain)
         val message = MessageVO.from(messageDomain)
         sessionsMap.forEach { (userId, sessions) ->
-            if (userId != message.to && userId != message.from) return@forEach
-            sessions.forEach { session ->
-                try {
-                    if (session.isOpen) session.sendMessage(message.to())
-                    else remove(session)
-                } catch (e: Exception) {
-                    remove(session)
+            if (userId == message.to || userId == message.from) {
+                val it = sessions.iterator()
+                while (it.hasNext()) {
+                    val session = it.next()
+                    try {
+                        if (session.isOpen) session.sendMessage(message.to())
+                        else it.remove()
+                    } catch (e: Exception) {
+                        it.remove()
+                    }
                 }
             }
         }
@@ -66,13 +69,16 @@ object ChatUtil {
         messageDao.add(messageDomain)
         val messageVO = MessageVO.from(messageDomain)
         sessionsMap.forEach { (userId, sessions) ->
-            if (userId != message.to && userId != message.from) return@forEach
-            sessions.forEach { session ->
-                try {
-                    if (session.isOpen) session.sendMessage(messageVO.to())
-                    else remove(session)
-                } catch (e: Exception) {
-                    remove(session)
+            if (userId == message.to || userId == message.from) {
+                val it = sessions.iterator()
+                while (it.hasNext()) {
+                    val session = it.next()
+                    try {
+                        if (session.isOpen) session.sendMessage(message.to())
+                        else it.remove()
+                    } catch (e: Exception) {
+                        it.remove()
+                    }
                 }
             }
         }
