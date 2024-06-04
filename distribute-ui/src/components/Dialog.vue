@@ -48,7 +48,7 @@ function close() {
     background-color: blur(black, .5);
     overflow: hidden;
     pointer-events: v-bind("visible ? '' : 'none'");
-    z-index: 1;
+    z-index: 2;
 }
 
 .masking {

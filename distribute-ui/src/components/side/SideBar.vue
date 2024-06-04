@@ -7,9 +7,9 @@
                     v-if="appStore.profile.nickname">
                 <Icon name="avatar" customClass="avatar_default" @click="openSignDialog" v-else />
             </div>
-            <div>搜索</div>
             <div>添加</div>
         </div>
+        <div class="search_box">搜索</div>
         <div class="session_list">
             <SideBarItem v-for="(item, index) in appStore.relations" :profile="item" :index />
         </div>
@@ -63,6 +63,7 @@ function openSignDialog() {
     height: 100%;
     width: 20%;
     background-color: var(--color-background-soft);
+    border-right: 1px solid var(--color-background-pro);
     /* resize: horizontal; */
     /* overflow: hidden; */
 }
@@ -83,7 +84,7 @@ function openSignDialog() {
     border-radius: 50%;
     overflow: hidden;
     transition: all .5s;
-    z-index: 2;
+    z-index: 3;
 }
 
 .avatar_navigation {

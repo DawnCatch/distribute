@@ -84,9 +84,8 @@ onMounted(() => {
     mitt.on("rtc:message", (data) => {
         const message = data as Message
         const userId = message.from
-        const contents = message.contents
-        if (contents.length === 0 || contents[0].type.indexOf("RTC") === -1) return
-        const content = contents[0]
+        const content = message.content
+        if (content.type.indexOf("RTC") === -1) return
         if (userId === appStore.profile.userId) {
             if (content.type === "RTC:REQ" && !wait) {
 

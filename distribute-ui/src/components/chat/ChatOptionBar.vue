@@ -1,15 +1,15 @@
 <template>
     <div class="chat_option_bar" ref="chatOptionBar" tabindex="0">
         <div class="file_box">
-            文件{{ focused && mode == Mode.FLOAT }}:{{ focused }}: {{ mode }}
+            文件
         </div>
         <div class="input_box">
             <textarea ref="textarea" v-model="input" class="input" placeholder="输入消息..."
                 @keydown="handleKeyCode($event)" @keydown.tab="handleKeyCode($event)" />
-            <div class="preview_box dock" ref="dock" v-html="preview" v-show="mode === Mode.DOCK"></div>
+            <div class="preview_box dock" ref="dock" v-html="preview" v-show="mode === Mode.DOCK && preview"></div>
         </div>
         <div class="preview_box float" ref="perviewBox" :style="style" v-html="preview"
-            v-show="focused && mode === Mode.FLOAT"></div>
+            v-show="focused && mode === Mode.FLOAT && preview"></div>
     </div>
 </template>
 
@@ -36,12 +36,10 @@ function handleKeyCode(event: KeyboardEvent) {
             url: "/message/send",
             data: {
                 to: appStore.relations[appStore.index].userId,
-                content: [
-                    {
-                        type: "TEXT",
-                        value: input.value
-                    }
-                ]
+                content: {
+                    type: "TEXT",
+                    value: input.value
+                }
             }
         })
     } else if (event.key === "Tab") {
@@ -136,7 +134,8 @@ enum Mode {
 .preview_box {
     padding-left: .5rem;
     min-width: 20%;
-    max-height: 30%;
+    max-width: 50%;
+    max-height: 50%;
     overflow: auto;
 }
 

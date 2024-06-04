@@ -55,7 +55,7 @@ watch(() => appStore.profile, () => {
       appStore.addMessage(message)
       notification({
         title: `收到一条来自${appStore.relations.filter((it) => it.userId === message.from)[0].nickname}的消息`,
-        body: message.contents[0].value
+        body: message.content.value
       } as Options);
     },
     onClose: () => console.log("链接断开")

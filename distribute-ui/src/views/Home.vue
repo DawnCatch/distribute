@@ -1,9 +1,9 @@
 <template>
-    <div class="home">
-        <SideBar />
-        <ChatBar />
-        <VideoCall />
-    </div>
+  <div class="home">
+    <SideBar />
+    <ChatBar />
+    <VideoCall />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -14,8 +14,8 @@ import VideoCall from "../components/chat/VideoCall.vue";
 
 <style scoped>
 .home {
-    position: relative;
-    display: flex;
-    height: 100%
+  position: relative;
+  display: flex;
+  height: 100%
 }
 </style>

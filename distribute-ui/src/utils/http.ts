@@ -42,6 +42,7 @@ const http = (opts = {} as HttpOption): Promise<HttpResponse> => {
             if (token) setToken(token);
             let data = res.data as HttpResponse;
             if (!data.status) {
+                console.log(data);
                 notification(data.message as string);
             }
             resolve(data);

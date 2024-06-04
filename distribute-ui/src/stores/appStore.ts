@@ -65,7 +65,7 @@ interface Message {
     id: number;
     from: number;
     to: number;
-    contents: Content[];
+    content: Content;
     date: number;
 }
 

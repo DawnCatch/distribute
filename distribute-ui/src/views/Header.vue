@@ -1,14 +1,17 @@
 <template>
     <div data-tauri-drag-region class="title_bar">
+        <div class="chat_title" v-if="appStore.index !== -1">
+            {{ appStore.relations[appStore.index].nickname }}
+        </div>
         <div class="window_tool">
             <div class="option" @click.left="windowMinimize">
-                <Icon name="minimize" custom-class="option_icon"/>
+                <Icon name="minimize" custom-class="option_icon" />
             </div>
             <div class="option" @click.left="windowMaximize">
-                <Icon :name="maxState ? 'enlarge' : 'narrow'" custom-class="option_icon"/>
+                <Icon :name="maxState ? 'enlarge' : 'narrow'" custom-class="option_icon" />
             </div>
             <div class="option highlight" @click.left="windowClose">
-                <Icon name="close" custom-class="option_icon"/>
+                <Icon name="close" custom-class="option_icon" />
             </div>
         </div>
     </div>
@@ -17,8 +20,11 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import { appWindow } from "@tauri-apps/api/window";
+import { useAppStore } from "../stores/appStore";
 
 import Icon from "../components/Icon.vue";
+
+const appStore = useAppStore()
 
 const maxStateName = ref('window-maximize')
 const maxState = ref(false)
@@ -48,12 +54,18 @@ async function windowClose() {
 
 <style scoped>
 .title_bar {
+    display: flex;
     background-color: var(--color-background-mute);
 }
 
+.chat_title {
+    line-height: 1.5rem;
+    margin-left: .5rem;
+}
+
 .window_tool {
-    float: right;
     display: flex;
+    margin-left: auto;
 }
 
 .option {

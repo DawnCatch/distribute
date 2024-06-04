@@ -26,6 +26,7 @@ const markdown = new MarkdownIt({
         } catch (__) {}
         return "";
     },
+    breaks: true
 });
 markdown.use(emoji);
 
