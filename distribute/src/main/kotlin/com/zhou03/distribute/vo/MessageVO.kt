@@ -1,6 +1,5 @@
 package com.zhou03.distribute.vo
 
-import com.google.gson.reflect.TypeToken
 import com.zhou03.distribute.domain.Message
 import com.zhou03.distribute.util.fromJson
 import com.zhou03.distribute.util.toJson
@@ -14,21 +13,19 @@ data class MessageVO(
     val id: Int = 0,
     var from: Int = 0,
     val to: Int,
-    val contents: List<Content>,
+    val content: Content,
     val date: Long? = LocalDateTime.now().toMilliSecond(),
 ) {
     companion object {
         fun from(message: WebSocketMessage<*>) = fromJson<MessageVO>(message.payload as String)
 
         fun from(message: Message) = MessageVO(
-            message.id,
-            message.from,
-            message.to,
-            fromJson<List<Content>>(message.content, object : TypeToken<List<Content>>() {}.type),
+            message.id, message.from, message.to, fromJson(message.content),
+//            fromJson<List<Content>>(message.content, object : TypeToken<List<Content>>() {}.type),
             message.date.toMilliSecond()
         )
 
-        fun from(from: Int, to: Int, content: List<Content>) = MessageVO(from = from, to = to, contents = content)
+        fun from(from: Int, to: Int, content: Content) = MessageVO(from = from, to = to, content = content)
     }
 
     fun to() = TextMessage(toJson(this))
@@ -36,7 +33,7 @@ data class MessageVO(
     fun toDomain(): Message = Message().apply {
         this.from = this@MessageVO.from
         this.to = this@MessageVO.to
-        this.content = toJson(this@MessageVO.contents)
+        this.content = toJson(this@MessageVO.content)
         if (this@MessageVO.date == null) {
             this.date = LocalDateTime.now()
         } else {

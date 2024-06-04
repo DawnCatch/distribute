@@ -51,7 +51,9 @@ class MessageServiceImpl : MessageService {
     }
 
     override fun send(messageSendDTO: MessageSendDTO, request: HttpServletRequest): Result<Nothing?> {
-        if (messageSendDTO.to == 0 || messageSendDTO.content.isEmpty()) return error("错误格式")
+        if (messageSendDTO.to == 0 || messageSendDTO.content.type == "" || messageSendDTO.content.value == "") return error(
+            "错误格式"
+        )
         val token = request.getToken()
         val ids = relationDao.listRelation(token.userId).map { it.tagetId }
         if (ids.isEmpty() || messageSendDTO.to !in ids && messageSendDTO.to != -1 && messageSendDTO.to != token.userId) return error(
@@ -68,10 +70,14 @@ class MessageServiceImpl : MessageService {
     }
 
     override fun send(key: String, messageSendDTO: MessageSendDTO): Result<Nothing?> {
-        if (messageSendDTO.to == 0 || messageSendDTO.content.isEmpty()) return error("错误格式")
+        if (messageSendDTO.to == 0 || messageSendDTO.content.type == "" || messageSendDTO.content.value == "") return error(
+            "错误格式"
+        )
         val device = deviceDao.check(key) ?: return error("验证失败")
         val ids = relationDao.listRelation(device.userId).map { it.tagetId }
-        if (ids.isEmpty() || messageSendDTO.to !in ids && messageSendDTO.to != -1 && messageSendDTO.to != device.userId) return error("发送失败")
+        if (ids.isEmpty() || messageSendDTO.to !in ids && messageSendDTO.to != -1 && messageSendDTO.to != device.userId) return error(
+            "发送失败"
+        )
         val message = MessageVO.from(Message().apply {
             from = device.userId
             to = if (messageSendDTO.to == -1) device.userId else messageSendDTO.to

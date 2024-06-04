@@ -5,5 +5,5 @@ import com.zhou03.distribute.vo.Content
 
 data class MessageSendDTO(
     val to: Int,
-    val content: List<Content>,
+    val content: Content,
 )
