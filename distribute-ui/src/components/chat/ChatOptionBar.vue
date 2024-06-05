@@ -42,6 +42,7 @@ function handleKeyCode(event: KeyboardEvent) {
                 }
             }
         })
+        input.value = ""
     } else if (event.key === "Tab") {
         if (!input.value) input.value = "    "
         const selectionStart = textarea.value.selectionStart
