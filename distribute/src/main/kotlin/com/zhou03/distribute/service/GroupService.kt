@@ -1,7 +1,9 @@
 package com.zhou03.distribute.service
 
 import com.zhou03.distribute.dao.GroupDao
+import com.zhou03.distribute.dao.RelationDao
 import com.zhou03.distribute.domain.Group
+import com.zhou03.distribute.domain.Relation
 import com.zhou03.distribute.dto.group.GroupCreateDTO
 import com.zhou03.distribute.dto.group.GroupDeleteDTO
 import com.zhou03.distribute.dto.group.GroupInviteDTO
@@ -33,6 +35,9 @@ class GroupServiceImpl : GroupService {
     @Autowired
     lateinit var groupDao: GroupDao
 
+    @Autowired
+    lateinit var relationDao: RelationDao
+
     override fun create(groupCreateDTO: GroupCreateDTO, request: HttpServletRequest): Result<GroupVO?> {
         val token = request.getToken()
         val group = Group().apply {
@@ -41,6 +46,14 @@ class GroupServiceImpl : GroupService {
             this.createDate = LocalDateTime.now()
         }
         groupDao.add(group)
+        val relation = Relation().apply {
+            this.userId = token.userId
+            this.targetId = group.id
+            this.status = true
+            this.date = LocalDateTime.now()
+            this.path = "/"
+        }
+        relationDao.add(relation)
         return success(GroupVO.from(group))
     }
 

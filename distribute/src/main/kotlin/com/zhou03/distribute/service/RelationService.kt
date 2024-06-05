@@ -51,9 +51,11 @@ class RelationServiceImpl : RelationService {
         request: HttpServletRequest,
     ): Result<Nothing?> {
         val token = request.getToken()
+        if (!type && relationFollowDTO.targetId == token.userId) return error("无法向自己发送申请")
         var relation = relationDao.getIdAndId(type, token.userId, relationFollowDTO.targetId)
         if (relation == null) {
             relation = Relation().apply {
+                this.type = type
                 this.userId = token.userId
                 this.targetId = relationFollowDTO.targetId
                 this.status = false
@@ -96,7 +98,7 @@ class RelationServiceImpl : RelationService {
             this.status = relationHandleDTO.status
             flushChanges()
         }
-        if (relationHandleDTO.status) {
+        if (!relation.type && relationHandleDTO.status) {
             relation = Relation().apply {
                 this.userId = relation.targetId
                 this.targetId = relation.userId

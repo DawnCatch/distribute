@@ -162,21 +162,39 @@ class MessageServiceImpl : MessageService {
 
     override fun read(messageReadDTO: MessageReadDTO, request: HttpServletRequest): Result<Nothing?> {
         val token = request.getToken()
-        val message = messageDao.getByIdAsOwn(messageReadDTO.id, token.userId) ?: return error("权限错误")
+        val message = messageDao.getById(messageReadDTO.id) ?: return error("目标不存在")
         val messageObserver = MessageObserver().apply {
             this.messageId = message.id
             this.userId = token.userId
             this.date = LocalDateTime.now()
         }
         try {
-            messageObserverDao.add(messageObserver)
-            ChatUtil.sendMessage(
-                MessageVO(
-                    id = message.id, from = token.userId, to = message.getOtherParty(token.userId), content = Content(
-                        type = "OBSERVER", value = ""
+            if (message.type) {
+                val relations = relationDao.listByGroupId(message.to)
+                val relationIds = relations.map { it.userId }
+                if (token.userId !in relationIds) return error("权限错误")
+                messageObserverDao.add(messageObserver)
+                ChatUtil.sendMessage(
+                    MessageVO(
+                        id = message.id, from = token.userId, to = message.to, content = Content(
+                            type = "OBSERVER", value = ""
+                        )
+                    ), relationIds
+                )
+            } else {
+                if (token.userId !in listOf(message.from, message.to)) return error("权限错误")
+                messageObserverDao.add(messageObserver)
+                ChatUtil.sendMessage(
+                    MessageVO(
+                        id = message.id,
+                        from = token.userId,
+                        to = message.getOtherParty(token.userId),
+                        content = Content(
+                            type = "OBSERVER", value = ""
+                        )
                     )
                 )
-            )
+            }
         } catch (_: SQLIntegrityConstraintViolationException) {
         }
         return success()
