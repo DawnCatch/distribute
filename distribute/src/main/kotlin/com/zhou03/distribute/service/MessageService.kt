@@ -6,9 +6,9 @@ import com.zhou03.distribute.dao.MessageObserverDao
 import com.zhou03.distribute.dao.RelationDao
 import com.zhou03.distribute.domain.Message
 import com.zhou03.distribute.domain.MessageObserver
-import com.zhou03.distribute.dto.MessageHistoryDTO
-import com.zhou03.distribute.dto.MessageReadDTO
-import com.zhou03.distribute.dto.MessageSendDTO
+import com.zhou03.distribute.dto.message.MessageHistoryDTO
+import com.zhou03.distribute.dto.message.MessageReadDTO
+import com.zhou03.distribute.dto.message.MessageSendDTO
 import com.zhou03.distribute.util.ChatUtil
 import com.zhou03.distribute.util.getToken
 import com.zhou03.distribute.util.toJson
@@ -24,9 +24,13 @@ interface MessageService {
 
     fun history(messageHistoryDTO: MessageHistoryDTO, request: HttpServletRequest): Result<List<MessageVO>?>
 
-    fun send(messageSendDTO: MessageSendDTO, request: HttpServletRequest): Result<Nothing?>
+    fun userSend(messageSendDTO: MessageSendDTO, request: HttpServletRequest): Result<Nothing?>
 
-    fun send(key: String, messageSendDTO: MessageSendDTO): Result<Nothing?>
+    fun userSend(key: String, messageSendDTO: MessageSendDTO): Result<Nothing?>
+
+    fun groupSend(messageSendDTO: MessageSendDTO, request: HttpServletRequest): Result<Nothing?>
+
+    fun groupSend(key: String, messageSendDTO: MessageSendDTO): Result<Nothing?>
 
     fun read(messageReadDTO: MessageReadDTO, request: HttpServletRequest): Result<Nothing?>
 }
@@ -50,7 +54,8 @@ class MessageServiceImpl : MessageService {
         val token = request.getToken()
         val from = messageHistoryDTO.from.toLocalDateTime()
         val to = messageHistoryDTO.to.toLocalDateTime()
-        val messageDomains = messageDao.getListOfDate(token.userId, from, to)
+        val relations = relationDao.listRelation(true, token.userId)
+        val messageDomains = messageDao.listByDateAsOwn(token.userId, relations.map { it.id }, from, to)
         val ids = messageDomains.map { it.id }
         val messageObserversMap = messageObserverDao.listByMessageId(ids).groupBy { it.messageId }
         val messages = messageDomains.map {
@@ -67,16 +72,17 @@ class MessageServiceImpl : MessageService {
         return success(messages)
     }
 
-    override fun send(messageSendDTO: MessageSendDTO, request: HttpServletRequest): Result<Nothing?> {
-        if (messageSendDTO.to == 0 || messageSendDTO.content.type == "" || messageSendDTO.content.value == "") return error(
+    override fun userSend(messageSendDTO: MessageSendDTO, request: HttpServletRequest): Result<Nothing?> {
+        if (messageSendDTO.validate()) return error(
             "错误格式"
         )
         val token = request.getToken()
-        val ids = relationDao.listRelation(token.userId).map { it.tagetId }
-        if (ids.isEmpty() || messageSendDTO.to !in ids && messageSendDTO.to != -1 && messageSendDTO.to != token.userId) return error(
-            "发送失败"
-        )
+        if (messageSendDTO.to != -1 && messageSendDTO.to != token.userId && !relationDao.haveRelation(
+                false, token.userId, messageSendDTO.to
+            )
+        ) return error("发生失败")
         val messageDomain = Message().apply {
+            type = false
             from = token.userId
             to = messageSendDTO.to
             content = toJson(messageSendDTO.content)
@@ -88,24 +94,70 @@ class MessageServiceImpl : MessageService {
         return success(null, "发送成功")
     }
 
-    override fun send(key: String, messageSendDTO: MessageSendDTO): Result<Nothing?> {
-        if (messageSendDTO.to == 0 || messageSendDTO.content.type == "" || messageSendDTO.content.value == "") return error(
+    override fun userSend(key: String, messageSendDTO: MessageSendDTO): Result<Nothing?> {
+        if (messageSendDTO.validate()) return error(
             "错误格式"
         )
         val device = deviceDao.check(key) ?: return error("验证失败")
-        val ids = relationDao.listRelation(device.userId).map { it.tagetId }
-        if (ids.isEmpty() || messageSendDTO.to !in ids && messageSendDTO.to != -1 && messageSendDTO.to != device.userId) return error(
-            "发送失败"
-        )
+        if (messageSendDTO.to != -1 && messageSendDTO.to != device.userId && !relationDao.haveRelation(
+                false, device.userId, messageSendDTO.to
+            )
+        ) return error("发生失败")
         val messageDomain = Message().apply {
+            type = false
             from = device.userId
             to = if (messageSendDTO.to == -1) device.userId else messageSendDTO.to
             content = toJson(messageSendDTO.content)
             date = LocalDateTime.now()
         }
+        messageDao.add(messageDomain)
         val message = MessageVO.from(messageDomain)
         ChatUtil.sendMessage(message)
-        return success(null, "发送成功")
+        return success(message = "发送成功")
+    }
+
+    override fun groupSend(messageSendDTO: MessageSendDTO, request: HttpServletRequest): Result<Nothing?> {
+        if (messageSendDTO.validate()) return error(
+            "错误格式"
+        )
+        val token = request.getToken()
+        val ids = relationDao.listByGroupId(messageSendDTO.to).map { it.userId }
+        if (ids.isEmpty() || token.userId !in ids) return error(
+            "发送失败"
+        )
+        val messageDomain = Message().apply {
+            type = true
+            from = token.userId
+            to = messageSendDTO.to
+            content = toJson(messageSendDTO.content)
+            date = LocalDateTime.now()
+        }
+        messageDao.add(messageDomain)
+        val message = MessageVO.from(messageDomain)
+        ChatUtil.sendMessage(message, ids)
+        return success(message = "发送成功")
+    }
+
+    override fun groupSend(key: String, messageSendDTO: MessageSendDTO): Result<Nothing?> {
+        if (messageSendDTO.validate()) return error(
+            "错误格式"
+        )
+        val device = deviceDao.check(key) ?: return error("验证失败")
+        val ids = relationDao.listByGroupId(messageSendDTO.to).map { it.userId }
+        if (ids.isEmpty() || device.userId !in ids) return error(
+            "发送失败"
+        )
+        val messageDomain = Message().apply {
+            type = false
+            from = device.userId
+            to = messageSendDTO.to
+            content = toJson(messageSendDTO.content)
+            date = LocalDateTime.now()
+        }
+        messageDao.add(messageDomain)
+        val message = MessageVO.from(messageDomain)
+        ChatUtil.sendMessage(message, ids)
+        return success(message = "发送成功")
     }
 
     override fun read(messageReadDTO: MessageReadDTO, request: HttpServletRequest): Result<Nothing?> {

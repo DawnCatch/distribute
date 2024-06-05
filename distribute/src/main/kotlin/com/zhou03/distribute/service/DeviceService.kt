@@ -3,10 +3,10 @@ package com.zhou03.distribute.service
 import com.zhou03.distribute.dao.DeviceDao
 import com.zhou03.distribute.dao.ProfileDao
 import com.zhou03.distribute.domain.Device
-import com.zhou03.distribute.dto.DeviceCheckDTO
-import com.zhou03.distribute.dto.DeviceDeleteDTO
-import com.zhou03.distribute.dto.DeviceGenerateDTO
-import com.zhou03.distribute.dto.DeviceModifyDTO
+import com.zhou03.distribute.dto.device.DeviceCheckDTO
+import com.zhou03.distribute.dto.device.DeviceDeleteDTO
+import com.zhou03.distribute.dto.device.DeviceGenerateDTO
+import com.zhou03.distribute.dto.device.DeviceModifyDTO
 import com.zhou03.distribute.util.aesEncrypt
 import com.zhou03.distribute.util.device
 import com.zhou03.distribute.util.getToken

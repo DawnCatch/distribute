@@ -11,9 +11,11 @@ interface Relation : Entity<Relation> {
 
     var id: Int
 
+    var type: Boolean
+
     var userId: Int
 
-    var tagetId: Int
+    var targetId: Int
 
     var status: Boolean
 
@@ -24,8 +26,9 @@ interface Relation : Entity<Relation> {
 
 object Relations : Table<Relation>("t_relation") {
     val id = int("id").primaryKey().bindTo { it.id }
+    val type = boolean("type").bindTo { it.type }
     val userId = int("user_id").bindTo { it.userId }
-    val targetId = int("target_id").bindTo { it.tagetId }
+    val targetId = int("target_id").bindTo { it.targetId }
     val status = boolean("status").bindTo { it.status }
     val date = datetime("date").bindTo { it.date }
     val path = varchar("path").bindTo { it.path }

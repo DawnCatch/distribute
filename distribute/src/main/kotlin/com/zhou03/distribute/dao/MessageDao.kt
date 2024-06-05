@@ -2,18 +2,21 @@ package com.zhou03.distribute.dao
 
 import com.zhou03.distribute.domain.Message
 import com.zhou03.distribute.domain.Messages
-import org.ktorm.dsl.and
-import org.ktorm.dsl.eq
-import org.ktorm.dsl.less
-import org.ktorm.dsl.or
+import org.ktorm.dsl.*
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
 @Component
 class MessageDao : BaseDao<Message, Messages>(Messages) {
 
-    fun getListOfDate(userId: Int, from: LocalDateTime, to: LocalDateTime) =
-        findList { (from less it.date) and (it.date less to) and ((it.from eq userId) or (it.to eq userId)) }
+    fun listByDateAsOwn(userId: Int, from: LocalDateTime, to: LocalDateTime) =
+        findList { (it.type eq false) and (from less it.date) and (it.date less to) and ((it.from eq userId) or (it.to eq userId)) }
+
+    fun listByDateAsOwn(ids: List<Int>, from: LocalDateTime, to: LocalDateTime) =
+        if (ids.isNotEmpty()) findList { (it.type eq true) and (from less it.date) and (it.date less to) and (it.to inList ids) } else listOf()
+
+    fun listByDateAsOwn(userId: Int, ids: List<Int>, from: LocalDateTime, to: LocalDateTime) =
+        listByDateAsOwn(userId, from, to) + listByDateAsOwn(ids, from, to)
 
     fun getList(userId: Int) = findList { (it.from eq userId) }
 
