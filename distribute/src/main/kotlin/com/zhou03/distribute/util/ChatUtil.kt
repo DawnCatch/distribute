@@ -44,30 +44,7 @@ object ChatUtil {
         this.messageDao = messageDao
     }
 
-    fun sendMessage(webSocketMessage: WebSocketMessage<*>) {
-        val messageDomain = MessageVO.from(webSocketMessage).toDomain()
-        messageDao.add(messageDomain)
-        val message = MessageVO.from(messageDomain)
-        sessionsMap.forEach { (userId, sessions) ->
-            if (userId == message.to || userId == message.from) {
-                val it = sessions.iterator()
-                while (it.hasNext()) {
-                    val session = it.next()
-                    try {
-                        if (session.isOpen) session.sendMessage(message.to())
-                        else it.remove()
-                    } catch (e: Exception) {
-                        it.remove()
-                    }
-                }
-            }
-        }
-    }
-
     fun sendMessage(message: MessageVO) {
-        val messageDomain = message.toDomain()
-        messageDao.add(messageDomain)
-        val messageVO = MessageVO.from(messageDomain)
         sessionsMap.forEach { (userId, sessions) ->
             if (userId == message.to || userId == message.from) {
                 val it = sessions.iterator()

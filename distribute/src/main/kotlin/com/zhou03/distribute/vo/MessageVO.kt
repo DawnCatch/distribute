@@ -15,17 +15,16 @@ data class MessageVO(
     val to: Int,
     val content: Content,
     val date: Long? = LocalDateTime.now().toMilliSecond(),
+    var observers: List<Int> = listOf(),
 ) {
     companion object {
         fun from(message: WebSocketMessage<*>) = fromJson<MessageVO>(message.payload as String)
 
         fun from(message: Message) = MessageVO(
-            message.id, message.from, message.to, fromJson(message.content),
-//            fromJson<List<Content>>(message.content, object : TypeToken<List<Content>>() {}.type),
-            message.date.toMilliSecond()
+            message.id, message.from, message.to, fromJson(message.content), message.date.toMilliSecond()
         )
 
-        fun from(from: Int, to: Int, content: Content) = MessageVO(from = from, to = to, content = content)
+        fun create(from: Int, to: Int, content: Content) = MessageVO(from = from, to = to, content = content)
     }
 
     fun to() = TextMessage(toJson(this))
