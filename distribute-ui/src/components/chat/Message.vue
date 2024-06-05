@@ -5,10 +5,12 @@
             <Icon name="avatar" customClass="avatar_default" v-else />
         </div>
         <div class="message_box">
-            <div class="content_bar" v-for="(message) in (messages as Message[])">
-                <div v-html="md2Ele(message.content)"></div>
+            <div class="content_bar" v-element-visibility="(state: boolean) => onElementVisibility(state, message)"
+                v-for="(message) in (messages as Message[])">
+                <div v-if="message.content.type === 'TEXT'" v-html="md2Ele(message.content)"></div>
                 <span class="space"></span>
                 <span class="time">{{ getTime(message.date) }}</span>
+                {{ message.observers }}
             </div>
         </div>
         <div class="avatar_box" v-if="reverse">
@@ -21,9 +23,11 @@
 <script setup lang="ts">
 import { useAppStore, Content, Message } from "../../stores/appStore";
 import markdown from "../../utils/markdown";
+import { vElementVisibility } from '@vueuse/components'
 
 import Icon from "../Icon.vue";
 import { ref } from "vue";
+import { http } from "../../utils/http";
 
 const appStore = useAppStore()
 
@@ -50,6 +54,17 @@ function getTime(time: number) {
 
 function md2Ele(item: Content) {
     return markdown.render(item.value)
+}
+
+function onElementVisibility(state: boolean, message: Message) {
+    if (state) {
+        http({
+            url: "/message/read",
+            data: {
+                id: message.id
+            }
+        })
+    }
 }
 </script>
 

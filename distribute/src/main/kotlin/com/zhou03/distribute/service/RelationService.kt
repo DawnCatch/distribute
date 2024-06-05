@@ -83,7 +83,7 @@ class RelationServiceImpl : RelationService {
         }
         if (relationHandleDTO.status) {
             ChatUtil.sendMessage(
-                MessageVO.from(
+                MessageVO.create(
                     relation.tagetId, relation.userId, Content("TEXT", "你好!")
                 )
             )

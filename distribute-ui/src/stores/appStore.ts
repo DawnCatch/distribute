@@ -17,12 +17,19 @@ export const useAppStore = defineStore("app", {
             this.relations.push(profile);
         },
         addMessage(message: Message) {
+            console.log(message)
             const index = this.messages.findIndex(
                 (it: Message) => it.id === message.id
             );
             if (index === -1) {
                 this.messages.push(message);
-                mitt.emit("rtc:message", message);
+                if (message.content.type.indexOf("rtc") !== -1) {
+                    mitt.emit("rtc:message", message);
+                }
+            } else if (message.content.type === "OBSERVER") {
+                this.messages[index].observers =
+                    this.messages[index].observers ?? [];
+                this.messages[index].observers.push(message.from);
             }
         },
         setMessage(messages: Message[]) {
@@ -47,7 +54,8 @@ export const useAppStore = defineStore("app", {
                     const key = Math.floor(date / (5 * 60 * 1000));
                     group[session] = group[session] ?? {};
                     group[session][key] = group[session][key] ?? {};
-                    group[session][key]!![from] = group[session][key]!![from] ?? [];
+                    group[session][key]!![from] =
+                        group[session][key]!![from] ?? [];
                     group[session][key]!![from]!!.push(message);
                     return group;
                 }, {} as Record<number, Record<number, Record<number, Message[] | null> | null>>);
@@ -67,6 +75,7 @@ interface Message {
     to: number;
     content: Content;
     date: number;
+    observers: number[];
 }
 
 interface Content {

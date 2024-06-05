@@ -21,6 +21,8 @@ interface Message : Entity<Message> {
     var content: String
 
     var date: LocalDateTime
+
+    fun getOtherParty(id: Int) = if (this.from == id) this.to else this.from
 }
 
 object Messages : Table<Message>("t_message") {

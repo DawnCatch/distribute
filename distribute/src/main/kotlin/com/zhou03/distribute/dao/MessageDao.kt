@@ -16,4 +16,6 @@ class MessageDao : BaseDao<Message, Messages>(Messages) {
         findList { (from less it.date) and (it.date less to) and ((it.from eq userId) or (it.to eq userId)) }
 
     fun getList(userId: Int) = findList { (it.from eq userId) }
+
+    fun getByIdAsOwn(id: Int, own: Int) = findOne { (it.id eq id) and ((it.from eq own) or (it.to eq own)) }
 }
