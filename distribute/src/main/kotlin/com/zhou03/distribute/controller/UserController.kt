@@ -1,8 +1,8 @@
 package com.zhou03.distribute.controller
 
-import com.zhou03.distribute.dto.UserLoginDTO
-import com.zhou03.distribute.dto.UserRegisterDTO
-import com.zhou03.distribute.dto.UserSetEmailDTO
+import com.zhou03.distribute.dto.user.UserLoginDTO
+import com.zhou03.distribute.dto.user.UserRegisterDTO
+import com.zhou03.distribute.dto.user.UserSetEmailDTO
 import com.zhou03.distribute.service.UserService
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse

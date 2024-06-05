@@ -1,13 +1,12 @@
 package com.zhou03.distribute.service
 
-import com.mysql.cj.xdevapi.Warning
 import com.zhou03.distribute.dao.ProfileDao
 import com.zhou03.distribute.dao.UserDao
 import com.zhou03.distribute.domain.Profile
 import com.zhou03.distribute.domain.User
-import com.zhou03.distribute.dto.UserLoginDTO
-import com.zhou03.distribute.dto.UserRegisterDTO
-import com.zhou03.distribute.dto.UserSetEmailDTO
+import com.zhou03.distribute.dto.user.UserLoginDTO
+import com.zhou03.distribute.dto.user.UserRegisterDTO
+import com.zhou03.distribute.dto.user.UserSetEmailDTO
 import com.zhou03.distribute.model.Email
 import com.zhou03.distribute.model.Token
 import com.zhou03.distribute.util.TokenUtil

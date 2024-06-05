@@ -4,7 +4,6 @@ import com.zhou03.distribute.dao.MessageDao
 import com.zhou03.distribute.vo.MessageVO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import org.springframework.web.socket.WebSocketMessage
 import org.springframework.web.socket.WebSocketSession
 import java.util.concurrent.ConcurrentHashMap
 
@@ -47,6 +46,23 @@ object ChatUtil {
     fun sendMessage(message: MessageVO) {
         sessionsMap.forEach { (userId, sessions) ->
             if (userId == message.to || userId == message.from) {
+                val it = sessions.iterator()
+                while (it.hasNext()) {
+                    val session = it.next()
+                    try {
+                        if (session.isOpen) session.sendMessage(message.to())
+                        else it.remove()
+                    } catch (e: Exception) {
+                        it.remove()
+                    }
+                }
+            }
+        }
+    }
+
+    fun sendMessage(message: MessageVO, targets: List<Int>) {
+        sessionsMap.forEach { (userId, sessions) ->
+            if (userId in targets || userId == message.from) {
                 val it = sessions.iterator()
                 while (it.hasNext()) {
                     val session = it.next()

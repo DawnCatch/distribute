@@ -1,9 +1,9 @@
 package com.zhou03.distribute.controller
 
-import com.zhou03.distribute.dto.DeviceCheckDTO
-import com.zhou03.distribute.dto.DeviceDeleteDTO
-import com.zhou03.distribute.dto.DeviceGenerateDTO
-import com.zhou03.distribute.dto.DeviceModifyDTO
+import com.zhou03.distribute.dto.device.DeviceCheckDTO
+import com.zhou03.distribute.dto.device.DeviceDeleteDTO
+import com.zhou03.distribute.dto.device.DeviceGenerateDTO
+import com.zhou03.distribute.dto.device.DeviceModifyDTO
 import com.zhou03.distribute.service.DeviceService
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse

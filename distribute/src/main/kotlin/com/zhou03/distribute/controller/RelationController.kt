@@ -1,7 +1,7 @@
 package com.zhou03.distribute.controller
 
-import com.zhou03.distribute.dto.RelationApplicationDTO
-import com.zhou03.distribute.dto.RelationHandleDTO
+import com.zhou03.distribute.dto.relation.RelationApplicationDTO
+import com.zhou03.distribute.dto.relation.RelationHandleDTO
 import com.zhou03.distribute.service.RelationService
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,11 +16,17 @@ class RelationController {
     @Autowired
     lateinit var relationService: RelationService
 
-    @RequestMapping("/application")
-    fun application(
+    @RequestMapping("/user/application")
+    fun userApplication(
         @RequestBody relationApplicationDTO: RelationApplicationDTO,
         request: HttpServletRequest,
-    ) = relationService.application(relationApplicationDTO, request)
+    ) = relationService.userApplication(relationApplicationDTO, request)
+
+    @RequestMapping("/group/application")
+    fun groupApplication(
+        @RequestBody relationApplicationDTO: RelationApplicationDTO,
+        request: HttpServletRequest,
+    ) = relationService.groupApplication(relationApplicationDTO, request)
 
     @RequestMapping("/handle")
     fun handle(

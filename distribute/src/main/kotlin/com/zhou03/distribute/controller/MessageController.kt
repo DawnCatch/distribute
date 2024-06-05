@@ -1,8 +1,8 @@
 package com.zhou03.distribute.controller
 
-import com.zhou03.distribute.dto.MessageHistoryDTO
-import com.zhou03.distribute.dto.MessageReadDTO
-import com.zhou03.distribute.dto.MessageSendDTO
+import com.zhou03.distribute.dto.message.MessageHistoryDTO
+import com.zhou03.distribute.dto.message.MessageReadDTO
+import com.zhou03.distribute.dto.message.MessageSendDTO
 import com.zhou03.distribute.service.MessageService
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,17 +24,29 @@ class MessageController {
         request: HttpServletRequest,
     ) = messageService.history(messageHistoryDTO, request)
 
-    @RequestMapping("/send")
-    fun send(
+    @RequestMapping("/user/send")
+    fun userSend(
         @RequestBody messageSendDTO: MessageSendDTO,
         request: HttpServletRequest,
-    ) = messageService.send(messageSendDTO, request)
+    ) = messageService.userSend(messageSendDTO, request)
 
-    @RequestMapping("/key/send/{key}")
-    fun send(
+    @RequestMapping("/group/send")
+    fun groupSend(
+        @RequestBody messageSendDTO: MessageSendDTO,
+        request: HttpServletRequest,
+    ) = messageService.groupSend(messageSendDTO, request)
+
+    @RequestMapping("/key/user/send/{key}")
+    fun userSend(
         @PathVariable("key") key: String,
         @RequestBody messageSendDTO: MessageSendDTO,
-    ) = messageService.send(key, messageSendDTO)
+    ) = messageService.userSend(key, messageSendDTO)
+
+    @RequestMapping("/key/group/send/{key}")
+    fun groupSend(
+        @PathVariable("key") key: String,
+        @RequestBody messageSendDTO: MessageSendDTO,
+    ) = messageService.groupSend(key, messageSendDTO)
 
     @RequestMapping("/read")
     fun read(
