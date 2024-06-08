@@ -1,6 +1,7 @@
 package com.zhou03.distribute.service
 
 import com.zhou03.distribute.dao.GroupDao
+import com.zhou03.distribute.dao.GroupUserProfileDao
 import com.zhou03.distribute.dao.RelationDao
 import com.zhou03.distribute.domain.Group
 import com.zhou03.distribute.domain.Relation
@@ -27,6 +28,8 @@ interface GroupService {
     fun delete(groupDeleteDTO: GroupDeleteDTO, request: HttpServletRequest): Result<Nothing?>
 
     fun invite(groupInviteDTO: GroupInviteDTO, request: HttpServletRequest): Result<String?>
+
+    fun get(id: Int, request: HttpServletRequest): Result<GroupVO?>
 }
 
 @Service
@@ -37,6 +40,9 @@ class GroupServiceImpl : GroupService {
 
     @Autowired
     lateinit var relationDao: RelationDao
+
+    @Autowired
+    lateinit var groupUserProfileDao: GroupUserProfileDao
 
     override fun create(groupCreateDTO: GroupCreateDTO, request: HttpServletRequest): Result<GroupVO?> {
         val token = request.getToken()
@@ -80,4 +86,12 @@ class GroupServiceImpl : GroupService {
         return success("NaN")
     }
 
+    override fun get(id: Int, request: HttpServletRequest): Result<GroupVO?> {
+        val token = request.getToken()
+        val group = groupDao.getById(id) ?: return error("查无此项")
+        if (relationDao.isMemberOfGroup(token.userId, group.id)) {
+            val profiles = groupUserProfileDao.listByGroupId(group.id)
+            return success(GroupVO.from(group, profiles))
+        } else return success(GroupVO.from(group))
+    }
 }

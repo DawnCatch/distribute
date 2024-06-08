@@ -11,6 +11,7 @@ import java.time.LocalDateTime
 
 data class MessageVO(
     val id: Int = 0,
+    val type: Boolean,
     var from: Int = 0,
     val to: Int,
     val content: Content,
@@ -21,10 +22,11 @@ data class MessageVO(
         fun from(message: WebSocketMessage<*>) = fromJson<MessageVO>(message.payload as String)
 
         fun from(message: Message) = MessageVO(
-            message.id, message.from, message.to, fromJson(message.content), message.date.toMilliSecond()
+            message.id, message.type, message.from, message.to, fromJson(message.content), message.date.toMilliSecond()
         )
 
-        fun create(from: Int, to: Int, content: Content) = MessageVO(from = from, to = to, content = content)
+        fun create(type: Boolean, from: Int, to: Int, content: Content) =
+            MessageVO(type = type, from = from, to = to, content = content)
     }
 
     fun to() = TextMessage(toJson(this))
@@ -45,3 +47,14 @@ data class Content(
     val type: String,
     val value: String,
 )
+
+class ContentType {
+    companion object {
+        const val TEXT = "TEXT"
+
+
+        const val GROUP_CHANGE = "GROUP_CHANGE"
+        const val GROUP_DELETE = "GROUP_DELETE"
+        const val GROUP_MEMBER_CHANGE = "GROUP_MEMBER_CHANGE"
+    }
+}

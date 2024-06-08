@@ -1,6 +1,7 @@
 package com.zhou03.distribute.util
 
 import com.zhou03.distribute.dao.MessageDao
+import com.zhou03.distribute.domain.Relation
 import com.zhou03.distribute.vo.MessageVO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -76,4 +77,6 @@ object ChatUtil {
             }
         }
     }
+
+    fun sendMessage(message: MessageVO, targets: List<Relation>) = sendMessage(message, targets.map { it.userId })
 }

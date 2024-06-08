@@ -1,6 +1,7 @@
 package com.zhou03.distribute.service
 
 import com.zhou03.distribute.dao.GroupDao
+import com.zhou03.distribute.dao.GroupUserProfileDao
 import com.zhou03.distribute.dao.ProfileDao
 import com.zhou03.distribute.dao.RelationDao
 import com.zhou03.distribute.domain.Relation
@@ -44,6 +45,9 @@ class RelationServiceImpl : RelationService {
 
     @Autowired
     lateinit var groupDao: GroupDao
+
+    @Autowired
+    lateinit var groupUserProfileDao: GroupUserProfileDao
 
     fun application(
         type: Boolean,
@@ -107,12 +111,17 @@ class RelationServiceImpl : RelationService {
                 this.path = "/"
             }
             relationDao.add(relation)
-        }
-        if (relationHandleDTO.status) {
             ChatUtil.sendMessage(
                 MessageVO.create(
-                    relation.targetId, relation.userId, Content("TEXT", "你好!")
+                    false, relation.targetId, relation.userId, Content("TEXT", "你好!")
                 )
+            )
+        } else if (relation.type && relationHandleDTO.status) {
+            val relations = relationDao.listByGroupId(relation.targetId)
+            ChatUtil.sendMessage(
+                MessageVO.create(
+                    true, relation.targetId, relation.targetId, Content(ContentType.GROUP_MEMBER_CHANGE, "")
+                ), relations
             )
         }
         return success(null, "处理完毕")

@@ -30,5 +30,8 @@ class RelationDao : BaseDao<Relation, Relations>(Relations) {
     fun haveRelation(type: Boolean, userId: Int, targetId: Int) =
         count { (it.type eq type) and (it.userId eq userId) and (it.targetId eq targetId) and (it.status eq true) } != 0
 
-    fun listByGroupId(groupId: Int) = findList { (it.type eq true) and (it.targetId eq groupId) and (it.status eq true) }
+    fun listByGroupId(groupId: Int) =
+        findList { (it.type eq true) and (it.targetId eq groupId) and (it.status eq true) }
+
+    fun isMemberOfGroup(userId: Int, groupId: Int) = haveRelation(true, userId, groupId)
 }
