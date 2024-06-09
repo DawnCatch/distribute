@@ -16,11 +16,11 @@ class RelationController {
     @Autowired
     lateinit var relationService: RelationService
 
-    @RequestMapping("/user/application")
+    @RequestMapping("/user/follow")
     fun userApplication(
         @RequestBody relationApplicationDTO: RelationApplicationDTO,
         request: HttpServletRequest,
-    ) = relationService.userApplication(relationApplicationDTO, request)
+    ) = relationService.userFollow(relationApplicationDTO, request)
 
     @RequestMapping("/group/application")
     fun groupApplication(
@@ -28,19 +28,34 @@ class RelationController {
         request: HttpServletRequest,
     ) = relationService.groupApplication(relationApplicationDTO, request)
 
+    @RequestMapping("/list/pending")
+    fun listGroupPendingHandle(
+        request: HttpServletRequest,
+    ) = relationService.listGroupPendingHandle(request)
+
     @RequestMapping("/handle")
     fun handle(
         @RequestBody relationHandleDTO: RelationHandleDTO,
         request: HttpServletRequest,
     ) = relationService.handle(relationHandleDTO, request)
 
-    @RequestMapping("/list")
-    fun list(
+    @RequestMapping("/list/follow")
+    fun listFollow(
         request: HttpServletRequest,
-    ) = relationService.getRelations(request)
+    ) = relationService.listFollow(request)
 
-    @RequestMapping("/list/application")
-    fun listApplication(
+    @RequestMapping("/list/fan")
+    fun listFan(
         request: HttpServletRequest,
-    ) = relationService.getApplications(request)
+    ) = relationService.listFan(request)
+
+    @RequestMapping("/list/group")
+    fun listGroup(
+        request: HttpServletRequest,
+    ) = relationService.listGroup(request)
+
+    @RequestMapping("/list/own/application")
+    fun listOwnApplication(
+        request: HttpServletRequest,
+    ) = relationService.listOwnApplication(request)
 }

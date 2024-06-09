@@ -2,6 +2,7 @@ package com.zhou03.distribute.service
 
 import com.zhou03.distribute.dao.ProfileDao
 import com.zhou03.distribute.dao.UserDao
+import com.zhou03.distribute.domain.Auth
 import com.zhou03.distribute.domain.Profile
 import com.zhou03.distribute.domain.User
 import com.zhou03.distribute.dto.user.UserLoginDTO
@@ -67,8 +68,9 @@ class UserServiceImpl : UserService {
         val profile = Profile().apply {
             this.id = user.id
             this.nickname = user.username
+            this.changeAuth(Auth.USER)
         }
-        profileDao.add(profile)
+        profileDao.addOrUpdate(profile)
         response.setHeader(SUBJECT, TokenUtil.genAccessToken(Token.from(user)))
         return success(ProfileVO.from(profile))
     }

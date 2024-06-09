@@ -31,7 +31,7 @@ class LoginInterceptor : HandlerInterceptor {
         } catch (_: NullPointerException) {
             return error(response)
         }
-        if (authorization == request.getHeader(SUBJECT)) return false
+        if (authorization == request.getHeader(SUBJECT)) return error(response)
         val claims: Claims
         try {
             claims = TokenUtil.parsePayload(authorization)

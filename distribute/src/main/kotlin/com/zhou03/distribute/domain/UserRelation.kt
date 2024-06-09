@@ -6,12 +6,10 @@ import org.ktorm.entity.sequenceOf
 import org.ktorm.schema.*
 import java.time.LocalDateTime
 
-interface Relation : Entity<Relation> {
-    companion object : Entity.Factory<Relation>()
+interface UserRelation : Entity<UserRelation> {
+    companion object : Entity.Factory<UserRelation>()
 
     var id: Int
-
-    var type: Boolean
 
     var userId: Int
 
@@ -19,19 +17,21 @@ interface Relation : Entity<Relation> {
 
     var status: Boolean
 
-    var date: LocalDateTime
-
     var path: String
+
+    var nickname: String
+
+    var date: LocalDateTime
 }
 
-object Relations : Table<Relation>("t_relation") {
+object UserRelations : Table<UserRelation>("t_user_relation") {
     val id = int("id").primaryKey().bindTo { it.id }
-    val type = boolean("type").bindTo { it.type }
     val userId = int("user_id").bindTo { it.userId }
     val targetId = int("target_id").bindTo { it.targetId }
     val status = boolean("status").bindTo { it.status }
-    val date = datetime("date").bindTo { it.date }
     val path = varchar("path").bindTo { it.path }
+    val nickname = varchar("nickname").bindTo { it.nickname }
+    val date = datetime("date").bindTo { it.date }
 }
 
-val Database.relations get() = this.sequenceOf(Relations)
+val Database.userRelations get() = this.sequenceOf(UserRelations)

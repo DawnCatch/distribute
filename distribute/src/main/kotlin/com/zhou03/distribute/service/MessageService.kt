@@ -1,9 +1,6 @@
 package com.zhou03.distribute.service
 
-import com.zhou03.distribute.dao.DeviceDao
-import com.zhou03.distribute.dao.MessageDao
-import com.zhou03.distribute.dao.MessageObserverDao
-import com.zhou03.distribute.dao.RelationDao
+import com.zhou03.distribute.dao.*
 import com.zhou03.distribute.domain.Message
 import com.zhou03.distribute.domain.MessageObserver
 import com.zhou03.distribute.dto.message.MessageHistoryDTO
@@ -45,17 +42,20 @@ class MessageServiceImpl : MessageService {
     lateinit var deviceDao: DeviceDao
 
     @Autowired
-    lateinit var relationDao: RelationDao
+    lateinit var userRelationDao: UserRelationDao
+
+    @Autowired
+    lateinit var groupUserRelationDao: GroupUserRelationDao
 
     @Autowired
     lateinit var messageObserverDao: MessageObserverDao
 
     override fun history(messageHistoryDTO: MessageHistoryDTO, request: HttpServletRequest): Result<List<MessageVO>?> {
         val token = request.getToken()
-        val from = messageHistoryDTO.from.toLocalDateTime()
+        val from = if (messageHistoryDTO.from == "") 0L.toLocalDateTime() else messageHistoryDTO.from.toLocalDateTime()
         val to = messageHistoryDTO.to.toLocalDateTime()
-        val relations = relationDao.listRelation(true, token.userId)
-        val messageDomains = messageDao.listByDateAsOwn(token.userId, relations.map { it.id }, from, to)
+        val groupIds = groupUserRelationDao.listByJoinAsOwn(token.userId).map { it.targetId }
+        val messageDomains = messageDao.listByDateAsOwn(token.userId, groupIds, from, to)
         val ids = messageDomains.map { it.id }
         val messageObserversMap = messageObserverDao.listByMessageId(ids).groupBy { it.messageId }
         val messages = messageDomains.map {
@@ -77,8 +77,8 @@ class MessageServiceImpl : MessageService {
             "错误格式"
         )
         val token = request.getToken()
-        if (messageSendDTO.to != -1 && messageSendDTO.to != token.userId && !relationDao.haveRelation(
-                false, token.userId, messageSendDTO.to
+        if (messageSendDTO.to != -1 && messageSendDTO.to != token.userId && !userRelationDao.isRelation(
+                token.userId, messageSendDTO.to
             )
         ) return error("发生失败")
         val messageDomain = Message().apply {
@@ -99,10 +99,10 @@ class MessageServiceImpl : MessageService {
             "错误格式"
         )
         val device = deviceDao.check(key) ?: return error("验证失败")
-        if (messageSendDTO.to != -1 && messageSendDTO.to != device.userId && !relationDao.haveRelation(
-                false, device.userId, messageSendDTO.to
+        if (messageSendDTO.to != -1 && messageSendDTO.to != device.userId && !userRelationDao.isRelation(
+                device.userId, messageSendDTO.to
             )
-        ) return error("发生失败")
+        ) return error("发送失败")
         val messageDomain = Message().apply {
             type = false
             from = device.userId
@@ -121,7 +121,7 @@ class MessageServiceImpl : MessageService {
             "错误格式"
         )
         val token = request.getToken()
-        val ids = relationDao.listByGroupId(messageSendDTO.to).map { it.userId }
+        val ids = groupUserRelationDao.listByTargetId(messageSendDTO.to).map { it.userId }
         if (ids.isEmpty() || token.userId !in ids) return error(
             "发送失败"
         )
@@ -143,7 +143,7 @@ class MessageServiceImpl : MessageService {
             "错误格式"
         )
         val device = deviceDao.check(key) ?: return error("验证失败")
-        val ids = relationDao.listByGroupId(messageSendDTO.to).map { it.userId }
+        val ids = groupUserRelationDao.listByTargetId(messageSendDTO.to).map { it.userId }
         if (ids.isEmpty() || device.userId !in ids) return error(
             "发送失败"
         )
@@ -170,27 +170,24 @@ class MessageServiceImpl : MessageService {
         }
         try {
             if (message.type) {
-                val relations = relationDao.listByGroupId(message.to)
+                val relations = groupUserRelationDao.listByTargetId(message.to)
                 val relationIds = relations.map { it.userId }
                 if (token.userId !in relationIds) return error("权限错误")
-                messageObserverDao.add(messageObserver)
+                messageObserverDao.addOrUpdate(messageObserver)
                 ChatUtil.sendMessage(
                     MessageVO(
-                        id = message.id, from = token.userId, to = message.to, content = Content(
-                            type = "OBSERVER", value = ""
+                        message.id, true, token.userId, message.to, Content(
+                            ContentType.OBSERVER, ""
                         )
                     ), relationIds
                 )
             } else {
                 if (token.userId !in listOf(message.from, message.to)) return error("权限错误")
-                messageObserverDao.add(messageObserver)
+                messageObserverDao.addOrUpdate(messageObserver)
                 ChatUtil.sendMessage(
                     MessageVO(
-                        id = message.id,
-                        from = token.userId,
-                        to = message.getOtherParty(token.userId),
-                        content = Content(
-                            type = "OBSERVER", value = ""
+                        message.id, false, token.userId, message.getOtherParty(token.userId), Content(
+                            "OBSERVER", value = ""
                         )
                     )
                 )

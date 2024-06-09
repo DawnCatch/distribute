@@ -48,13 +48,12 @@ data class Content(
     val value: String,
 )
 
-class ContentType {
-    companion object {
-        const val TEXT = "TEXT"
+object ContentType {
+    const val TEXT = "TEXT"
 
+    const val OBSERVER = "OBSERVER"
 
-        const val GROUP_CHANGE = "GROUP_CHANGE"
-        const val GROUP_DELETE = "GROUP_DELETE"
-        const val GROUP_MEMBER_CHANGE = "GROUP_MEMBER_CHANGE"
-    }
+    const val GROUP_CHANGE = "GROUP_CHANGE"
+    const val GROUP_DELETE = "GROUP_DELETE"
+    const val GROUP_MEMBER_CHANGE = "GROUP_MEMBER_CHANGE"
 }
