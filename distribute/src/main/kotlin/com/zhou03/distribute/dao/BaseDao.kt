@@ -12,8 +12,28 @@ abstract class BaseDao<E : Entity<E>, T : Table<E>>(private val tableObject: T) 
     @Autowired
     lateinit var database: Database
 
+    open fun updateUnion(entity: E): Int {
+        return 0
+    }
+
     open fun add(entity: E): Int {
         return database.sequenceOf(tableObject).add(entity)
+    }
+
+    open fun addOrUpdate(entity: E): Int {
+        return try {
+            add(entity)
+        } catch (e: Exception) {
+            updateUnion(entity)
+        }
+    }
+
+    open fun batchAdd(entities: List<E>) {
+        for (entity in entities) add(entity)
+    }
+
+    open fun batchAddOrUpdate(entities: List<E>) {
+        for (entity in entities) addOrUpdate(entity)
     }
 
     open fun update(entity: E): Int {

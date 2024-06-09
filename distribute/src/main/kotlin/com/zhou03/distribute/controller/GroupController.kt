@@ -36,9 +36,9 @@ class GroupController {
         request: HttpServletRequest,
     ) = groupService.delete(groupDeleteDTO, request)
 
-    @RequestMapping("/delete/{id}")
-    fun delete(
+    @RequestMapping("/get/{id}")
+    fun get(
         @PathVariable("id") id: Int,
         request: HttpServletRequest,
-    ) = groupService.delete(GroupDeleteDTO(id), request)
+    ) = groupService.get(id,request)
 }

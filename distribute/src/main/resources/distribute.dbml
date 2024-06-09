@@ -1,0 +1,107 @@
+// Use DBML to define your database structure
+// Docs: https://www.dbml.org/docs
+
+Table t_user {
+  id int [primary key, increment]
+  username varchar(30)
+  password char(32)
+  email char(64)
+
+  indexes {
+    username [unique]
+    email [unique]
+    username [type: hash]
+    email [type: hash]
+  }
+}
+
+Table t_device {
+  id int [primary key, increment]
+  user_id int [ref: > t_profile.id]
+  title char(20)
+  code char(64)
+  status tinyint(1)
+
+  indexes {
+    (user_id,title) [unique]
+    user_id [type: btree]
+    code [type: hash]
+  }
+}
+
+Table t_profile {
+  id int  [primary key, increment, ref: - t_user.id]
+  nickname char(20)
+  auth int(1)
+}
+
+Table t_group {
+  id int [primary key, increment]
+  title char(20)
+  create_date datetime
+  visible tinyint(1)
+  status tinyint(1)
+
+  indexes {
+    title [type: btree]
+  }
+}
+
+Table t_message {
+  id int [primary key, increment]
+  type tinyint(1)
+  from int [ref: > t_profile.id]
+  to int
+  content text
+  date datetime
+
+  indexes {
+    from [type: btree]
+    to [type: btree]
+  }
+}
+
+Table t_message_observer {
+  id int [primary key, increment]
+  message_id int [ref: > t_message.id]
+  user_id int [ref: > t_profile.id]
+  date datetime
+
+  indexes {
+    (message_id,user_id) [unique]
+    message_id [type: btree]
+  }
+}
+
+Table t_user_relation {
+  id int [primary key, increment]
+  user_id int [ref: > t_profile.id]
+  target_id int [ref: > t_profile.id]
+  status tinyint(1)
+  path char(20)
+  nickname char(20)
+  date datetime
+
+  indexes {
+    (user_id, target_id) [unique]
+    user_id [type: btree]
+    target_id [type: btree]
+  }
+}
+
+Table t_group_user_relation {
+  id int [primary key, increment]
+  user_id int [ref: > t_profile.id]
+  target_id int [ref: > t_group.id]
+  status tinyint(1)
+  path char(20)
+  nickname char(20)
+  role char(10)
+  date datetime
+
+  indexes {
+    (user_id, target_id) [unique]
+    user_id [type: btree]
+    target_id [type: btree]
+  }
+}
