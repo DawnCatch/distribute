@@ -176,7 +176,7 @@ class MessageServiceImpl : MessageService {
                 messageObserverDao.add(messageObserver)
                 ChatUtil.sendMessage(
                     MessageVO(
-                        id = message.id, from = token.userId, to = message.to, content = Content(
+                        id = message.id, false, from = token.userId, to = message.to, content = Content(
                             type = "OBSERVER", value = ""
                         )
                     ), relationIds
@@ -187,6 +187,7 @@ class MessageServiceImpl : MessageService {
                 ChatUtil.sendMessage(
                     MessageVO(
                         id = message.id,
+                        true,
                         from = token.userId,
                         to = message.getOtherParty(token.userId),
                         content = Content(
