@@ -4,6 +4,7 @@ import {
     requestPermission,
     sendNotification,
 } from "@tauri-apps/api/notification";
+import { platform } from "./env";
 
 const permission = async (): Promise<boolean> => {
     let permissionGranted = await isPermissionGranted();
@@ -17,9 +18,13 @@ const permission = async (): Promise<boolean> => {
 type Notification = (options: Options | string) => void;
 
 const notification = (options: Options | string): void => {
-    permission().then((value) => {
-        value && sendNotification(options);
-    });
+    if (platform) {
+        permission().then((value) => {
+            value && sendNotification(options);
+        });
+    }else {
+        console.log(options)
+    }
 };
 
 export { notification };

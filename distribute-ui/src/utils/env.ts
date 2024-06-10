@@ -2,6 +2,9 @@
 const platform = window.__TAURI_IPC__ !== undefined;
 
 const security = import.meta.env.VITE_APP_SECURITY === "true";
-const ip = import.meta.env.VITE_APP_IP;
+const ip = import.meta.env.VITE_SERVER_IP;
+const port = import.meta.env.VITE_SERVER_PORT;
 
-export { platform, security, ip };
+const proxy_rewrite = import.meta.env.VITE_PROXY_REWRITE;
+
+export { platform, security, ip, port, proxy_rewrite };
