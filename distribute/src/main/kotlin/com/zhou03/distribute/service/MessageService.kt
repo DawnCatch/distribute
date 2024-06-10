@@ -170,6 +170,16 @@ class MessageServiceImpl : MessageService {
         }
         try {
             if (message.type) {
+                if (!groupUserRelationDao.isMember(token.userId, message.to)) return error("权限错误")
+                messageObserverDao.addOrUpdate(messageObserver)
+                ChatUtil.sendMessage(
+                    MessageVO(
+                        message.id, true, token.userId, message.to, Content(
+                            ContentType.OBSERVER, ""
+                        )
+                    ), token.userId
+                )
+
                 val relations = groupUserRelationDao.listByTargetId(message.to)
                 val relationIds = relations.map { it.userId }
                 if (token.userId !in relationIds) return error("权限错误")
