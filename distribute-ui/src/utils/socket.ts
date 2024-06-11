@@ -1,15 +1,17 @@
-import WebSocket, { Message as TauriMessage } from "tauri-plugin-websocket-api";
+import TauriWebSocket, {
+    Message as TauriMessage,
+} from "tauri-plugin-websocket-api";
 import mitt from "mitt";
 import { getToken } from "./secure";
-import { ip, security } from "./env";
+import { ip, platform, port, proxy_rewrite, security } from "./env";
 import { Message } from "../stores/appStore";
 
-const baseURL = `ws${security ? "s" : ""}://${ip}`;
+const baseURL = `ws${security ? "s" : ""}://${ip}${port !== ""?`:${port}`:""}`;
 
 interface SocketOption {
     url: string;
     headers?: Record<string, string>;
-    onOpen?: (instance: WebSocket) => void;
+    onOpen?: (instance: TauriWebSocket | WebSocket) => void;
     onMessage: (message: Message) => void;
     onClose?: () => void;
 }
@@ -29,26 +31,46 @@ const socket = (option = {} as SocketOption) => {
             socket(option);
         }, 2000);
     });
-    WebSocket.connect(baseURL + url, {
-        headers: {
-            Authorization: getToken(),
-            ...headers,
-        },
-    })
-        .then((instance: WebSocket) => {
-            event.emit("onOpen", instance);
-            instance.addListener((message: TauriMessage | string) => {
-                if (typeof message === "string") {
-                    event.emit("onClose");
-                } else {
-                    const data = JSON.parse(message.data as string) as Message;
-                    event.emit("onMessage", data);
-                }
-            });
+    if (platform) {
+        console.log(baseURL + url)
+        TauriWebSocket.connect(baseURL + url, {
+            headers: {
+                "Sec-Websocket-Protocol": getToken(),
+                ...headers,
+            },
         })
-        .catch(() => {
+            .then((instance: TauriWebSocket) => {
+                event.emit("onOpen", instance);
+                instance.addListener((message: TauriMessage | string) => {
+                    if (typeof message === "string") {
+                        event.emit("onClose");
+                    } else {
+                        const data = JSON.parse(
+                            message.data as string
+                        ) as Message;
+                        event.emit("onMessage", data);
+                    }
+                });
+            })
+            .catch(() => {
+                event.emit("onClose");
+            });
+    } else {
+        const ws = new WebSocket(
+            baseURL + url,
+            getToken()
+        );
+        ws.onopen = () => {
+            event.emit("onOpen", ws);
+        };
+        ws.onmessage = (e) => {
+            console.log(e.data);
+            event.emit("onMessage", e.data);
+        };
+        ws.onclose = () => {
             event.emit("onClose");
-        });
+        };
+    }
 };
 
 export { socket };

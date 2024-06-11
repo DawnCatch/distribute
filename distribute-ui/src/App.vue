@@ -9,7 +9,7 @@ import { http } from './utils/http';
 import { socket } from './utils/socket';
 import { notification } from './utils/notification';
 import { Options } from '@tauri-apps/api/notification';
-import WebSocket from "tauri-plugin-websocket-api";
+import TauriWebSocket from "tauri-plugin-websocket-api";
 import { platform as platformEnv } from './utils/env';
 
 const appStore = useAppStore()
@@ -38,17 +38,17 @@ watch(() => appStore.profile, () => {
       appStore.setMessage(res.data as Message[])
     }
   })
-  http({
-    method: "POST",
-    url: "/relation/list"
-  }).then((res) => {
-    if (res.status) {
-      appStore.setRelations(res.data as Profile[])
-    }
-  })
+  // http({
+  //   method: "POST",
+  //   url: "/relation/list"
+  // }).then((res) => {
+  //   if (res.status) {
+  //     appStore.setRelations(res.data as Profile[])
+  //   }
+  // })
   socket({
     url: "/chat",
-    onOpen: (_: WebSocket) => {
+    onOpen: (_: TauriWebSocket | WebSocket) => {
       console.log("打开链接")
     },
     onMessage: (message: Message) => {
@@ -71,7 +71,7 @@ const platform = ref(platformEnv)
 <template>
   <div class="container">
     <Header v-if="platform" />
-    <div :class="{tauri: platform,web: !platform}">
+    <div :class="{ tauri: platform, web: !platform }">
       <RouterView />
     </div>
   </div>

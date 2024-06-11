@@ -1,7 +1,10 @@
 package com.zhou03.distribute.interceptor
 
 import com.zhou03.distribute.dao.UserDao
-import com.zhou03.distribute.util.*
+import com.zhou03.distribute.util.TokenUtil
+import com.zhou03.distribute.util.getHeader
+import com.zhou03.distribute.util.getToken
+import com.zhou03.distribute.util.setHeader
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.security.SignatureException
@@ -22,8 +25,7 @@ class ChatWebSocketInterceptor : HandshakeInterceptor {
         wsHandler: WebSocketHandler,
         attributes: MutableMap<String, Any>,
     ): Boolean {
-        val authorization = request.getHeader(TokenUtil.SUBJECT).refreshToken()
-        if (authorization == request.getHeader(TokenUtil.SUBJECT)) return false
+        val authorization = request.getHeader(HEADER_KEY)
         val claims: Claims
         try {
             claims = TokenUtil.parsePayload(authorization)
@@ -36,7 +38,7 @@ class ChatWebSocketInterceptor : HandshakeInterceptor {
         }
         val token = claims.getToken() ?: return false
         attributes["token"] = token
-        response.setHeader(TokenUtil.SUBJECT, authorization)
+        response.setHeader(HEADER_KEY, authorization)
         return true
     }
 
@@ -47,5 +49,9 @@ class ChatWebSocketInterceptor : HandshakeInterceptor {
         exception: Exception?,
     ) {
 
+    }
+
+    companion object {
+        const val HEADER_KEY = "Sec-Websocket-Protocol"
     }
 }

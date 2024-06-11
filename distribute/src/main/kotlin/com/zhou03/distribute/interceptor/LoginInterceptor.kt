@@ -18,12 +18,6 @@ import java.io.PrintWriter
 @Component
 class LoginInterceptor : HandlerInterceptor {
 
-    @Autowired
-    lateinit var userDao: UserDao
-
-    @Autowired
-    lateinit var deviceDao: DeviceDao
-
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
         val authorization: String
         try {

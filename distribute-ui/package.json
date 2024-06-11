@@ -29,6 +29,8 @@
     "@tauri-apps/cli": "^1",
     "@types/markdown-it": "^14.1.1",
     "@types/markdown-it-emoji": "^3.0.1",
+    "@types/websocket": "^1.0.10",
+    "@types/ws": "^8.5.10",
     "@vitejs/plugin-vue": "^5.0.4",
     "typescript": "^5.0.2",
     "vite": "^5.0.0",

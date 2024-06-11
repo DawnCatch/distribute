@@ -26,7 +26,7 @@ const http = (opts = {} as HttpOption): Promise<HttpResponse> => {
     return new Promise((resolve) => {
         const { url, method, query, data, headers } = opts;
         if (platform) {
-            fetch(baseURL + port !== ''? `:${port}`: '' + url, {
+            fetch(baseURL + (port !== ''? `:${port}`: '') + url, {
                 method: method || "GET",
                 headers: {
                     "Content-Type": "application/json;charset=utf-8",
