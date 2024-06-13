@@ -71,6 +71,7 @@ watch(visible, (newValue) => {
 
 function signOut() {
     setToken("")
+    appStore.init()
 }
 
 </script>

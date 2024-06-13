@@ -4,19 +4,19 @@
             <div @click="send">
                 start
             </div>
-            <div class="message_content" v-for="(item) in group">
+            <div class="message_content" v-for="(item) in messageGroup">
                 <div class="time_stamp">
                     {{ getTime(item) }}
                 </div>
-                <Message :messages v-for="(messages) in (item as Record<number, MessageModel[]>)" />
+                <Message :messages="pair.messages" :from="pair.from" v-for="(pair) in (item as PairFromMessage[])" />
             </div>
         </div>
-        <ChatoptionBar ref="chatOptionBar"/>
+        <ChatoptionBar ref="chatOptionBar" />
     </div>
 </template>
 
 <script setup lang="ts">
-import { Message as MessageModel, useAppStore } from '../../stores/appStore';
+import { Message as MessageModel, PairFromMessage, useAppStore } from '../../stores/appStore';
 import { computed, ref } from 'vue';
 import mitt from '../../utils/mitt';
 import { useElementSize } from '@vueuse/core';
@@ -26,27 +26,29 @@ import ChatoptionBar from './ChatOptionBar.vue';
 
 const appStore = useAppStore()
 
-const group = computed(() => {
-    return appStore.index !== -1 && appStore.messageGroup[appStore.relations[appStore.index].userId]
+const messageGroup = computed(() => {
+    return appStore.index !== -1 && appStore.messageGroup[appStore.relations[appStore.index].type ? "Group" : "User"][appStore.relations[appStore.index].id]
 })
 
 
 function send() {
-    mitt.emit("rtc:request", appStore.relations[appStore.index].userId)
+    mitt.emit("rtc:request", appStore.relations[appStore.index].id)
 }
 
-function getTime(item: Record<number, MessageModel[]>) {
-    for (const key in item) {
-        const date = new Date(item[key][0].date)
-        var result = ""
-        var hours = (date.getHours() + 12) % 24
-        var minutes = date.getMinutes()
-        if (hours < 10) result = `0${hours}:`
-        else result = `${hours}:`
-        if (minutes < 10) result += `0${minutes}`
-        else result += `${minutes}`
-        return result
-    }
+function getTime(item: PairFromMessage[]) {
+    const date = new Date(item[0].messages[0].date)
+    const now = new Date()
+    var result = ""
+    var month = date.getMonth() + 1
+    var day = date.getDate()
+    var hours = date.getHours()
+    var minutes = date.getMinutes()
+    if (now.getMonth() + 1 !== month || now.getDate() !== day) result = `${month}-${day} `
+    if (hours < 10) result += `0${hours}:`
+    else result += `${hours}:`
+    if (minutes < 10) result += `0${minutes}`
+    else result += `${minutes}`
+    return result
 }
 
 const chatOptionBar = ref()

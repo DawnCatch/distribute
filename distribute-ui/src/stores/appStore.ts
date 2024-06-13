@@ -5,19 +5,33 @@ export const useAppStore = defineStore("app", {
     state: () => ({
         profile: {} as Profile,
         messages: [] as Message[],
-        relations: [] as Profile[],
+        follows: [] as Relation[],
+        fans: [] as Relation[],
+        groups: [] as Relation[],
+        applications: [] as Relation[],
+        profiles: [] as Profile[],
         index: -1 as number,
     }),
     actions: {
-        setRelations(relations: Profile[]) {
-            this.relations = [this.profile, ...relations];
+        setApplications(applications: Relation[]) {
+            this.applications = applications;
+        },
+        setGroup(groups: Relation[]) {
+            this.groups = groups;
+        },
+        setProfiles(profiles: Profile[]) {
+            this.profiles = profiles;
+        },
+        setFans(fans: Relation[]) {
+            this.fans = fans;
+        },
+        setFollows(follows: Relation[]) {
+            this.follows = follows;
         },
         setProfile(profile: Profile) {
             this.profile = profile;
-            this.relations.push(profile);
         },
         addMessage(message: Message) {
-            console.log(message)
             const index = this.messages.findIndex(
                 (it: Message) => it.id === message.id
             );
@@ -29,7 +43,8 @@ export const useAppStore = defineStore("app", {
             } else if (message.content.type === "OBSERVER") {
                 this.messages[index].observers =
                     this.messages[index].observers ?? [];
-                this.messages[index].observers.push(message.from);
+                !this.messages[index].observers.includes(message.from) &&
+                    this.messages[index].observers.push(message.from);
             }
         },
         setMessage(messages: Message[]) {
@@ -44,25 +59,58 @@ export const useAppStore = defineStore("app", {
         setIndex(index: number) {
             this.index = index;
         },
+        init() {
+            this.$reset()
+        }
     },
     getters: {
         messageGroup(state) {
             if (state.messages.length > 0) {
                 return state.messages.reduce((group, message) => {
-                    const { from, to, date } = message;
+                    const { type, from, to, date } = message;
+                    const typeStr = type ? "Group" : "User";
                     const session = from === state.profile.userId ? to : from;
                     const key = Math.floor(date / (5 * 60 * 1000));
-                    group[session] = group[session] ?? {};
-                    group[session][key] = group[session][key] ?? {};
-                    group[session][key]!![from] =
-                        group[session][key]!![from] ?? [];
-                    group[session][key]!![from]!!.push(message);
+                    group[typeStr] = group[typeStr] ?? {};
+                    group[typeStr][session] = group[typeStr][session] ?? {};
+                    group[typeStr][session][key] =
+                        group[typeStr][session][key] ?? [];
+                    const index = group[typeStr][session][key].findIndex(
+                        (it) => it.from === from
+                    );
+                    if (index === -1) {
+                        group[typeStr][session][key].push({
+                            from: from,
+                            messages: [message],
+                        } as PairFromMessage);
+                    } else {
+                        group[typeStr][session][key][index].messages.push(
+                            message
+                        );
+                    }
+                    // group[typeStr][session][key]!![from] =
+                    //     group[typeStr][session][key]!![from] ?? [];
+                    // group[typeStr][session][key]!![from]!!.push(message);
                     return group;
-                }, {} as Record<number, Record<number, Record<number, Message[] | null> | null>>);
+                }, {} as Record<string, Record<number, Record<number, PairFromMessage[] | null>>>);
+                // }, {} as Record<string, Record<number, Record<number, Record<number, Message[] | null> | null>>>);
             } else return {};
+        },
+        relations(state) {
+            const fans = new Set(state.fans.map((item) => item.id));
+            return state.follows
+                .filter((item) => fans.has(item.id))
+                .concat(state.groups) as Relation[];
         },
     },
 });
+
+interface Relation {
+    type: boolean;
+    id: number;
+    title: String;
+    path: String;
+}
 
 interface Profile {
     userId: number;
@@ -70,6 +118,7 @@ interface Profile {
 }
 
 interface Message {
+    type: boolean;
     id: number;
     from: number;
     to: number;
@@ -83,4 +132,9 @@ interface Content {
     value: string;
 }
 
-export type { Profile, Message, Content };
+interface PairFromMessage {
+    from: number;
+    messages: Message[];
+}
+
+export type { Relation, Profile, Message, Content, PairFromMessage };

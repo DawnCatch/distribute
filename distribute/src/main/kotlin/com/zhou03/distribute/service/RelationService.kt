@@ -11,10 +11,7 @@ import com.zhou03.distribute.dto.relation.RelationApplicationDTO
 import com.zhou03.distribute.dto.relation.RelationHandleDTO
 import com.zhou03.distribute.util.getToken
 import com.zhou03.distribute.util.toLocalDateTime
-import com.zhou03.distribute.vo.PendRelationVO
-import com.zhou03.distribute.vo.Result
-import com.zhou03.distribute.vo.error
-import com.zhou03.distribute.vo.success
+import com.zhou03.distribute.vo.*
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -30,13 +27,15 @@ interface RelationService {
 
     fun handle(relationHandleDTO: RelationHandleDTO, request: HttpServletRequest): Result<Nothing?>
 
-    fun listFollow(request: HttpServletRequest): Result<List<Int>?>
+    fun listFollow(request: HttpServletRequest): Result<List<RelationVO>?>
 
-    fun listFan(request: HttpServletRequest): Result<List<Int>?>
+    fun listFan(request: HttpServletRequest): Result<List<RelationVO>?>
 
-    fun listGroup(request: HttpServletRequest): Result<List<Int>?>
+    fun listGroup(request: HttpServletRequest): Result<List<RelationVO>?>
 
-    fun listOwnApplication(request: HttpServletRequest): Result<List<Int>?>
+    fun listOwnApplication(request: HttpServletRequest): Result<List<RelationVO>?>
+
+    fun listUnion(request: HttpServletRequest): Result<RelationUnionVO?>
 }
 
 @Service
@@ -128,27 +127,39 @@ class RelationServiceImpl : RelationService {
         return success(null, "处理完毕")
     }
 
-    override fun listFollow(request: HttpServletRequest): Result<List<Int>?> {
+    override fun listFollow(request: HttpServletRequest): Result<List<RelationVO>?> {
         val token = request.getToken()
         val follows = userRelationDao.listFollowAsOwn(token.userId)
-        return success(follows.map { it.targetId })
+        return success(follows.map { RelationVO(false, it.targetId, it.nickname, it.path) })
     }
 
-    override fun listFan(request: HttpServletRequest): Result<List<Int>?> {
+    override fun listFan(request: HttpServletRequest): Result<List<RelationVO>?> {
         val token = request.getToken()
         val fans = userRelationDao.listFanAsOwn(token.userId)
-        return success(fans.map { it.userId })
+        return success(fans.map { RelationVO(false, it.userId, it.nickname, it.path) })
     }
 
-    override fun listGroup(request: HttpServletRequest): Result<List<Int>?> {
+    override fun listGroup(request: HttpServletRequest): Result<List<RelationVO>?> {
         val token = request.getToken()
-        val relations = groupUserRelationDao.listByJoinAsOwn(token.userId)
-        return success(relations.map { it.targetId })
+        val groups = groupUserRelationDao.listByJoinAsOwn(token.userId)
+        return success(groups.map { RelationVO(true, it.targetId, it.nickname, it.path) })
     }
 
-    override fun listOwnApplication(request: HttpServletRequest): Result<List<Int>?> {
+    override fun listOwnApplication(request: HttpServletRequest): Result<List<RelationVO>?> {
         val token = request.getToken()
-        val relations = groupUserRelationDao.listByPendingAsOwn(token.userId)
-        return success(relations.map { it.targetId })
+        val applications = groupUserRelationDao.listByPendingAsOwn(token.userId)
+        return success(applications.map { RelationVO(true, it.targetId, it.nickname, it.path) })
+    }
+
+    override fun listUnion(request: HttpServletRequest): Result<RelationUnionVO?> {
+        val token = request.getToken()
+        val follows =
+            userRelationDao.listFollowAsOwn(token.userId).map { RelationVO(false, it.targetId, it.nickname, it.path) }
+        val fans = userRelationDao.listFanAsOwn(token.userId).map { RelationVO(false, it.userId, it.nickname, it.path) }
+        val groups = groupUserRelationDao.listByJoinAsOwn(token.userId)
+            .map { RelationVO(true, it.targetId, it.nickname, it.path) }
+        val applications = groupUserRelationDao.listByPendingAsOwn(token.userId)
+            .map { RelationVO(true, it.targetId, it.nickname, it.path) }
+        return success(RelationUnionVO(follows, fans, groups, applications))
     }
 }

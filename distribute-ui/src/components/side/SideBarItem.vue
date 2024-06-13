@@ -1,6 +1,6 @@
 <template>
     <div class="profile_box" @click="select">
-        {{ profile.nickname }}
+        {{ relation.title }}
     </div>
 </template>
 
@@ -10,7 +10,7 @@ import { useAppStore } from '../../stores/appStore';
 const appStore = useAppStore()
 
 const props = defineProps({
-    profile: {
+    relation: {
         type: Object,
         required: true
     },

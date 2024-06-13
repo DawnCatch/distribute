@@ -33,9 +33,10 @@ const { focused } = useFocusWithin(chatOptionBar)
 function handleKeyCode(event: KeyboardEvent) {
     if (event.key === "Enter" && event.ctrlKey && input.value !== "") {
         http({
-            url: "/message/send",
+            method: "POST",
+            url: "/message/user/send",
             data: {
-                to: appStore.relations[appStore.index].userId,
+                to: appStore.relations[appStore.index].id,
                 content: {
                     type: "TEXT",
                     value: input.value

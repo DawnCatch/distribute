@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch, } from 'vue';
 
-import { Message, Profile, useAppStore } from './stores/appStore';
+import { Message, Profile, Relation, useAppStore } from './stores/appStore';
 
 import { RouterView } from "vue-router"
 import Header from "./views/Header.vue"
@@ -38,14 +38,17 @@ watch(() => appStore.profile, () => {
       appStore.setMessage(res.data as Message[])
     }
   })
-  // http({
-  //   method: "POST",
-  //   url: "/relation/list"
-  // }).then((res) => {
-  //   if (res.status) {
-  //     appStore.setRelations(res.data as Profile[])
-  //   }
-  // })
+  http({
+    method: "GET",
+    url: "/relation/list/union"
+  }).then((res) => {
+    if (res.status) {
+      appStore.setFollows(res.data.follows as Relation[])
+      appStore.setFans(res.data.fans as Relation[])
+      appStore.setGroup(res.data.groups as Relation[])
+      appStore.setApplications(res.data.applications as Relation[])
+    }
+  })
   socket({
     url: "/chat",
     onOpen: (_: TauriWebSocket | WebSocket) => {
@@ -53,10 +56,10 @@ watch(() => appStore.profile, () => {
     },
     onMessage: (message: Message) => {
       appStore.addMessage(message)
-      notification({
-        title: `收到一条来自${appStore.relations.filter((it) => it.userId === message.from)[0].nickname}的消息`,
-        body: message.content.value
-      } as Options);
+      // notification({
+      //   title: `收到一条来自${appStore.profiles.filter((it) => it.userId === message.from)[0].nickname}的消息`,
+      //   body: message.content.value
+      // } as Options);
     },
     onClose: () => console.log("链接断开")
   })

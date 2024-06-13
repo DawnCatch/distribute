@@ -1,7 +1,7 @@
 <template>
     <div data-tauri-drag-region class="title_bar">
         <div class="chat_title" v-if="appStore.index !== -1">
-            {{ appStore.relations[appStore.index].nickname }}
+            {{ appStore.relations[appStore.index].title }}
         </div>
         <div class="window_tool">
             <div class="option" @click.left="windowMinimize">

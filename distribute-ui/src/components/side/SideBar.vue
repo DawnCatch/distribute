@@ -11,7 +11,7 @@
         </div>
         <div class="search_box">搜索</div>
         <div class="session_list">
-            <SideBarItem v-for="(item, index) in appStore.relations" :profile="item" :index />
+            <SideBarItem v-for="(item, index) in appStore.relations" :relation="item" :index />
         </div>
         <NavigationDialog />
         <SignDialog />

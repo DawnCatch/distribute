@@ -26,14 +26,18 @@ import markdown from "../../utils/markdown";
 import { vElementVisibility } from '@vueuse/components'
 
 import Icon from "../Icon.vue";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { http } from "../../utils/http";
 
 const appStore = useAppStore()
 
-defineProps({
+const props = defineProps({
     messages: {
         type: Array,
+        required: true
+    },
+    from: {
+        type: Number,
         required: true
     }
 })
@@ -57,8 +61,9 @@ function md2Ele(item: Content) {
 }
 
 function onElementVisibility(state: boolean, message: Message) {
-    if (state) {
+    if (state && !message.observers.includes(appStore.profile.userId)) {
         http({
+            method: "POST",
             url: "/message/read",
             data: {
                 id: message.id
@@ -66,6 +71,16 @@ function onElementVisibility(state: boolean, message: Message) {
         })
     }
 }
+
+watch(() => props.from, (newVal) => {
+    if (newVal === appStore.profile.userId) {
+        reverse.value = true
+    } else {
+        reverse.value = false
+    }
+}, {
+    immediate: true,
+})
 </script>
 
 <style scoped>

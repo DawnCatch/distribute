@@ -6,7 +6,9 @@ import { getToken } from "./secure";
 import { ip, platform, port, proxy_rewrite, security } from "./env";
 import { Message } from "../stores/appStore";
 
-const baseURL = `ws${security ? "s" : ""}://${ip}${port !== ""?`:${port}`:""}`;
+const baseURL = `ws${security ? "s" : ""}://${ip}${
+    port !== "" ? `:${port}` : ""
+}`;
 
 interface SocketOption {
     url: string;
@@ -32,7 +34,7 @@ const socket = (option = {} as SocketOption) => {
         }, 2000);
     });
     if (platform) {
-        console.log(baseURL + url)
+        console.log(baseURL + url);
         TauriWebSocket.connect(baseURL + url, {
             headers: {
                 "Sec-Websocket-Protocol": getToken(),
@@ -56,16 +58,13 @@ const socket = (option = {} as SocketOption) => {
                 event.emit("onClose");
             });
     } else {
-        const ws = new WebSocket(
-            baseURL + url,
-            getToken()
-        );
+        const ws = new WebSocket(baseURL + url, getToken());
         ws.onopen = () => {
             event.emit("onOpen", ws);
         };
         ws.onmessage = (e) => {
-            console.log(e.data);
-            event.emit("onMessage", e.data);
+            const data = JSON.parse(e.data as string) as Message;
+            event.emit("onMessage", data);
         };
         ws.onclose = () => {
             event.emit("onClose");
