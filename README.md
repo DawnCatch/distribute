@@ -1,4 +1,4 @@
-# 后端https://github.com/DawnCatch/distribute/tree/feat-ui
+# 后端
 ## 目录结构
 ```
 |-- distribute
