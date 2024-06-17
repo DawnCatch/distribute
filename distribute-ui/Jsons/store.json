@@ -1,0 +1,13 @@
+{
+  "profile?": "$profile",
+  "messages?": "$[]message",
+  "follows?": "$[]relation",
+  "fans?": [
+    0,
+    0
+  ],
+  "groups?": "$[]relation",
+  "applications?": "$[]relation",
+  "profiles?": "$[]profile",
+  "authorization?": ""
+}

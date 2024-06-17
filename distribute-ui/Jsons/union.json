@@ -1,0 +1,9 @@
+{
+  "follows": "$[]relation",
+  "fans": [
+    0,
+    0
+  ],
+  "groups": "$[]relation",
+  "applications": "$[]relation"
+}
