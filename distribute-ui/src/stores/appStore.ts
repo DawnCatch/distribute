@@ -60,8 +60,9 @@ export const useAppStore = defineStore("app", {
             this.index = index;
         },
         init() {
-            this.$reset()
-        }
+            mitt.emit("NavigationDialog:close");
+            this.$reset();
+        },
     },
     getters: {
         messageGroup(state) {

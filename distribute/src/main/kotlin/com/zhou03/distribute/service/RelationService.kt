@@ -155,7 +155,7 @@ class RelationServiceImpl : RelationService {
         val token = request.getToken()
         val follows =
             userRelationDao.listFollowAsOwn(token.userId).map { RelationVO(false, it.targetId, it.nickname, it.path) }
-        val fans = userRelationDao.listFanAsOwn(token.userId).map { RelationVO(false, it.userId, it.nickname, it.path) }
+        val fans = userRelationDao.listFanAsOwn(token.userId).map { it.userId }
         val groups = groupUserRelationDao.listByJoinAsOwn(token.userId)
             .map { RelationVO(true, it.targetId, it.nickname, it.path) }
         val applications = groupUserRelationDao.listByPendingAsOwn(token.userId)
