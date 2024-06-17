@@ -17,44 +17,26 @@ class App extends StatefulWidget {
   State<StatefulWidget> createState() => AppState();
 }
 
-class AppState extends State<App> with WidgetsBindingObserver {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-    if (state == AppLifecycleState.paused) {
-      Global.save();
-    }
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
+class AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => ProfileChangeNotifier()),
-          ChangeNotifierProvider(create: (_) => UnionChangeNotifier())
-        ],
-        child: MaterialApp(
-          title: 'Flutter Demo',
-          initialRoute: "sign",
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(
-                seedColor: Colors.blue, brightness: Brightness.dark),
-            useMaterial3: true,
-          ),
-          debugShowCheckedModeBanner: false,
-          routes: routes,
-        ));
+      providers: [
+        ChangeNotifierProvider(create: (_) => ProfileChangeNotifier()),
+        ChangeNotifierProvider(create: (_) => UnionChangeNotifier())
+      ],
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        initialRoute: "/splash",
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.blue, brightness: Brightness.dark),
+          useMaterial3: true,
+        ),
+        debugShowCheckedModeBanner: false,
+        routes: routes,
+      ),
+    );
   }
 }

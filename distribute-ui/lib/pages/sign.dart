@@ -24,7 +24,7 @@ class _SignPageState extends State<SignPage> {
   @override
   void initState() {
     super.initState();
-    _reconnect();
+    // _reconnect();
     _signFormDate = SignFormDate();
   }
 
@@ -100,7 +100,7 @@ class _SignPageState extends State<SignPage> {
       if (result.status == true) {
         profileChangeNotifier.value = result.data ?? Profile();
       }
-      Navigator.pushNamed(context, "home");
+      Navigator.pushReplacementNamed(context, "/home");
     });
   }
 
@@ -112,7 +112,7 @@ class _SignPageState extends State<SignPage> {
         if (result.status == true) {
           Global.appStore.profile = result.data;
         }
-        Navigator.pushNamed(context, "home");
+        Navigator.pushReplacementNamed(context, "/home");
       });
     }
   }
