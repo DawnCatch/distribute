@@ -1,12 +1,8 @@
-import 'dart:ui';
-
-import 'package:distribute/domains/profile.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:distribute/common/global.dart';
+import 'package:distribute/models/index.dart';
+import 'package:distribute/stores/own.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:provider/provider.dart';
-
-import '../../common/global.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class HomeDrawer extends StatefulWidget {
   const HomeDrawer({super.key});
@@ -24,7 +20,6 @@ class _HomeDrawerState extends State<HomeDrawer>
   @override
   void initState() {
     super.initState();
-
     _isExpanded = false;
   }
 
@@ -70,19 +65,24 @@ class _HomeDrawerState extends State<HomeDrawer>
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Consumer<ProfileChangeNotifier>(
-                                builder: (context, provider, child) {
+                            Consumer(builder: (context, ref, child) {
+                              final Profile? ownState =
+                                  ref.watch(ownStateProvider);
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    provider.value.nickname ?? "未登录",
+                                    ownState?.nickname ??
+                                        Global.appStore.profile?.nickname ??
+                                        "未登录",
                                     style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w900),
                                   ),
                                   Text(
-                                      provider.value.userId?.toString() ??
+                                      ownState?.userId.toString() ??
+                                          Global.appStore.profile?.userId
+                                              .toString() ??
                                           "-1",
                                       style: TextStyle(
                                           color: Theme.of(context)

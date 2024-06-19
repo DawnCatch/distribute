@@ -10,7 +10,7 @@ Union _$UnionFromJson(Map<String, dynamic> json) => Union()
   ..follows = (json['follows'] as List<dynamic>)
       .map((e) => Relation.fromJson(e as Map<String, dynamic>))
       .toList()
-  ..fans = json['fans'] as List<dynamic>
+  ..fans = (json['fans'] as List<dynamic>).map((e) => e as num).toList()
   ..groups = (json['groups'] as List<dynamic>)
       .map((e) => Relation.fromJson(e as Map<String, dynamic>))
       .toList()

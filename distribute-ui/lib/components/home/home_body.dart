@@ -1,18 +1,20 @@
 import 'package:animations/animations.dart';
 import 'package:distribute/components/home/home_body_relation.dart';
 import 'package:distribute/components/home/home_body_search.dart';
+import 'package:distribute/stores/union.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class HomeBody extends StatefulWidget {
+class HomeBody extends ConsumerStatefulWidget {
   const HomeBody({super.key});
 
   @override
-  State<StatefulWidget> createState() => _HomeBodyState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _HomeBodyState();
 }
 
-class _HomeBodyState extends State<HomeBody> with TickerProviderStateMixin {
+class _HomeBodyState extends ConsumerState<HomeBody>
+    with TickerProviderStateMixin {
   late bool _isSearchPage;
-  late List<String> _tabs;
   late List<Widget> _pages;
 
   late FocusNode _searchFocusNode;
@@ -24,14 +26,50 @@ class _HomeBodyState extends State<HomeBody> with TickerProviderStateMixin {
   @override
   void initState() {
     _isSearchPage = false;
-    _tabs = ["1", "2", "3"];
-    _pages = [const HomeBodyRelation(), const HomeBodySearch()];
     _searchFocusNode = FocusNode();
+    _pages = [const HomeBodyRelation(), const HomeBodySearch()];
     _controller = AnimationController(
         duration: const Duration(milliseconds: 200), vsync: this);
     _leadingIconAnimation = Tween(begin: 0.0, end: 1.0).animate(_controller);
     _searchIconAnimation = Tween(begin: 1.0, end: 0.0).animate(_controller);
     super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final tabs =
+        ref.watch(unionStateProvider.select((union) => union.value?.tabs));
+    return Container(
+      color: Theme.of(context).colorScheme.surfaceBright,
+      child: SafeArea(
+        child: DefaultTabController(
+          length: tabs?[_isSearchPage ? 1 : 0].length ?? 0,
+          child: NestedScrollView(
+            headerSliverBuilder: (context, isScrolled) {
+              return buildHeader();
+            },
+            body: Container(
+              height: 200,
+              color: Theme.of(context).colorScheme.surface,
+              child: PageTransitionSwitcher(
+                reverse: _isSearchPage,
+                duration: const Duration(milliseconds: 200),
+                transitionBuilder: (child, animation, secondaryAnimation) {
+                  return SharedAxisTransition(
+                    animation: animation,
+                    secondaryAnimation: secondaryAnimation,
+                    transitionType: SharedAxisTransitionType.horizontal,
+                    child: child,
+                  );
+                },
+                child:
+                    tabs != null ? _pages[_isSearchPage ? 1 : 0] : Container(),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget buildTitle() {
@@ -101,69 +139,28 @@ class _HomeBodyState extends State<HomeBody> with TickerProviderStateMixin {
         pinned: _isSearchPage,
       ),
     ];
-    if (_tabs.isNotEmpty) {
+    final tabs =
+        ref.watch(unionStateProvider.select((union) => union.value?.tabs));
+    if (tabs != null && tabs[_isSearchPage ? 1 : 0].isNotEmpty) {
       slivers.add(
         SliverPersistentHeader(
           pinned: true,
           delegate: _StickyTabBarDelegate(
-            child: _isSearchPage
-                ? TabBar(
-                    key: ValueKey<bool>(_isSearchPage),
-                    isScrollable: true,
-                    tabAlignment: TabAlignment.start,
-                    tabs: _tabs.map((it) {
-                      return Tab(text: it.toString());
-                    }).toList(),
-                  )
-                : TabBar(
-                    key: ValueKey<bool>(_isSearchPage),
-                    isScrollable: true,
-                    tabAlignment: TabAlignment.start,
-                    tabs: const [
-                      Tab(text: "data"),
-                      Tab(text: "data"),
-                      Tab(text: "data")
-                    ],
-                  ),
+            child: TabBar(
+              key: ValueKey<bool>(_isSearchPage),
+              isScrollable: true,
+              tabAlignment: TabAlignment.start,
+              tabs: tabs[_isSearchPage ? 1 : 0].map(
+                (it) {
+                  return Tab(text: it.toString());
+                },
+              ).toList(),
+            ),
           ),
         ),
       );
     }
     return slivers;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Theme.of(context).colorScheme.surfaceBright,
-      child: SafeArea(
-        child: DefaultTabController(
-          length: _tabs.length,
-          child: NestedScrollView(
-            headerSliverBuilder: (context, isScrolled) {
-              return buildHeader();
-            },
-            body: Container(
-              height: 200,
-              color: Theme.of(context).colorScheme.surface,
-              child: PageTransitionSwitcher(
-                reverse: _isSearchPage,
-                duration: const Duration(milliseconds: 500),
-                transitionBuilder: (child, animation, secondaryAnimation) {
-                  return SharedAxisTransition(
-                    animation: animation,
-                    secondaryAnimation: secondaryAnimation,
-                    transitionType: SharedAxisTransitionType.horizontal,
-                    child: child,
-                  );
-                },
-                child: _pages[_isSearchPage ? 1 : 0],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
   }
 
   @override

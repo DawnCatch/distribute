@@ -10,19 +10,9 @@ Store _$StoreFromJson(Map<String, dynamic> json) => Store()
   ..profile = json['profile'] == null
       ? null
       : Profile.fromJson(json['profile'] as Map<String, dynamic>)
-  ..messages = (json['messages'] as List<dynamic>?)
-      ?.map((e) => Message.fromJson(e as Map<String, dynamic>))
-      .toList()
-  ..follows = (json['follows'] as List<dynamic>?)
-      ?.map((e) => Relation.fromJson(e as Map<String, dynamic>))
-      .toList()
-  ..fans = json['fans'] as List<dynamic>?
-  ..groups = (json['groups'] as List<dynamic>?)
-      ?.map((e) => Relation.fromJson(e as Map<String, dynamic>))
-      .toList()
-  ..applications = (json['applications'] as List<dynamic>?)
-      ?.map((e) => Relation.fromJson(e as Map<String, dynamic>))
-      .toList()
+  ..union = json['union'] == null
+      ? null
+      : Union.fromJson(json['union'] as Map<String, dynamic>)
   ..profiles = (json['profiles'] as List<dynamic>?)
       ?.map((e) => Profile.fromJson(e as Map<String, dynamic>))
       .toList()
@@ -30,11 +20,7 @@ Store _$StoreFromJson(Map<String, dynamic> json) => Store()
 
 Map<String, dynamic> _$StoreToJson(Store instance) => <String, dynamic>{
       'profile': instance.profile,
-      'messages': instance.messages,
-      'follows': instance.follows,
-      'fans': instance.fans,
-      'groups': instance.groups,
-      'applications': instance.applications,
+      'union': instance.union,
       'profiles': instance.profiles,
       'authorization': instance.authorization,
     };

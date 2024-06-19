@@ -6,10 +6,10 @@ part 'relation.g.dart';
 class Relation {
   Relation();
 
-  bool? type;
-  num? id;
-  String? title;
-  String? path;
+  late bool type;
+  late num id;
+  late String title;
+  late String path;
   
   factory Relation.fromJson(Map<String,dynamic> json) => _$RelationFromJson(json);
   Map<String, dynamic> toJson() => _$RelationToJson(this);

@@ -1,24 +1,18 @@
-import 'package:distribute/common/global.dart';
 import 'package:distribute/common/http.dart';
 import 'package:distribute/common/result.dart';
-import 'package:distribute/components/home/home_drawer.dart';
-import 'package:distribute/domains/authorization.dart';
-import 'package:distribute/domains/profile.dart';
 import 'package:distribute/models/index.dart';
+import 'package:distribute/stores/own.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SignPage extends StatefulWidget {
+class SignPage extends ConsumerStatefulWidget {
   const SignPage({super.key});
 
   @override
-  State<StatefulWidget> createState() => _SignPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _SignPageState();
 }
 
-class _SignPageState extends State<SignPage> {
-  late ProfileChangeNotifier profileChangeNotifier;
-
+class _SignPageState extends ConsumerState<SignPage> {
   late SignFormDate _signFormDate;
 
   @override
@@ -30,7 +24,6 @@ class _SignPageState extends State<SignPage> {
 
   @override
   Widget build(BuildContext context) {
-    profileChangeNotifier = Provider.of<ProfileChangeNotifier>(context);
     double maxHeight = MediaQuery.of(context).size.height;
     return Scaffold(
         body: Container(
@@ -95,26 +88,12 @@ class _SignPageState extends State<SignPage> {
 
   void _signIn() {
     Http.post("/user/login", _signFormDate.toJson()).then((res) {
-      Result<Profile> result =
-          Result.fromJson(res, (json) => Profile.fromJson(json));
+      Result<Profile> result = Result.fromJson(res, Profile.fromJson);
       if (result.status == true) {
-        profileChangeNotifier.value = result.data ?? Profile();
-      }
-      Navigator.pushReplacementNamed(context, "/home");
-    });
-  }
-
-  void _reconnect() {
-    if (AuthorizationChangeNotifier().haveCookies) {
-      Http.get("/user/reconnect").then((res) {
-        Result<Profile> result =
-            Result.fromJson(res, (json) => Profile.fromJson(json));
-        if (result.status == true) {
-          Global.appStore.profile = result.data;
-        }
+        ref.read(ownStateProvider.notifier).set(result.data);
         Navigator.pushReplacementNamed(context, "/home");
-      });
-    }
+      }
+    });
   }
 }
 

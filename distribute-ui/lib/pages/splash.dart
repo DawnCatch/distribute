@@ -1,25 +1,26 @@
 import 'package:distribute/common/global.dart';
 import 'package:distribute/common/http.dart';
 import 'package:distribute/common/result.dart';
-import 'package:distribute/domains/authorization.dart';
 import 'package:distribute/models/profile.dart';
+import 'package:distribute/stores/own.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../main.dart';
+import '../common/env.dart';
 
-class SplashPage extends StatefulWidget {
+class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});
 
   @override
-  State<StatefulWidget> createState() => SplashPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => SplashPageState();
 }
 
-class SplashPageState extends State<SplashPage> {
+class SplashPageState extends ConsumerState<SplashPage> {
   @override
   void initState() {
-    _reconnect();
     super.initState();
+    _reconnect();
   }
 
   @override
@@ -44,14 +45,17 @@ class SplashPageState extends State<SplashPage> {
   }
 
   void _reconnect() {
-    if (AuthorizationChangeNotifier().haveCookies) {
+    final authorization = Global.appStore.authorization;
+    if (authorization != null && authorization != "") {
       Http.get("/user/reconnect").then(
         (res) {
-          Result<Profile> result =
-              Result.fromJson(res, (json) => Profile.fromJson(json));
+          Result<Profile> result = Result.fromJson(res, Profile.fromJson);
+          if (result.status == true) {
+            Global.appStore.profile = result.data;
+            ref.read(ownStateProvider.notifier).set(result.data);
+          }
           Future.delayed(const Duration(milliseconds: 300), () {
             if (result.status == true) {
-              Global.appStore.profile = result.data;
               Navigator.pushReplacementNamed(context, "/home");
             } else {
               Navigator.pushReplacementNamed(context, "/sign");

@@ -8,8 +8,13 @@ class HomeBodySearch extends StatefulWidget {
 }
 
 class _HomeBodySearchState extends State<HomeBodySearch> {
-  @override
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return const TabBarView(
       children: [
