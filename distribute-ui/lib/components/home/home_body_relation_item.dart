@@ -1,4 +1,5 @@
 import 'package:distribute/models/index.dart';
+import 'package:distribute/stores/message.dart';
 import 'package:distribute/stores/union.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,11 +32,24 @@ class _HomeBodyRelationItemState extends State<HomeBodyRelationItem> {
               builder: (context, ref, child) {
                 final AsyncValue<Union?> unionState =
                     ref.watch(unionStateProvider);
+                final AsyncValue<List<Message>> messagesState =
+                    ref.watch(messageStateProvider);
                 return unionState.when(
-                  data: (data) => Text(
-                      (widget.type ? data!.groups : data!.friends)
+                  data: (data) => Column(
+                    children: [
+                      Text((widget.type ? data!.groups : data!.friends)
                           .singleWhere((it) => it.id == widget.id)
                           .title),
+                      messagesState.when(
+                          data: (data) {
+                            Message? last = MessagesUtil.lastMessageByTypeAndId(
+                                data, widget.type, widget.id);
+                            return Text(last?.content.value ?? "");
+                          },
+                          error: (error, stack) => const Text("error"),
+                          loading: () => const Text("loading"))
+                    ],
+                  ),
                   error: (error, stack) => const Text("error"),
                   loading: () => const CircularProgressIndicator(),
                 );

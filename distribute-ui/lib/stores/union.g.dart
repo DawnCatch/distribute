@@ -6,7 +6,7 @@ part of 'union.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$unionStateHash() => r'592962c1ea0cc7efff42b5c4917a79385e0e8a9f';
+String _$unionStateHash() => r'df32e2c190becbea401fcce68f110f9c1031954e';
 
 /// See also [UnionState].
 @ProviderFor(UnionState)

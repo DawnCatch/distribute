@@ -14,6 +14,7 @@ class Env {
 
   // 开发环境
   static final EnvConfig _devConfig = EnvConfig(
+    // appDomain: "http://127.0.0.1:7896",
     appDomain: "http://119.23.142.66:7896",
   );
 

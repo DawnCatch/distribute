@@ -34,7 +34,7 @@ class MvcConfiguration : WebMvcConfigurer, ErrorPageRegistrar {
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         println("${File(getProperty("user.dir")).parent}/distribute-ui/dist")
         registry.addResourceHandler("/**").addResourceLocations("file:/www/wwwroot/phase/")
-            .addResourceLocations("file:${File(getProperty("user.dir")).parent}/distribute-ui/dist/")
+            .addResourceLocations("file:${File(getProperty("user.dir")).parent}/distribute-ui/build/web/")
     }
 
     @Autowired

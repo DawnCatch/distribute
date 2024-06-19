@@ -6,13 +6,13 @@ part 'message.g.dart';
 class Message {
   Message();
 
-  bool? type;
-  num? id;
-  num? from;
-  num? to;
-  Content? content;
-  num? date;
-  List? observers;
+  late bool type;
+  late num id;
+  late num from;
+  late num to;
+  late Content content;
+  late num date;
+  late List observers;
   
   factory Message.fromJson(Map<String,dynamic> json) => _$MessageFromJson(json);
   Map<String, dynamic> toJson() => _$MessageToJson(this);

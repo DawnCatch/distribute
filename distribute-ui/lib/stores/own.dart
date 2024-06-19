@@ -8,10 +8,17 @@ part "own.g.dart";
 @riverpod
 class OwnState extends _$OwnState {
   @override
-  Profile? build() => null;
+  Future<Profile?> build() async {
+    dynamic response = await Http.get("/user/reconnect");
+    Result<Profile> unionResult = Result.fromJson(response, Profile.fromJson);
+    if (unionResult.status == true && unionResult.data != null) {
+      return unionResult.data!;
+    }
+    return null;
+  }
 
   void set(Profile? profile) {
     if (profile == null) return;
-    state = profile;
+    state = AsyncValue.data(profile);
   }
 }

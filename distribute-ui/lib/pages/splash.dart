@@ -1,7 +1,3 @@
-import 'package:distribute/common/global.dart';
-import 'package:distribute/common/http.dart';
-import 'package:distribute/common/result.dart';
-import 'package:distribute/models/profile.dart';
 import 'package:distribute/stores/own.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,11 +16,11 @@ class SplashPageState extends ConsumerState<SplashPage> {
   @override
   void initState() {
     super.initState();
-    _reconnect();
   }
 
   @override
   Widget build(BuildContext context) {
+    _reconnect();
     double width = MediaQuery.of(context).size.width * 0.8;
     return Material(
       child: Column(
@@ -45,28 +41,23 @@ class SplashPageState extends ConsumerState<SplashPage> {
   }
 
   void _reconnect() {
-    final authorization = Global.appStore.authorization;
-    if (authorization != null && authorization != "") {
-      Http.get("/user/reconnect").then(
-        (res) {
-          Result<Profile> result = Result.fromJson(res, Profile.fromJson);
-          if (result.status == true) {
-            Global.appStore.profile = result.data;
-            ref.read(ownStateProvider.notifier).set(result.data);
+    final ownState = ref.watch(ownStateProvider);
+    ownState.when(
+      data: (data) {
+        Future.delayed(const Duration(milliseconds: 300), () {
+          if (data == null) {
+            Navigator.pushReplacementNamed(context, "/sign");
+          } else {
+            Navigator.pushReplacementNamed(context, "/home");
           }
-          Future.delayed(const Duration(milliseconds: 300), () {
-            if (result.status == true) {
-              Navigator.pushReplacementNamed(context, "/home");
-            } else {
-              Navigator.pushReplacementNamed(context, "/sign");
-            }
-          });
-        },
-      );
-    } else {
-      Future.delayed(const Duration(milliseconds: 500), () {
-        Navigator.pushReplacementNamed(context, "/sign");
-      });
-    }
+        });
+      },
+      error: (error, stack) {
+        Future.delayed(const Duration(milliseconds: 300), () {
+          Navigator.pushReplacementNamed(context, "/sign");
+        });
+      },
+      loading: () {},
+    );
   }
 }
