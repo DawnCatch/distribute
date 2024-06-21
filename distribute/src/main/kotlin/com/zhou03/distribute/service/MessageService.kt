@@ -56,17 +56,22 @@ class MessageServiceImpl : MessageService {
         val to = messageHistoryDTO.to.toLocalDateTime()
         val groupIds = groupUserRelationDao.listByJoinAsOwn(token.userId).map { it.targetId }
         val messageDomains = messageDao.listByDateAsOwn(token.userId, groupIds, from, to)
-        val ids = messageDomains.map { it.id }
-        val messageObserversMap = messageObserverDao.listByMessageId(ids).groupBy { it.messageId }
+        val ownMessageIds = messageDomains.filter { it.from == token.userId }.map { it.id }
+        val otherMessageIds = messageDomains.filter { it.from != token.userId }.map { it.id }
+        val ownMessageObserversMap = messageObserverDao.listByMessageId(ownMessageIds).groupBy { it.messageId }
+        val otherMessageObserversMap = messageObserverDao.listByMessageId(otherMessageIds).groupBy { it.messageId }
         val messages = messageDomains.map {
             MessageVO.from(it)
         }
         messages.forEach { it ->
-            val messageObservers = messageObserversMap[it.id]
-            if (messageObservers.isNullOrEmpty()) {
+            val ownMessageObservers = ownMessageObserversMap[it.id]
+            val otherMessageObservers = otherMessageObserversMap[it.id]
+            if (ownMessageObservers.isNullOrEmpty() || otherMessageObservers.isNullOrEmpty()) {
                 it.observers = listOf()
-            } else {
-                it.observers = messageObservers.map { it.userId }
+            } else if (ownMessageObservers.isNotEmpty()) {
+                it.observers = ownMessageObservers.map { it.userId }
+            } else if (otherMessageObservers.isNotEmpty()) {
+                it.observers = otherMessageObservers.map { it.userId }
             }
         }
         return success(messages)
