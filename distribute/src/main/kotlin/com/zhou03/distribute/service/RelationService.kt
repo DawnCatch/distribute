@@ -36,6 +36,8 @@ interface RelationService {
     fun listOwnApplication(request: HttpServletRequest): Result<List<RelationVO>?>
 
     fun listUnion(request: HttpServletRequest): Result<RelationUnionVO?>
+
+    fun listProfileIdByGroup(groupId: Int, request: HttpServletRequest): Result<List<Int>?>
 }
 
 @Service
@@ -161,5 +163,12 @@ class RelationServiceImpl : RelationService {
         val applications = groupUserRelationDao.listByPendingAsOwn(token.userId)
             .map { RelationVO(true, it.targetId, it.nickname, it.path) }
         return success(RelationUnionVO(follows, fans, groups, applications))
+    }
+
+    override fun listProfileIdByGroup(groupId: Int, request: HttpServletRequest): Result<List<Int>?> {
+        val token = request.getToken()
+        if (!groupUserRelationDao.isMember(token.userId, groupId)) return error("权限错误")
+        val relations = groupUserRelationDao.listByTargetId(groupId)
+        return success(relations.map { it.userId })
     }
 }
