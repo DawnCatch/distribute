@@ -23,17 +23,12 @@ class MessageState extends _$MessageState {
     return [];
   }
 
-  void set(List<Message>? messages) {
-    if (messages == null) return;
+  void set(List<Message> messages) {
     state = AsyncValue.data(messages);
   }
 
-  void add(Message message) {
-    List<Message>? temp = state.value;
-    if (temp == null) return;
-    int index = temp.indexWhere((it) => it.id == message.id);
-    temp[index] = message;
-    state = AsyncValue.data(temp);
+  Future<void> add(List<Message> messages, Message message) async {
+    set(MessagesUtil.addOrUpdate(messages, message));
   }
 }
 
@@ -50,7 +45,7 @@ class MessagesUtil {
       List<Message> messages,
       {required num ownId}) {
     List<Message> sortMessages = messages;
-    sortMessages.sort();
+    sortMessages.sort((a, b) => a.date < b.date ? 0 : 1);
     Map<Pair<bool, num>, List<Message>> map = {};
     for (var message in sortMessages) {
       (map[Pair(
@@ -91,6 +86,57 @@ class MessagesUtil {
     List<Message> temp = map[Pair(first: type, second: id)] ?? [];
     temp.sort((a, b) => a.date < b.date ? 0 : 1);
     return temp.isEmpty ? null : temp.last;
+  }
+
+  static List<Message> addOrUpdate(List<Message> messages, Message message) {
+    List<Message> temp = messages;
+    int index = temp.indexWhere((it) => it.id == message.id);
+    if (index != -1) {
+      temp[index] = message;
+    } else {
+      temp.add(message);
+    }
+    return temp;
+  }
+
+  static num getUnreadNumberByTypeAndId(
+    List<Message> messages,
+    bool type,
+    num id,
+    num ownId,
+  ) {
+    List<Message> temp = byTypeAndId(messages, type, id);
+    for (int i = temp.length - 1; i > 0; i--) {
+      if (temp[i].from == ownId ||
+          (temp[i].from == id && temp[i].observers.contains(ownId))) {
+        return temp.length - 1 - i;
+      }
+    }
+    return 0;
+  }
+
+  static Map<num, Map<num, List<Message>>> test(
+    List<Message> messages,
+    bool type,
+    num id,
+  ) {
+    List<Message> temp = byTypeAndId(messages, type, id);
+    temp.sort((a, b) => a.date < b.date ? 1 : 0);
+    Map<num, Map<num, List<Message>>> map = {};
+    for (var message in temp) {
+      final from = message.from;
+      final date = message.date;
+      final key = date ~/ (5 * 60 * 1000);
+      map[key] = map[key] ?? {};
+      map[key]![from] = map[key]![from] ?? [];
+      map[key]![from]!.add(message);
+    }
+    map.forEach((_,value) {
+      value.forEach((_,value) {
+        value.sort((a, b) => a.date < b.date ? 0 : 1);
+      });
+    });
+    return map;
   }
 }
 

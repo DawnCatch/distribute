@@ -52,9 +52,10 @@ class _HomeDrawerState extends State<HomeDrawer>
                   child: const Row(
                     children: [
                       CircleAvatar(
-                          radius: 32,
-                          backgroundImage: NetworkImage(
-                              "https://files.catbox.moe/nizk28.jpg"))
+                        radius: 32,
+                        backgroundImage:
+                            NetworkImage("https://files.catbox.moe/nizk28.jpg"),
+                      )
                     ],
                   ),
                 ),

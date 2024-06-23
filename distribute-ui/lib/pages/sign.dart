@@ -88,7 +88,7 @@ class _SignPageState extends ConsumerState<SignPage> {
 
   void _signIn() {
     Http.post("/user/login", _signFormDate.toJson()).then((res) {
-      Result<Profile> result = Result.fromJson(res, Profile.fromJson);
+      Result<UserProfile> result = Result.fromJson(res, UserProfile.fromJson);
       if (result.status == true) {
         ref.read(ownStateProvider.notifier).set(result.data);
         Navigator.pushReplacementNamed(context, "/home");

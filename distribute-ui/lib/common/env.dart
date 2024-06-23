@@ -1,10 +1,10 @@
 // 环境配置
 class EnvConfig {
-  final String appDomain;
+  final bool isSecurity;
+  final String ip;
+  final num? port;
 
-  EnvConfig({
-    required this.appDomain,
-  });
+  EnvConfig({required this.isSecurity, required this.ip, required this.port});
 }
 
 // 获取的配置信息
@@ -14,13 +14,17 @@ class Env {
 
   // 开发环境
   static final EnvConfig _devConfig = EnvConfig(
+    isSecurity: false,
     // appDomain: "http://127.0.0.1:7896",
-    appDomain: "http://119.23.142.66:7896",
+    ip: "119.23.142.66",
+    port: 7896,
   );
 
   // 发布环境
   static final EnvConfig _releaseConfig = EnvConfig(
-    appDomain: "https://www.phase-app.shop",
+    isSecurity: true,
+    ip: "https://www.phase-app.shop",
+    port: null,
   );
 
   static EnvConfig get envConfig => _getEnvConfig();

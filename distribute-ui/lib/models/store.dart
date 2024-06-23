@@ -7,9 +7,8 @@ part 'store.g.dart';
 class Store {
   Store();
 
-  Profile? profile;
+  UserProfile? profile;
   Union? union;
-  List<Profile>? profiles;
   String? authorization;
 
   factory Store.fromJson(Map<String, dynamic> json) => _$StoreFromJson(json);

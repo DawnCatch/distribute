@@ -7,8 +7,8 @@ part of 'content.dart';
 // **************************************************************************
 
 Content _$ContentFromJson(Map<String, dynamic> json) => Content()
-  ..type = json['type'] as String?
-  ..value = json['value'] as String?;
+  ..type = json['type'] as String
+  ..value = json['value'] as String;
 
 Map<String, dynamic> _$ContentToJson(Content instance) => <String, dynamic>{
       'type': instance.type,

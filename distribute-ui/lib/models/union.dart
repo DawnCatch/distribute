@@ -5,7 +5,12 @@ part 'union.g.dart';
 
 @JsonSerializable()
 class Union {
-  Union();
+  Union() {
+    follows = [];
+    fans = [];
+    groups = [];
+    applications = [];
+  }
 
   late List<Relation> follows;
   late List<num> fans;
