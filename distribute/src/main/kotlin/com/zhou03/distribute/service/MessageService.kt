@@ -66,11 +66,11 @@ class MessageServiceImpl : MessageService {
         messages.forEach { it ->
             val ownMessageObservers = ownMessageObserversMap[it.id]
             val otherMessageObservers = otherMessageObserversMap[it.id]
-            if (ownMessageObservers.isNullOrEmpty() || otherMessageObservers.isNullOrEmpty()) {
+            if (ownMessageObservers.isNullOrEmpty() && otherMessageObservers.isNullOrEmpty()) {
                 it.observers = listOf()
-            } else if (ownMessageObservers.isNotEmpty()) {
+            } else if (!ownMessageObservers.isNullOrEmpty()) {
                 it.observers = ownMessageObservers.map { it.userId }
-            } else if (otherMessageObservers.isNotEmpty()) {
+            } else if (!otherMessageObservers.isNullOrEmpty()) {
                 it.observers = otherMessageObservers.map { it.userId }
             }
         }
@@ -185,16 +185,14 @@ class MessageServiceImpl : MessageService {
                     ), token.userId
                 )
 
-                val relations = groupUserRelationDao.listByTargetId(message.to)
-                val relationIds = relations.map { it.userId }
-                if (token.userId !in relationIds) return error("权限错误")
+                if (!groupUserRelationDao.isMember(token.userId, message.to)) return error("权限错误")
                 messageObserverDao.addOrUpdate(messageObserver)
                 ChatUtil.sendMessage(
                     MessageVO(
                         message.id, true, token.userId, message.to, Content(
                             ContentType.OBSERVER, ""
                         )
-                    ), relationIds
+                    ), listOf(message.from)
                 )
             } else {
                 if (token.userId !in listOf(message.from, message.to)) return error("权限错误")
