@@ -46,5 +46,4 @@ class UserController {
     fun confirm(
         @RequestParam code: String,
     ) = userService.confirm(code)
-
 }
