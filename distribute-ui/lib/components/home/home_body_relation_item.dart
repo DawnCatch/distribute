@@ -104,13 +104,34 @@ class _HomeBodyRelationItemState extends ConsumerState<HomeBodyRelationItem> {
           title,
           style: titleStyle,
         ),
-        last != null
-            ? Text(last.content.value)
-            : const SizedBox(
-                height: 0,
-              ),
+        buildNews(last),
       ],
     );
+  }
+
+  Widget buildNews(Message? message) {
+    if (message != null) {
+      final id = message.from;
+      final unionState = ref.watch(unionStateProvider);
+      final userProfileState = ref.watch(userProfileStateProvider.call(id));
+      String value = "";
+      unionState.when(
+        data: (data) => value =
+            data.friends.where((it) => it.id == id).firstOrNull?.title ?? "",
+        error: (err, stack) => value = "",
+        loading: () => value = "",
+      );
+      if (value == "") {
+        userProfileState.when(
+          data: (data) => value = data?.nickname ?? "None",
+          error: (err, stack) => value = "None",
+          loading: () => value = "None",
+        );
+      }
+      return Text("$value:${message.content.value}");
+    } else {
+      return const SizedBox();
+    }
   }
 
   Widget buildTips() {

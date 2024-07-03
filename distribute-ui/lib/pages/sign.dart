@@ -18,7 +18,6 @@ class _SignPageState extends ConsumerState<SignPage> {
   @override
   void initState() {
     super.initState();
-    // _reconnect();
     _signFormDate = SignFormDate();
   }
 

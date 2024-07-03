@@ -68,7 +68,12 @@ class _ChatPageState extends State<ChatPage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 16),
-                    child: Text(title),
+                    child: GestureDetector(
+                      onTap: () {
+
+                      },
+                      child: Text(title),
+                    ),
                   )
                 ],
               );
@@ -107,7 +112,6 @@ class _ChatPageState extends State<ChatPage> {
                 ChatGroup(
                   key: ValueKey(value.hashCode),
                   controller: _controller,
-                  date: key,
                   map: value,
                 ),
               );

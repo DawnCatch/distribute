@@ -15,7 +15,12 @@ class Env {
   // 开发环境
   static final EnvConfig _devConfig = EnvConfig(
     isSecurity: false,
-    // appDomain: "http://127.0.0.1:7896",
+    ip: "192.168.0.102",
+    port: 7896,
+  );
+
+  static final EnvConfig _debugCondig = EnvConfig(
+    isSecurity: false,
     ip: "119.23.142.66",
     port: 7896,
   );
@@ -33,6 +38,8 @@ class Env {
     switch (appEnv) {
       case EnvName.dev:
         return _devConfig;
+      case EnvName.debug:
+        return _debugCondig;
       case EnvName.release:
         return _releaseConfig;
       default:
@@ -46,5 +53,6 @@ class EnvName {
   static const String envKey = "APP_ENV";
 
   static const String dev = "dev";
+  static const String debug = "debug";
   static const String release = "release";
 }

@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import "content.dart";
+
 part 'message.g.dart';
 
 @JsonSerializable()
@@ -12,7 +13,7 @@ class Message {
   late num to;
   late Content content;
   late num date;
-  late List observers;
+  late List<num> observers;
   
   factory Message.fromJson(Map<String,dynamic> json) => _$MessageFromJson(json);
   Map<String, dynamic> toJson() => _$MessageToJson(this);

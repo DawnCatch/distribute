@@ -7,13 +7,11 @@ class ChatGroup extends StatefulWidget {
   const ChatGroup({
     super.key,
     required this.controller,
-    required this.date,
     required this.map,
   });
 
   final ChatController controller;
-  final num date;
-  final Map<num, List<Message>> map;
+  final List<List<Message>> map;
 
   @override
   State<StatefulWidget> createState() => _ChatGroupState();
@@ -28,19 +26,36 @@ class _ChatGroupState extends State<ChatGroup> {
   @override
   Widget build(BuildContext context) {
     final children = <Widget>[];
-    widget.map.forEach((key, value) {
+    num id = -1;
+    for (int i = 0; i < widget.map.length; i++) {
+      List<Message> messages = widget.map[i];
+      if (id == -1 && messages.firstOrNull != null) {
+        id = messages.first.id - 0.5;
+      }
       children.add(
         ChatGroupItem(
           controller: widget.controller,
-          messages: value,
+          messages: messages,
         ),
       );
-    });
+    }
+    widget.controller.updateHeight(id, 16);
     return Column(
       children: <Widget>[
-            // Text(widget.date.toString()),
+            SizedBox(
+              height: 16,
+              child: Center(
+                child: Text(getDate()),
+              ),
+            ),
           ] +
           children,
     );
+  }
+
+  String getDate() {
+    final milliseconds = widget.map.firstOrNull?.firstOrNull?.date ?? 0;
+    final date = DateTime.fromMillisecondsSinceEpoch(milliseconds.toInt()).toString();
+    return date.substring(0,date.length - 7);
   }
 }

@@ -13,7 +13,8 @@ Message _$MessageFromJson(Map<String, dynamic> json) => Message()
   ..to = json['to'] as num
   ..content = Content.fromJson(json['content'] as Map<String, dynamic>)
   ..date = json['date'] as num
-  ..observers = json['observers'] as List<dynamic>;
+  ..observers =
+      (json['observers'] as List<dynamic>).map((e) => e as num).toList();
 
 Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
       'type': instance.type,

@@ -37,4 +37,16 @@ class Union {
     tabs[0] += paths.map((it) => it.replaceAll("/", "")).toList();
     return tabs;
   }
+
+  bool inGroups(num id) {
+    return groups.indexWhere((it) => it.id == id) != -1 ? true : false;
+  }
+
+  bool inFollows(num id) {
+    return follows.indexWhere((it) => it.id == id) != -1 ? true : false;
+  }
+
+  bool inFans(num id) {
+    return fans.indexWhere((it) => it == id) != -1 ? true : false;
+  }
 }

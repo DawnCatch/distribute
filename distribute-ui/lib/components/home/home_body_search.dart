@@ -18,9 +18,9 @@ class _HomeBodySearchState extends State<HomeBodySearch> {
   Widget build(BuildContext context) {
     return const TabBarView(
       children: [
-        Center(child: Text('10')),
-        Center(child: Text('11')),
-        Center(child: Text('12')),
+        Center(child: SizedBox()),
+        Center(child: SizedBox()),
+        Center(child: SizedBox()),
       ],
     );
   }

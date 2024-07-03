@@ -21,7 +21,10 @@ class HomePage extends StatelessWidget {
         messageState.when(
             data: (data) {
               stream.forEach((e) {
-                messageNotifier.add(data, Message.fromJson(jsonDecode(e)));
+                Message message = Message.fromJson(jsonDecode(e));
+                if (message.content.type == "TEXT") {
+                  messageNotifier.add(data, message);
+                }
               });
             },
             error: (error, stack) {},
@@ -31,7 +34,13 @@ class HomePage extends StatelessWidget {
       child: Scaffold(
         drawer: const HomeDrawer(),
         floatingActionButton: FloatingActionButton(
-            onPressed: () {}, child: const Icon(Icons.add)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+          onPressed: () {
+            Navigator.pushNamed(context, "/add");
+          },
+          child: const Icon(Icons.add),
+        ),
         body: const HomeBody(),
       ),
     );

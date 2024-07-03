@@ -67,43 +67,45 @@ class _HomeDrawerState extends State<HomeDrawer>
                         final ownState = ref.watch(ownStateProvider);
                         return ownState.when(
                             data: (data) => Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            data?.nickname ??
-                                                // Global.appStore.profile?.nickname ??
-                                                "未登录",
-                                            style: const TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w900),
-                                          ),
-                                          Text(
-                                              data?.userId.toString() ??
-                                                  Global
-                                                      .appStore.profile?.userId
-                                                      .toString() ??
-                                                  "-1",
-                                              style: TextStyle(
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .primary,
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w300))
-                                        ],
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          data?.nickname ??
+                                              // Global.appStore.profile?.nickname ??
+                                              "未登录",
+                                          style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w900),
+                                        ),
+                                        // Text(
+                                        //   data?.userId.toString() ??
+                                        //       Global.appStore.profile?.userId
+                                        //           .toString() ??
+                                        //       "-1",
+                                        //   style: TextStyle(
+                                        //       color: Theme.of(context)
+                                        //           .colorScheme
+                                        //           .primary,
+                                        //       fontSize: 12,
+                                        //       fontWeight: FontWeight.w300),
+                                        // )
+                                      ],
+                                    ),
+                                    AnimatedRotation(
+                                      turns: _isExpanded ? -.5 : 0,
+                                      duration: animationDuration,
+                                      child: const Icon(
+                                        Icons.keyboard_arrow_down,
+                                        size: 32,
                                       ),
-                                      AnimatedRotation(
-                                        turns: _isExpanded ? -.5 : 0,
-                                        duration: animationDuration,
-                                        child: const Icon(
-                                            Icons.keyboard_arrow_down,
-                                            size: 32),
-                                      )
-                                    ]),
+                                    )
+                                  ],
+                                ),
                             error: (error, stack) => const Text("error"),
                             loading: () => const CircularProgressIndicator());
                       })),
