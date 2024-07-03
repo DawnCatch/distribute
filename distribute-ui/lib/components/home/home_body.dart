@@ -81,6 +81,9 @@ class _HomeBodyState extends ConsumerState<HomeBody>
               child: TextField(
                 focusNode: _searchFocusNode,
                 onChanged: (value) => setState(() {}),
+                onSubmitted: (value) {
+
+                },
                 decoration: const InputDecoration(
                   hintText: "搜索",
                   border: InputBorder.none,
