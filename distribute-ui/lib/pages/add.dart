@@ -3,9 +3,7 @@ import 'package:distribute/common/result.dart';
 import 'package:distribute/components/add/add_body_option_item.dart';
 import 'package:distribute/components/add/add_bottom_sheet_item.dart';
 import 'package:distribute/models/search_item.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class AddPage extends StatefulWidget {
   const AddPage({super.key});
@@ -28,7 +26,7 @@ class _AddPageState extends State<AddPage> {
             Navigator.pop(context);
           },
         ),
-        title: const Text("新建联系"),
+        title: Text(_items.length.toString()),
       ),
       floatingActionButton: FloatingActionButton(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
@@ -36,22 +34,25 @@ class _AddPageState extends State<AddPage> {
           showModalBottomSheet(
             context: context,
             builder: (BuildContext context) {
-              return Column(
-                children: [
-                  SizedBox(
-                    height: 40,
-                    child: Center(
-                      child: Container(
-                        height: 5,
-                        width: 100,
-                        color: Theme.of(context).colorScheme.onSurface,
+              return StatefulBuilder(builder: (context, setSheetState) {
+                _setSheetState = setSheetState;
+                return Column(
+                  children: [
+                    SizedBox(
+                      height: 40,
+                      child: Center(
+                        child: Container(
+                          height: 5,
+                          width: 100,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                       ),
                     ),
-                  ),
-                  buildSearchInput(),
-                  buildBottomSheetContent(),
-                ],
-              );
+                    buildSearchInput(),
+                    buildBottomSheetContent(),
+                  ],
+                );
+              });
             },
           );
         },
@@ -76,7 +77,10 @@ class _AddPageState extends State<AddPage> {
     );
   }
 
+  late StateSetter _setSheetState;
+
   late TextEditingController _controller;
+  late FocusNode _focusNode;
 
   Widget buildSearchInput() {
     return Container(
@@ -86,6 +90,7 @@ class _AddPageState extends State<AddPage> {
           Expanded(
             child: TextField(
               controller: _controller,
+              focusNode: _focusNode,
               autofocus: true,
               style: TextStyle(
                 fontSize: 16,
@@ -123,7 +128,10 @@ class _AddPageState extends State<AddPage> {
   }
 
   void onSearch() {
-    Http.post("/search/all", {"title": _controller.text}).then((res) {
+    _focusNode.unfocus();
+    Http.post("/search/all", {
+      "title": _controller.text,
+    }).then((res) {
       Result<List<SearchItem>> result = Result.fromJsonT(res, (json) {
         return (json as List<dynamic>)
             .map((e) => SearchItem.fromJson(e as Map<String, dynamic>))
@@ -132,6 +140,7 @@ class _AddPageState extends State<AddPage> {
       if (result.status == true && result.data != null) {
         _items = result.data!;
       }
+      _setSheetState(() {});
     });
   }
 
@@ -140,6 +149,7 @@ class _AddPageState extends State<AddPage> {
   @override
   void initState() {
     _controller = TextEditingController();
+    _focusNode = FocusNode();
     _items = [];
     super.initState();
   }

@@ -10,7 +10,7 @@ class EnvConfig {
 // 获取的配置信息
 class Env {
   // 获取到当前环境
-  static const appEnv = EnvName.dev;
+  static const appEnv = EnvName.debug;
 
   // 开发环境
   static final EnvConfig _devConfig = EnvConfig(
@@ -19,7 +19,7 @@ class Env {
     port: 7896,
   );
 
-  static final EnvConfig _debugCondig = EnvConfig(
+  static final EnvConfig _debugConfig = EnvConfig(
     isSecurity: false,
     ip: "119.23.142.66",
     port: 7896,
@@ -39,7 +39,7 @@ class Env {
       case EnvName.dev:
         return _devConfig;
       case EnvName.debug:
-        return _debugCondig;
+        return _debugConfig;
       case EnvName.release:
         return _releaseConfig;
       default:

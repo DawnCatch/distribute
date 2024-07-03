@@ -97,17 +97,19 @@ class _AddBottomSheetItemState extends ConsumerState<AddBottomSheetItem> {
   }
 
   void onPressed() {
-    if (_mode == "关注" || _mode == "回关") {
+    if (_mode == "关注" || _mode == "回关" || _mode == "取关") {
       Http.post(
         "/relation/user/follow",
-        {"targetId": widget.item.id},
+        {
+          "targetId": widget.item.id,
+        },
       ).then((res) {
         Result result = Result.fromJson(res, null);
         final unionState = ref.read(unionStateProvider.notifier);
         if (result.message == "关注成功") {
           unionState.addFollows(widget.item.id);
         } else if (result.message == "取消关注") {
-          unionState.addFollows(widget.item.id);
+          unionState.removeFollows(widget.item.id);
         }
       });
     } else if (_mode == "发消息") {
