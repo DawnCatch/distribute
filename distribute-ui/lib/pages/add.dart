@@ -26,7 +26,7 @@ class _AddPageState extends State<AddPage> {
             Navigator.pop(context);
           },
         ),
-        title: Text(_items.length.toString()),
+        title: const Text("新增对话"),
       ),
       floatingActionButton: FloatingActionButton(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
