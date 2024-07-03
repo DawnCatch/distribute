@@ -29,7 +29,6 @@ class _AddBottomSheetItemState extends ConsumerState<AddBottomSheetItem> {
 
   @override
   Widget build(BuildContext context) {
-    final unionState = ref.watch(unionStateProvider);
     String title = "";
     if (widget.item.type) {
       title = ref.watch(groupProfileStateProvider
@@ -40,6 +39,7 @@ class _AddBottomSheetItemState extends ConsumerState<AddBottomSheetItem> {
           .call(widget.item.id)
           .select((it) => it.value?.nickname ?? "None"));
     }
+    final unionState = ref.watch(unionStateProvider);
     unionState.when(
       data: (data) {
         if (widget.item.type) {
@@ -58,6 +58,8 @@ class _AddBottomSheetItemState extends ConsumerState<AddBottomSheetItem> {
             _mode = "回关";
           } else if (inFollows) {
             _mode = "取关";
+          } else {
+            _mode = "关注";
           }
         }
         setState(() {});
@@ -89,7 +91,12 @@ class _AddBottomSheetItemState extends ConsumerState<AddBottomSheetItem> {
                 backgroundColor: MaterialStateProperty.all(
                     Theme.of(context).colorScheme.surface)),
             onPressed: onPressed,
-            child: Text(_mode),
+            child: SizedBox(
+              width: 48,
+              child: Center(
+                child: Text(_mode),
+              ),
+            ),
           )
         ],
       ),
