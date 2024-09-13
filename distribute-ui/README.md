@@ -1,16 +1,34 @@
-# distribute
+# distribute-ui
 
-A new Flutter project.
+An Electron application with Vue and TypeScript
 
-## Getting Started
+## Recommended IDE Setup
 
-This project is a starting point for a Flutter application.
+- [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin)
 
-A few resources to get you started if this is your first Flutter project:
+## Project Setup
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Install
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+$ npm install
+```
+
+### Development
+
+```bash
+$ npm run dev
+```
+
+### Build
+
+```bash
+# For windows
+$ npm run build:win
+
+# For macOS
+$ npm run build:mac
+
+# For Linux
+$ npm run build:linux
+```
