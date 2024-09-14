@@ -1,6 +1,6 @@
 <template>
   <div data-tauri-drag-region class="title_bar">
-    <div v-if="appStore.index !== -1" class="chat_title">
+    <div v-if="appStore.checkItem.id !== -1" class="chat_title">
       {{ appStore.checkItem.title }}
     </div>
     <div class="window_tool">

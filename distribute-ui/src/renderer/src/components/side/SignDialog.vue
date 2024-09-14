@@ -1,5 +1,11 @@
 <template>
-  <Dialog mask :visible="visible" custom-class="sign_box" transition="sign" @click-mask-listen="close">
+  <Dialog
+    mask
+    :visible="visible"
+    custom-class="sign_box"
+    transition="sign"
+    @click-mask-listen="close"
+  >
     <h1>登录</h1>
     <div class="input_box login_box">
       <EditText v-model="user.username" placeholder="用户名" />
@@ -87,8 +93,8 @@ interface User {
   margin: auto;
 }
 
-.title>h1,
-.title>p {
+.title > h1,
+.title > p {
   margin: 3rem;
 }
 

@@ -5,12 +5,20 @@
       <Icon v-else name="avatar" custom-class="avatar_default" />
     </div>
     <div class="message_box">
-      <div v-for="message in messages as Message[]" :key="message"
-        v-element-visibility="(state: boolean) => onElementVisibility(state, message)" class="content_bar">
-        <div v-if="message.content.type === 'TEXT'" v-dompurify-html="md2Ele(message.content)"></div>
+      <div
+        v-for="(message, index) in messages as Message[]"
+        :key="index"
+        v-element-visibility="(state: boolean) => onElementVisibility(state, message)"
+        class="content_bar"
+      >
+        <div
+          v-if="message.content.type === 'TEXT'"
+          v-dompurify-html="md2Ele(message.content)"
+          class="content"
+        ></div>
         <span class="space"></span>
         <span class="time">{{ getTime(message.date) }}</span>
-        {{ message.observers }}
+        <!-- {{ message.observers }} -->
       </div>
     </div>
     <div v-if="reverse" class="avatar_box">
@@ -40,7 +48,7 @@ const props = defineProps({
 
 const reverse = computed(() => {
   const { type, id } = appStore.checkItem
-  const { from, to } = props.messages[0]
+  const { from, to } = props.messages[0] as Message
   if (type) {
     return from === appStore.profile.userId
   } else {
@@ -115,6 +123,10 @@ function onElementVisibility(state: boolean, message: Message) {
   word-wrap: break-word;
   border-radius: 1rem;
   background-color: var(--color-background-mute);
+}
+
+.content {
+  width: 100%;
 }
 
 .space {
