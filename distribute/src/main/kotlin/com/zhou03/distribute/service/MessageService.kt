@@ -52,8 +52,18 @@ class MessageServiceImpl : MessageService {
 
     override fun history(messageHistoryDTO: MessageHistoryDTO, request: HttpServletRequest): Result<List<MessageVO>?> {
         val token = request.getToken()
-        val from = if (messageHistoryDTO.from == "") 0L.toLocalDateTime() else messageHistoryDTO.from.toLocalDateTime()
-        val to = messageHistoryDTO.to.toLocalDateTime()
+        fun toLocalDateTime(str: String): LocalDateTime {
+            if (str == "") return 0L.toLocalDateTime()
+            return try {
+                str.toLong().toLocalDateTime()
+            } catch (e: Exception) {
+                str.toLocalDateTime()
+            }
+        }
+
+        val from = toLocalDateTime(messageHistoryDTO.from)
+        var to = toLocalDateTime(messageHistoryDTO.to)
+        if (to <= from) to = LocalDateTime.now()
         val groupIds = groupUserRelationDao.listByJoinAsOwn(token.userId).map { it.targetId }
         val messageDomains = messageDao.listByDateAsOwn(token.userId, groupIds, from, to)
         val ownMessageIds = messageDomains.filter { it.from == token.userId }.map { it.id }

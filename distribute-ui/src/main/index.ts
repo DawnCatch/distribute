@@ -2,13 +2,16 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import axios from 'axios'
+import WebSocketClient from './web-socket-client'
 
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 900,
+    width: 1130,
     height: 670,
     show: false,
+    frame: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
@@ -16,6 +19,8 @@ function createWindow(): void {
       sandbox: false
     }
   })
+
+  mainWindow.setMenu(null)
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
@@ -72,3 +77,47 @@ app.on('window-all-closed', () => {
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
+ipcMain.on('window-min', function () {
+  BrowserWindow.getFocusedWindow()?.minimize()
+})
+ipcMain.on('window-max', function () {
+  const mainWindow = BrowserWindow.getFocusedWindow()
+  if (mainWindow === null) return
+  if (mainWindow.isMaximized()) {
+    mainWindow.restore()
+  } else {
+    mainWindow.maximize()
+  }
+})
+ipcMain.on('window-close', function () {
+  BrowserWindow.getFocusedWindow()?.close()
+})
+
+ipcMain.on('http', async function (event, uuid, option) {
+  for (let i = 1; i <= 5; i++) {
+    try {
+      const res = await axios(option)
+      event.sender.send(`${uuid}-resolve`, {
+        data: res.data,
+        headers: res.headers,
+        status: res.status
+      })
+      return
+    } catch (error) {
+      event.sender.send(`${uuid}-reject`, `请求失败(第${i}次):${option.url}`)
+    }
+  }
+})
+
+let webSocketClient: WebSocketClient | null = null
+ipcMain.on('socket', function (event, option) {
+  option.onMessage = (message: any) => {
+    event.sender.send('on-message', message)
+  }
+  if (webSocketClient !== null) {
+    webSocketClient.option = option
+    return
+  }
+  webSocketClient = new WebSocketClient(option)
+  webSocketClient.connect()
+})
