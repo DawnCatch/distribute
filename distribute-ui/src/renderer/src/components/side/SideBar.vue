@@ -1,16 +1,8 @@
 <template>
   <div class="side_bar">
     <div class="top_bar">
-      <div
-        class="avatar_box"
-        :class="{ avatar_navigation: navigationDialogVisible, avatar_sign: signDialogVisible }"
-      >
-        <img
-          v-if="appStore.profile.nickname"
-          src="../../assets/avatar.jpg"
-          alt="avatar"
-          @click="openNavigation"
-        />
+      <div class="avatar_box" :class="{ avatar_navigation: navigationDialogVisible, avatar_sign: signDialogVisible }">
+        <img v-if="appStore.profile.nickname" src="../../assets/avatar.jpg" alt="avatar" @click="openNavigation" />
         <Icon v-else name="avatar" custom-class="avatar_default" @click="openSignDialog" />
       </div>
       <div>添加</div>
@@ -18,10 +10,16 @@
     <div ref="searchBoxRef" class="search_input_box">
       <BorderEditText ref="searchRef" v-model="text" placeholder="搜索" />
     </div>
-    <div v-if="searchFocus" class="search_content">
+    <!-- <div v-if="searchFocus" class="search_content">
       <SearchBox />
     </div>
     <div v-else ref="scrollable" class="session_list">
+      <SideBarItem v-for="(item, index) in appStore.relations" :key="index" :item="item" />
+    </div> -->
+    <div class="search_content" :class="{ visible: searchFocus }">
+      <SearchBox />
+    </div>
+    <div ref="scrollable" class="session_list" :class="{ visible: !searchFocus }">
       <SideBarItem v-for="(item, index) in appStore.relations" :key="index" :item="item" />
     </div>
     <NavigationDialog />
@@ -169,7 +167,8 @@ const searchFocus = computed(() => {
 }
 
 .search_content {
-  flex: 1;
+  transition: all 0.2s ease-in-out;
+  height: 0;
 }
 
 .search_box {
@@ -179,10 +178,11 @@ const searchFocus = computed(() => {
 
 .session_list {
   overflow-y: auto;
-  flex: 1;
   position: relative;
   display: flex;
   flex-direction: column;
+  transition: all 0.2s ease-in-out;
+  height: 0;
 }
 
 .session_list::after {
@@ -218,5 +218,9 @@ const searchFocus = computed(() => {
 
 .session_list::-webkit-scrollbar {
   width: 0;
+}
+
+.visible {
+  flex: 1;
 }
 </style>

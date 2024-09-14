@@ -99,7 +99,7 @@ function onElementVisibility(state: boolean, message: Message) {
 .avatar_box {
   display: flex;
   position: sticky;
-  bottom: 0;
+  bottom: 0.5rem;
   height: 3rem;
   width: 3rem;
   margin-bottom: 0.3rem;

@@ -1,7 +1,14 @@
 <template>
   <div class="edit_content" :class="{ focus: focused }">
     <form @onsubmit.prevent>
-      <input ref="inputRef" :type="type" :value="modelValue" autocomplete="off" :placeholder @input="handleInput" />
+      <input
+        ref="inputRef"
+        :type="type"
+        :value="modelValue"
+        autocomplete="off"
+        :placeholder
+        @input="handleInput"
+      />
     </form>
     <div class="option_button" @click="clear">
       <Icon name="close" custom-class="clear" />
@@ -46,6 +53,7 @@ function clear() {
 
 function focus(is: boolean) {
   focused.value = is
+  if (!is) clear()
 }
 
 defineExpose({
