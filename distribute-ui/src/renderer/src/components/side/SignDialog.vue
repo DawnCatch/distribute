@@ -1,11 +1,41 @@
 <template>
-  <Dialog mask :visible="visible" custom-class="sign_box" transition="sign" @click-mask-listen="close">
-    <h1>登录</h1>
-    <div class="input_box login_box">
-      <EditText v-model="user.username" placeholder="用户名" />
-      <EditText v-model="user.password" type="password" placeholder="密码" />
-    </div>
-    <Button ref="loginButton" @click="login"> 登录 </Button>
+  <Dialog
+    mask
+    :visible="visible"
+    transition="sign"
+    custom-class="dialog_content"
+    @click-mask-listen="close"
+  >
+    <ReverseSwitchPage v-model="active" :page-num="2" class="sign_box">
+      <template #page="{ data }">
+        <div v-if="data.index === 0">
+          <h1>登录</h1>
+          <div class="input_box login_box">
+            <EditText v-model="user.username" placeholder="用户名" />
+            <EditText v-model="user.password" type="password" placeholder="密码" />
+          </div>
+          <Button ref="loginButton" @click="login"> 登录 </Button>
+          <div class="space"></div>
+          <div class="tips">
+            没有账号?
+            <div class="tips_button" @click="data.select(1)">去注册</div>
+          </div>
+        </div>
+        <div v-else-if="data.index === 1">
+          <h1>注册</h1>
+          <div class="input_box login_box">
+            <EditText v-model="user.username" placeholder="用户名" />
+            <EditText v-model="user.password" type="password" placeholder="密码" />
+          </div>
+          <Button ref="registerButton" @click="register"> 注册 </Button>
+          <div class="space"></div>
+          <div class="tips">
+            已有账号?
+            <div class="tips_button" @click="data.select(0)">去登录</div>
+          </div>
+        </div>
+      </template>
+    </ReverseSwitchPage>
   </Dialog>
 </template>
 
@@ -17,6 +47,8 @@ import { Profile, useAppStore } from '../../stores/appStore'
 import Dialog from '../Dialog.vue'
 import EditText from '../EditText.vue'
 import Button from '../Button.vue'
+import ReverseSwitchPage from '../ReverseSwitchPage.vue'
+
 import { http } from '../../utils/http'
 import mitt from '../../utils/mitt'
 
@@ -36,6 +68,7 @@ const visible = ref(false)
 const user: User = reactive({ username: '', password: '' } as User)
 
 const loginButton = ref<InstanceType<typeof Button> | null>()
+const registerButton = ref<InstanceType<typeof Button> | null>()
 
 function login() {
   loginButton.value?.wait()
@@ -49,6 +82,21 @@ function login() {
       close()
     }
     loginButton.value?.release()
+  })
+}
+
+function register() {
+  registerButton.value?.wait()
+  http({
+    method: 'POST',
+    url: '/user/register',
+    data: user
+  }).then((res) => {
+    if (res.status) {
+      appStore.setOwn(res.data as Profile)
+      close()
+    }
+    registerButton.value?.release()
   })
 }
 
@@ -72,6 +120,8 @@ watch(
     deep: false
   }
 )
+
+const active = ref(0)
 </script>
 
 <script lang="ts">
@@ -82,6 +132,15 @@ interface User {
 </script>
 
 <style scoped>
+.sign_box {
+  margin: auto;
+  width: 19rem;
+  height: 26rem;
+  border-radius: 2rem;
+  background-color: var(--color-background-soft);
+  padding: 2rem;
+}
+
 .title {
   position: relative;
   top: -1rem;
@@ -89,8 +148,8 @@ interface User {
   margin: auto;
 }
 
-.title>h1,
-.title>p {
+.title > h1,
+.title > p {
   margin: 3rem;
 }
 
@@ -112,16 +171,25 @@ p {
 .login_box {
   padding: 15% 0;
 }
+
+.space {
+  height: 1rem;
+}
+
+.tips {
+  display: flex;
+  justify-content: center;
+}
+
+.tips_button {
+  border-bottom: 1px solid black;
+  cursor: pointer;
+}
 </style>
 
 <style>
-.sign_box {
+.dialog_content {
   margin: auto;
-  width: 19rem;
-  height: 26rem;
-  border-radius: 2rem;
-  background-color: var(--color-background-soft);
-  padding: 2rem;
 }
 
 .sign-enter-active {

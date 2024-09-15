@@ -17,7 +17,11 @@
         <div class="time_stamp">
           {{ time(item) }}
         </div>
-        <Message v-for="(messages, key) in item as Record<number, MessageModel[]>" :key :messages="messages" />
+        <Message
+          v-for="(messages, key) in item as Record<number, MessageModel[]>"
+          :key
+          :messages="messages"
+        />
       </div>
     </ScrollBox>
     <ChatoptionBar ref="chatOptionBar" />

@@ -86,6 +86,7 @@ watch(
       len++
     }
     const message = messages[index]
+    text.value = ''
     if (message.from !== ownId) {
       text.value = '=> '
     }
