@@ -1,5 +1,5 @@
 <template>
-  <div v-if="appStore.isLogin" class="chat_bar">
+  <div v-if="appStore.isLogin && appStore.current.id !== -1" class="chat_bar">
     <div class="tool_bar">
       <div class="chat_text_box">
         <div class="title_text">{{ appStore.currentTitle }}</div>
@@ -17,14 +17,16 @@
         <div class="time_stamp">
           {{ time(item) }}
         </div>
-        <Message
-          v-for="(messages, key) in item as Record<number, MessageModel[]>"
-          :key
-          :messages="messages"
-        />
+        <Message v-for="(messages, key) in item as Record<number, MessageModel[]>" :key :messages="messages" />
       </div>
     </ScrollBox>
     <ChatoptionBar ref="chatOptionBar" />
+  </div>
+  <div v-else-if="appStore.isLogin" class="tips_box">
+    <div class="tips">选择一个对话开始聊天</div>
+  </div>
+  <div v-else class="tips_box">
+    <div class="tips">请先登录</div>
   </div>
 </template>
 
@@ -44,9 +46,9 @@ import ScrollBox from '../ScrollBox.vue'
 const appStore = useAppStore()
 
 const group = computed(() => {
+  const { type, id } = appStore.current
   try {
-    const result = appStore.currentGroup
-    console.log(result)
+    const result = appStore.messageGroup[type ? 1 : 0][id]
     return result
   } catch (e) {
     return {}
@@ -155,5 +157,20 @@ const messageListStyle = computed(() => {
   padding: 0.5rem 1rem;
   margin: 0.25rem auto;
   z-index: 1;
+}
+
+.tips_box {
+  display: flex;
+  height: 100%;
+  width: 0;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+}
+
+.tips {
+  padding: 0.5rem 1rem;
+  border-radius: 1rem;
+  background-color: var(--color-background-mute);
 }
 </style>

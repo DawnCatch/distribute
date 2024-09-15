@@ -25,19 +25,12 @@ watch(
   () => appStore.isLogin,
   (newVal) => {
     if (!newVal) return
-    const messages = appStore.messages
-    let before = 0
-    for (let i = 0; i < messages.length; i++) {
-      const it = messages[i]
-      if (before < it.date) {
-        before = it.date
-      }
-    }
+    console.log(newVal)
     http({
       method: 'POST',
       url: '/message/history',
       data: {
-        from: `${before}`,
+        from: '0',
         to: ''
       }
     }).then((res) => {

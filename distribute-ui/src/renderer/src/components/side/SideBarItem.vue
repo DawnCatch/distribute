@@ -20,7 +20,7 @@
 <script setup lang="ts">
 import Avatar from '@renderer/components/Avatar.vue'
 
-import { Relation, useAppStore } from '../../stores/appStore'
+import { Message, Relation, useAppStore } from '../../stores/appStore'
 import { computed, ref, watch } from 'vue'
 import { getTime } from '@renderer/utils/utils'
 
@@ -47,10 +47,11 @@ function select() {
   appStore.setCurrent(type, id)
 }
 
-const messages = computed(() => {
+const map = computed(() => {
   try {
-    return appStore.messageMap[props.item.type ? '1' : '0'][props.item.id] ?? []
-  }catch(e) {
+    const result = appStore.messageMap
+    return result
+  } catch (e) {
     return []
   }
 })
@@ -60,12 +61,18 @@ const newsLen = ref(0)
 const date = ref('')
 
 watch(
-  messages,
-  (messages) => {
+  map,
+  (newVal) => {
+    console.log(newVal)
+    let messages: Message[]
+    try {
+      messages = newVal[props.item.type ? '1' : '0'][props.item.id] ?? []
+    } catch (e) {
+      return
+    }
     const ownId = appStore.ownId
     let index = 0
     let len = 0
-    console.log(messages)
     if (messages.length === 0) return
     for (let i = 0; i < messages.length; i++) {
       const { date } = messages[i]
@@ -87,6 +94,7 @@ watch(
     newsLen.value = len
   },
   {
+    immediate: true,
     deep: true
   }
 )

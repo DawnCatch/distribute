@@ -10,7 +10,7 @@ export const useAppStore = defineStore('app', {
     relations: [] as Relation[],
     messages: [] as Message[],
     messageMap: [] as Message[][][],
-    messageGroup: {} as Record<number, Record<number, Message[][]>>[],
+    messageGroup: [] as Record<number, Record<number, Message[][]>>[],
     current: {
       type: false,
       id: -1

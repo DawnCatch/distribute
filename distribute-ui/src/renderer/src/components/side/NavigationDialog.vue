@@ -32,7 +32,6 @@ import { useAppStore } from '../../stores/appStore'
 import Dialog from '../Dialog.vue'
 import Icon from '../Icon.vue'
 import mitt from '../../utils/mitt'
-import { setToken } from '../../utils/secure'
 
 const appStore = useAppStore()
 
@@ -74,7 +73,8 @@ watch(
 )
 
 function signOut() {
-  setToken('')
+  mitt.emit('reload')
+  close()
 }
 </script>
 
