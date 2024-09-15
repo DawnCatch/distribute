@@ -51,7 +51,7 @@ function login() {
     data: user
   }).then((res) => {
     if (res.status) {
-      appStore.setProfile(res.data as Profile)
+      appStore.setOwn(res.data as Profile)
       close()
     }
     loginButton.value?.release()

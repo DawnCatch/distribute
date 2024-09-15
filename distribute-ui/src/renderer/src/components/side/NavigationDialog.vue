@@ -9,7 +9,7 @@
     <div class="user_box box" @click="extend">
       <div class="user_detail">
         <div class="detail_text">
-          {{ appStore.profile.nickname }}
+          {{ appStore.own.nickname }}
         </div>
         <div class="detail_text click_text">设置状态</div>
       </div>

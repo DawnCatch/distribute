@@ -1,7 +1,7 @@
 <template>
   <div class="message_bar" :class="{ reverse: reverse }">
     <div v-if="!reverse" class="avatar_box">
-      <img v-if="appStore.profile.nickname" src="../../assets/avatar.jpg" alt="avatar" />
+      <img v-if="appStore.currentTitle" src="../../assets/avatar.jpg" alt="avatar" />
       <Icon v-else name="avatar" custom-class="avatar_default" />
     </div>
     <div class="message_box">
@@ -22,7 +22,7 @@
       </div>
     </div>
     <div v-if="reverse" class="avatar_box">
-      <img v-if="appStore.profile.nickname" src="../../assets/avatar.jpg" alt="avatar" />
+      <img v-if="appStore.isLogin" src="../../assets/avatar.jpg" alt="avatar" />
       <Icon v-else name="avatar" custom-class="avatar_default" />
     </div>
   </div>
@@ -36,6 +36,7 @@ import { vElementVisibility } from '@vueuse/components'
 import Icon from '../Icon.vue'
 import { computed } from 'vue'
 import { http } from '../../utils/http'
+import { getTime } from '@renderer/utils/utils'
 
 const appStore = useAppStore()
 
@@ -47,26 +48,14 @@ const props = defineProps({
 })
 
 const reverse = computed(() => {
-  const { type, id } = appStore.checkItem
+  const { type, id } = appStore.current
   const { from, to } = props.messages[0] as Message
   if (type) {
-    return from === appStore.profile.userId
+    return from === appStore.ownId
   } else {
     return to === id
   }
 })
-
-function getTime(time: number) {
-  const date = new Date(time)
-  let result = ''
-  const hours = date.getHours() % 24
-  const minutes = date.getMinutes()
-  if (hours < 10) result = `0${hours}:`
-  else result = `${hours}:`
-  if (minutes < 10) result += `0${minutes}`
-  else result += `${minutes}`
-  return result
-}
 
 function md2Ele(item: Content) {
   return markdown.render(item.value)
@@ -74,7 +63,7 @@ function md2Ele(item: Content) {
 
 function onElementVisibility(state: boolean, message: Message) {
   if (reverse.value) return
-  if (state && !message.observers.includes(appStore.profile.userId)) {
+  if (state && !message.observers.includes(appStore.ownId)) {
     http({
       url: '/message/read',
       data: {

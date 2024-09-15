@@ -17,13 +17,14 @@ onMounted(() => {
     url: '/user/reconnect'
   }).then((res) => {
     if (res.status) {
-      appStore.setProfile(res.data as Profile)
+      appStore.setOwn(res.data as Profile)
     }
   })
 })
 watch(
-  () => appStore.profile,
-  () => {
+  () => appStore.isLogin,
+  (newVal) => {
+    if (!newVal) return
     const messages = appStore.messages
     let before = 0
     for (let i = 0; i < messages.length; i++) {
@@ -41,7 +42,7 @@ watch(
       }
     }).then((res) => {
       if (res.status) {
-        appStore.setMessage(res.data as Message[])
+        appStore.addMessages(res.data as Message[])
       }
     })
     http({
@@ -56,7 +57,7 @@ watch(
     mitt.on('on-message', (value) => {
       const message = value as Message
       appStore.addMessage(message as Message)
-      if (message.from !== appStore.profile.userId) {
+      if (message.from !== appStore.ownId) {
         notification({
           title: `收到一条来自${appStore.relations.filter((it) => it.id === message.from && it.type === message.type)[0].title}的消息`,
           body: message.content.value

@@ -1,8 +1,8 @@
 <template>
-  <div v-if="appStore.checkItem.id !== -1" class="chat_bar">
+  <div v-if="appStore.isLogin" class="chat_bar">
     <div class="tool_bar">
       <div class="chat_text_box">
-        <div class="title_text">{{ appStore.checkItem.title }}</div>
+        <div class="title_text">{{ appStore.currentTitle }}</div>
         <div class="detail_text">0 人</div>
       </div>
       <div class="option_box">
@@ -15,7 +15,7 @@
     <ScrollBox class="message_list" :style="messageListStyle">
       <div v-for="(item, index) in group" :key="index" class="message_content">
         <div class="time_stamp">
-          {{ getTime(item) }}
+          {{ time(item) }}
         </div>
         <Message
           v-for="(messages, key) in item as Record<number, MessageModel[]>"
@@ -24,14 +24,6 @@
         />
       </div>
     </ScrollBox>
-    <!-- <div class="message_list" :style="messageListStyle">
-      <div v-for="(item, index) in group" :key="index" class="message_content">
-        <div class="time_stamp">
-          {{ getTime(item) }}
-        </div>
-        <Message v-for="(messages, key) in item as Record<number, MessageModel[]>" :key :messages="messages" />
-      </div>
-    </div> -->
     <ChatoptionBar ref="chatOptionBar" />
   </div>
 </template>
@@ -41,6 +33,7 @@ import { Message as MessageModel, useAppStore } from '../../stores/appStore'
 import { computed, ref } from 'vue'
 import mitt from '../../utils/mitt'
 import { useElementSize } from '@vueuse/core'
+import { getTime } from '@renderer/utils/utils'
 
 import Message from './Message.vue'
 import ChatoptionBar from './ChatOptionBar.vue'
@@ -51,31 +44,23 @@ import ScrollBox from '../ScrollBox.vue'
 const appStore = useAppStore()
 
 const group = computed(() => {
-  const { type, id } = appStore.checkItem
-  if (id === -1) return {}
   try {
-    const result = appStore.messageGroup[type ? 1 : 0][id]
+    const result = appStore.currentGroup
+    console.log(result)
     return result
   } catch (e) {
     return {}
   }
 })
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function send() {
-  mitt.emit('rtc:request', appStore.checkItem.id)
+  mitt.emit('rtc:request', appStore.ownId)
 }
 
-function getTime(item: Record<number, MessageModel[]>) {
+function time(item: Record<number, MessageModel[]>) {
   for (const key in item) {
-    const date = new Date(item[key][0].date)
-    let result = ''
-    const hours = date.getHours() % 24
-    const minutes = date.getMinutes()
-    if (hours < 10) result = `0${hours}:`
-    else result = `${hours}:`
-    if (minutes < 10) result += `0${minutes}`
-    else result += `${minutes}`
-    return result
+    return getTime(item[key][0].date)
   }
   return ''
 }

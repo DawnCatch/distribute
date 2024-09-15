@@ -1,8 +1,16 @@
 <template>
   <div class="side_bar">
     <div class="top_bar">
-      <div class="avatar_box" :class="{ avatar_navigation: navigationDialogVisible, avatar_sign: signDialogVisible }">
-        <img v-if="appStore.profile.nickname" src="../../assets/avatar.jpg" alt="avatar" @click="openNavigation" />
+      <div
+        class="avatar_box"
+        :class="{ avatar_navigation: navigationDialogVisible, avatar_sign: signDialogVisible }"
+      >
+        <img
+          v-if="appStore.isLogin"
+          src="../../assets/avatar.jpg"
+          alt="avatar"
+          @click="openNavigation"
+        />
         <Icon v-else name="avatar" custom-class="avatar_default" @click="openSignDialog" />
       </div>
       <div>添加</div>
@@ -14,7 +22,7 @@
       <SearchBox />
     </div>
     <ScrollBox class="session_list" :class="{ visible: !searchFocus }">
-      <SideBarItem v-for="(item, index) in appStore.relations" :key="index" :item="item" />
+      <SideBarItem v-for="(item, index) in appStore.ownRelations" :key="index" :item="item" />
     </ScrollBox>
     <NavigationDialog />
     <SignDialog />

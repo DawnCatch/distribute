@@ -7,11 +7,11 @@
         <div class="title">
           {{ item.title }}
         </div>
-        <div class="date">xx:xx</div>
+        <div class="date">{{ date }}</div>
       </div>
       <div class="message_box">
-        <div class="message_text">你好</div>
-        <div class="message_len">100</div>
+        <div class="message_text">{{ text }}</div>
+        <div v-if="newsLen" class="message_len">{{ newsLen }}</div>
       </div>
     </div>
   </div>
@@ -21,7 +21,8 @@
 import Avatar from '@renderer/components/Avatar.vue'
 
 import { Relation, useAppStore } from '../../stores/appStore'
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
+import { getTime } from '@renderer/utils/utils'
 
 const appStore = useAppStore()
 
@@ -37,13 +38,58 @@ const type = computed(() => {
 })
 
 const isFocus = computed(() => {
-  const { type, id } = appStore.checkItem
+  const { type, id } = appStore.current
   return props.item.type === type && props.item.id === id
 })
 
 function select() {
-  appStore.check(props.item as Relation)
+  const { type, id } = props.item
+  appStore.setCurrent(type, id)
 }
+
+const messages = computed(() => {
+  try {
+    return appStore.messageMap[props.item.type ? '1' : '0'][props.item.id] ?? []
+  }catch(e) {
+    return []
+  }
+})
+
+const text = ref('')
+const newsLen = ref(0)
+const date = ref('')
+
+watch(
+  messages,
+  (messages) => {
+    const ownId = appStore.ownId
+    let index = 0
+    let len = 0
+    console.log(messages)
+    if (messages.length === 0) return
+    for (let i = 0; i < messages.length; i++) {
+      const { date } = messages[i]
+      if (date > messages[index].date) {
+        index = i
+      }
+    }
+    for (let i = messages.length - 1; i >= 0; i--) {
+      const { from, observers } = messages[i]
+      if (from === ownId || observers.includes(ownId)) break
+      len++
+    }
+    const message = messages[index]
+    if (message.from !== ownId) {
+      text.value = '=> '
+    }
+    date.value = getTime(message.date)
+    text.value += message.content.value
+    newsLen.value = len
+  },
+  {
+    deep: true
+  }
+)
 </script>
 
 <style scoped>
@@ -116,6 +162,10 @@ function select() {
   background-color: var(--color-toast-tip-background-mute);
   color: var(--color-slde-bar-item-background-hover);
   font-size: 0.75rem;
+  display: flex;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 .focus .message_len {
