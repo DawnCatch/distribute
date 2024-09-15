@@ -63,7 +63,6 @@ const date = ref('')
 watch(
   map,
   (newVal) => {
-    console.log(newVal)
     let messages: Message[]
     try {
       messages = newVal[props.item.type ? '1' : '0'][props.item.id] ?? []
@@ -114,12 +113,12 @@ watch(
 }
 
 .profile_box:hover {
-  background-color: var(--color-slde-bar-item-background-hover);
+  background-color: var(--color-side-bar-item-background-hover);
 }
 
 .focus,
 .focus:hover {
-  background-color: var(--color-slde-bar-item-background-focus);
+  background-color: var(--color-side-bar-item-background-focus);
 }
 
 .avatar {
@@ -169,7 +168,7 @@ watch(
   padding: 0.25rem;
   border-radius: 0.75rem;
   background-color: var(--color-toast-tip-background-mute);
-  color: var(--color-slde-bar-item-background-hover);
+  color: var(--color-side-bar-item-background-hover);
   font-size: 0.75rem;
   display: flex;
   justify-content: center;
@@ -179,6 +178,6 @@ watch(
 
 .focus .message_len {
   background-color: var(--color-toast-tip-background-soft);
-  color: var(--color-slde-bar-item-background-focus);
+  color: var(--color-side-bar-item-background-focus);
 }
 </style>

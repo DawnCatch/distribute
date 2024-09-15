@@ -18,8 +18,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-import TabBar from '../tab/TabBar.vue'
-import TabView from '../tab/TabView.vue'
+import TabBar from '../../tab/TabBar.vue'
+import TabView from '../../tab/TabView.vue'
 
 const list = ref([
   {

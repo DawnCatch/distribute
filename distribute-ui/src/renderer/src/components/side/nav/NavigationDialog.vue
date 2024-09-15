@@ -18,8 +18,27 @@
       </div>
     </div>
     <div class="device_list" :class="{ device_list_visible: deviceListVisible }"></div>
-    <div class="option_box box">
-      <div @click="signOut">退出登录</div>
+    <div class="option_list">
+      <NavigationOptionItem title="添&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp加">
+        <Icon name="invite" custom-class="navigation_icon" />
+      </NavigationOptionItem>
+      <NavigationOptionItem title="收&nbsp&nbsp藏&nbsp&nbsp夹">
+        <Icon name="mark" custom-class="navigation_icon" />
+      </NavigationOptionItem>
+      <NavigationOptionItem
+        title="夜间模式"
+        :default-value="isDark"
+        type="switch"
+        :use="changeTheme"
+      >
+        <Icon name="night" custom-class="navigation_icon" />
+      </NavigationOptionItem>
+      <NavigationOptionItem title="设置">
+        <Icon name="setting" custom-class="navigation_icon" />
+      </NavigationOptionItem>
+      <NavigationOptionItem title="退出登录" :use="signOut">
+        <Icon name="exit" custom-class="navigation_icon" />
+      </NavigationOptionItem>
     </div>
   </Dialog>
 </template>
@@ -27,11 +46,14 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, watch } from 'vue'
 
-import { useAppStore } from '../../stores/appStore'
+import { useAppStore } from '../../../stores/appStore'
 
-import Dialog from '../Dialog.vue'
-import Icon from '../Icon.vue'
-import mitt from '../../utils/mitt'
+import Dialog from '../../Dialog.vue'
+import Icon from '../../Icon.vue'
+import NavigationOptionItem from './NavigationOptionItem.vue'
+
+import mitt from '../../../utils/mitt'
+import { useDark, useToggle } from '@vueuse/core'
 
 const appStore = useAppStore()
 
@@ -76,6 +98,14 @@ function signOut() {
   mitt.emit('reload')
   close()
 }
+
+const isDark = useDark()
+const toggleDark = useToggle(isDark)
+
+function changeTheme() {
+  setTimeout(() => toggleDark(), 150)
+  return true
+}
 </script>
 
 <style scoped>
@@ -118,17 +148,12 @@ function signOut() {
 .device_list_visible {
   padding: 0.25rem 2rem;
 }
-
-.option_box {
-  display: flex;
-  border-top: 1px solid var(--color-border-hover);
-}
 </style>
 
 <style>
 .navigation_box {
   height: 100%;
-  width: 18%;
+  width: 16rem;
   background-color: var(--color-background-soft);
   box-shadow: 0 0 0.5rem black;
   overflow-y: hidden;
@@ -155,5 +180,10 @@ function signOut() {
 .btn_extend_icon {
   height: 2rem;
   width: 2rem;
+}
+
+.navigation_icon {
+  width: 1.5rem;
+  height: 1.5rem;
 }
 </style>

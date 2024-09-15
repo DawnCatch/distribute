@@ -6,15 +6,14 @@
         <div class="detail_text">0 人</div>
       </div>
       <div class="option_box">
-        <Icon name="search" custom-class="icon" />
-        <Icon name="split" custom-class="icon" />
-        <Icon name="more" custom-class="icon" />
+        <Icon name="search" custom-class="chat_icon" />
+        <Icon name="split" custom-class="chat_icon" />
+        <Icon name="more" custom-class="chat_icon" />
       </div>
     </div>
     <Split direction :weight="0.125" />
-    <ScrollBox class="message_list" :style="messageListStyle">
+    <ScrollBox ref="scrollRef" class="message_list" :style="messageListStyle">
       <div v-for="(item, index) in group" :key="index" class="message_content">
-        {{ item }}
         <div class="time_stamp">
           {{ time(item) }}
         </div>
@@ -33,7 +32,7 @@
 
 <script setup lang="ts">
 import { Message as MessageModel, useAppStore } from '../../stores/appStore'
-import { computed, ref } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import mitt from '../../utils/mitt'
 import { useElementSize } from '@vueuse/core'
 import { getTime } from '@renderer/utils/utils'
@@ -50,26 +49,11 @@ const group = computed(() => {
   const { type, id } = appStore.current
   try {
     const result = appStore.messageGroup[type ? 1 : 0][id]
-    return reverseData(result)
+    return result
   } catch (e) {
     return {}
   }
 })
-
-function reverseData(data: Record<number, MessageModel[][]>): Record<number, MessageModel[][]> {
-  const reversedData: Record<number, MessageModel[][]> = {}
-
-  for (const key in data) {
-    if (Array.isArray(data[key])) {
-      reversedData[key] = data[key]
-        .slice()
-        .reverse()
-        .map((arr) => arr.reverse())
-    }
-  }
-
-  return reversedData
-}
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function send() {
@@ -91,6 +75,18 @@ const messageListStyle = computed(() => {
     height: `calc(100% - ${height.value}px)`
   }
 })
+
+const scrollRef = ref<InstanceType<typeof ScrollBox> | null>()
+
+watch(
+  () => appStore.current,
+  () => {
+    nextTick(() => {
+      scrollRef.value && scrollRef.value.scrollToBottom()
+    })
+  },
+  { deep: true }
+)
 </script>
 
 <style scoped>
@@ -99,7 +95,6 @@ const messageListStyle = computed(() => {
 */
 .chat_bar {
   position: relative;
-  background-color: var(--color-background-pro);
   height: 100%;
   width: 0;
   flex: 1;
@@ -117,9 +112,9 @@ const messageListStyle = computed(() => {
 .message_list {
   width: 100%;
   height: 0;
-  /* height: calc(100% - 3rem); */
   overflow: auto;
   flex: 1;
+  background-color: var(--color-chat-message-list-background);
 }
 
 /* .message_list::-webkit-scrollbar {
@@ -155,7 +150,7 @@ const messageListStyle = computed(() => {
   align-items: center;
 }
 
-.icon {
+.chat_icon {
   width: 1.25rem;
   height: 1.25rem;
   cursor: pointer;
@@ -170,7 +165,7 @@ const messageListStyle = computed(() => {
   background-color: var(--color-background-soft);
   border-radius: 1.25rem;
   border: 1px solid var(--color-background-pro);
-  padding: 0.5rem 1rem;
+  padding: 0.15rem 0.5rem;
   margin: 0.25rem auto;
   z-index: 1;
 }

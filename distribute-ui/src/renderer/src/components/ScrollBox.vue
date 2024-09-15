@@ -10,11 +10,13 @@
 </template>
 
 <script setup lang="ts">
-import { useElementHover } from '@vueuse/core'
+import { useAppStore } from '@renderer/stores/appStore'
+import { useElementHover, useElementVisibility } from '@vueuse/core'
 import { ref, watch, nextTick } from 'vue'
 
 const scrollBoxRef = ref<HTMLElement | null>()
 const scrollBarRef = ref<HTMLElement | null>()
+const visibled = useElementVisibility(scrollBarRef)
 const scrollThumbRef = ref<HTMLElement | null>()
 
 const scrollVisible = ref(false)
@@ -22,6 +24,8 @@ const scrollTop = ref(0)
 const scrollThumbTop = ref(0)
 const scrollThumbHeight = ref(0)
 const isHovered = useElementHover(scrollBoxRef)
+
+const appStore = useAppStore()
 
 watch(
   isHovered,
@@ -32,6 +36,18 @@ watch(
     immediate: false,
     deep: false
   }
+)
+
+watch(visibled, (newVal) => {
+  if (newVal) handleScroll()
+})
+
+watch(
+  () => appStore.current,
+  () => {
+    scrollVisible.value = false
+  },
+  { deep: true }
 )
 
 function handleScroll() {
@@ -52,6 +68,15 @@ function handleScroll() {
     }
   })
 }
+
+function scrollToBottom() {
+  // scrollBoxRef.value!.scrollTo({ top: 99999 })
+  scrollBoxRef.value!.scrollTo({ top: scrollBoxRef.value!.scrollHeight })
+}
+
+defineExpose({
+  scrollToBottom
+})
 </script>
 
 <style scoped>

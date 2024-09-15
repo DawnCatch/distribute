@@ -25,7 +25,6 @@ watch(
   () => appStore.isLogin,
   (newVal) => {
     if (!newVal) return
-    console.log(newVal)
     http({
       method: 'POST',
       url: '/message/history',

@@ -6,6 +6,111 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "1444698",
+      "name": "group",
+      "font_class": "path",
+      "unicode": "e791",
+      "unicode_decimal": 59281
+    },
+    {
+      "icon_id": "21243071",
+      "name": "通知",
+      "font_class": "toast",
+      "unicode": "e650",
+      "unicode_decimal": 58960
+    },
+    {
+      "icon_id": "1898910",
+      "name": "moon-o",
+      "font_class": "night",
+      "unicode": "e6e4",
+      "unicode_decimal": 59108
+    },
+    {
+      "icon_id": "6050540",
+      "name": "exit",
+      "font_class": "exit",
+      "unicode": "e622",
+      "unicode_decimal": 58914
+    },
+    {
+      "icon_id": "41127637",
+      "name": "invite",
+      "font_class": "invite",
+      "unicode": "e683",
+      "unicode_decimal": 59011
+    },
+    {
+      "icon_id": "536459",
+      "name": "person",
+      "font_class": "person",
+      "unicode": "e60c",
+      "unicode_decimal": 58892
+    },
+    {
+      "icon_id": "766689",
+      "name": "date",
+      "font_class": "date",
+      "unicode": "e697",
+      "unicode_decimal": 59031
+    },
+    {
+      "icon_id": "1261566",
+      "name": "ellipsis-v",
+      "font_class": "more",
+      "unicode": "e66b",
+      "unicode_decimal": 58987
+    },
+    {
+      "icon_id": "1388115",
+      "name": "group",
+      "font_class": "group",
+      "unicode": "e613",
+      "unicode_decimal": 58899
+    },
+    {
+      "icon_id": "1433785",
+      "name": "mark-o",
+      "font_class": "mark",
+      "unicode": "e64d",
+      "unicode_decimal": 58957
+    },
+    {
+      "icon_id": "4767039",
+      "name": "sort-ascending",
+      "font_class": "sort",
+      "unicode": "e7f1",
+      "unicode_decimal": 59377
+    },
+    {
+      "icon_id": "9568085",
+      "name": "link",
+      "font_class": "link-0",
+      "unicode": "e659",
+      "unicode_decimal": 58969
+    },
+    {
+      "icon_id": "11538059",
+      "name": "link",
+      "font_class": "link-1",
+      "unicode": "e678",
+      "unicode_decimal": 59000
+    },
+    {
+      "icon_id": "12310549",
+      "name": "square_split_2x1",
+      "font_class": "split",
+      "unicode": "e8bf",
+      "unicode_decimal": 59583
+    },
+    {
+      "icon_id": "18991735",
+      "name": "setting",
+      "font_class": "setting",
+      "unicode": "e87e",
+      "unicode_decimal": 59518
+    },
+    {
       "icon_id": "1262104",
       "name": "search",
       "font_class": "search",

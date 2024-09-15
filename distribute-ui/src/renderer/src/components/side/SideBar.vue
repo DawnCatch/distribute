@@ -13,7 +13,9 @@
         />
         <Icon v-else name="avatar" custom-class="avatar_default" @click="openSignDialog" />
       </div>
-      <div>添加</div>
+      <div class="toast_btn">
+        <Icon name="toast" custom-class="side_bar_icon" />
+      </div>
     </div>
     <div ref="searchBoxRef" class="search_input_box">
       <BorderEditText ref="searchRef" v-model="text" placeholder="搜索" />
@@ -37,10 +39,10 @@ import { useAppStore } from '../../stores/appStore'
 import Icon from '../Icon.vue'
 import SideBarItem from './SideBarItem.vue'
 import BorderEditText from '../BorderEditText.vue'
-import SearchBox from './SearchBox.vue'
+import SearchBox from './search/SearchBox.vue'
 import ScrollBox from '../ScrollBox.vue'
 
-import NavigationDialog from './NavigationDialog.vue'
+import NavigationDialog from './nav/NavigationDialog.vue'
 import SignDialog from './SignDialog.vue'
 import mitt from '../../utils/mitt'
 import { useFocusWithin } from '@vueuse/core'
@@ -98,6 +100,7 @@ const searchFocus = computed(() => {
 .top_bar {
   padding: 0.5rem;
   display: flex;
+  align-items: center;
 }
 
 .avatar_box {
@@ -111,7 +114,23 @@ const searchFocus = computed(() => {
   border-radius: 50%;
   overflow: hidden;
   transition: all 0.5s;
+  cursor: pointer;
   z-index: 3;
+}
+
+.toast_btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  cursor: pointer;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+}
+
+.toast_btn:hover {
+  background-color: var(--color-background-mute);
 }
 
 .avatar_navigation {
@@ -153,5 +172,12 @@ const searchFocus = computed(() => {
 
 .visible {
   flex: 1;
+}
+</style>
+
+<style>
+.side_bar_icon {
+  height: 1.5rem;
+  width: 1.5rem;
 }
 </style>

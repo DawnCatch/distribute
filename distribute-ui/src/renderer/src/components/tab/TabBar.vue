@@ -113,6 +113,7 @@ function handleScroll() {
 <style scoped>
 .tab_bar {
   overflow: hidden;
+  cursor: pointer;
 }
 
 .tab_list {
@@ -130,7 +131,7 @@ function handleScroll() {
 
 .line {
   height: 0.25rem;
-  background-color: aqua;
+  background-color: var(--color-tab-bar-line);
   border-radius: 4px 4px 0 0;
 }
 </style>

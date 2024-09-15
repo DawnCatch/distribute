@@ -1,14 +1,7 @@
 <template>
   <div class="edit_content" :class="{ focus: focused }">
     <form @onsubmit.prevent>
-      <input
-        ref="inputRef"
-        :type="type"
-        :value="modelValue"
-        autocomplete="off"
-        :placeholder
-        @input="handleInput"
-      />
+      <input ref="inputRef" :type="type" :value="modelValue" autocomplete="off" :placeholder @input="handleInput" />
     </form>
     <div class="option_button" @click="clear">
       <Icon name="close" custom-class="clear" />
@@ -68,6 +61,7 @@ defineExpose({
   border: 2px var(--color-border-edit-text-border) solid;
   padding: 0.25rem 0.5rem;
   border-radius: 20px;
+  height: 2rem;
   width: 100%;
   position: relative;
   display: flex;
@@ -90,6 +84,7 @@ input {
   padding: 0;
   outline: none;
   width: 100%;
+  color: var(--color-text)
 }
 
 .option_button {

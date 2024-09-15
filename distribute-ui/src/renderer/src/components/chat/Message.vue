@@ -107,7 +107,7 @@ function onElementVisibility(state: boolean, message: Message) {
 .content_bar {
   display: flex;
   position: relative;
-  padding: 1rem 1rem;
+  padding: 0.5rem 0.5rem;
   margin: 0.1rem 0;
   word-wrap: break-word;
   border-radius: 1rem;
