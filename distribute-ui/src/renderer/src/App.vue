@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, watch } from 'vue'
 
-import { Profile, useAppStore, Message } from './stores/appStore'
+import { Profile, useAppStore, Message, Union } from './stores/appStore'
 import { RouterView } from 'vue-router'
 import Header from './views/Header.vue'
 import { http } from './utils/http'
@@ -49,18 +49,18 @@ watch(
       url: '/relation/list/union'
     }).then((res) => {
       if (res.status) {
-        appStore.setUnion(res.data as Profile[])
-        console.log(appStore.relations)
+        appStore.setUnion(res.data as Union)
       }
     })
     socket()
-    mitt.on('on-message', (message: Message) => {
-      appStore.addMessage(message)
+    mitt.on('on-message', (value) => {
+      const message = value as Message
+      appStore.addMessage(message as Message)
       if (message.from !== appStore.profile.userId) {
         notification({
           title: `收到一条来自${appStore.relations.filter((it) => it.id === message.from && it.type === message.type)[0].title}的消息`,
           body: message.content.value
-        } as Options)
+        })
       }
     })
   },

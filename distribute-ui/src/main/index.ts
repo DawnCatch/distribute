@@ -94,6 +94,7 @@ ipcMain.on('window-close', function () {
 })
 
 ipcMain.on('http', async function (event, uuid, option) {
+  console.log(JSON.stringify(option))
   for (let i = 1; i <= 5; i++) {
     try {
       const res = await axios(option)

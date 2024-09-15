@@ -104,13 +104,11 @@ enum Mode {
 <style scoped>
 .chat_option_bar {
   display: flex;
-  position: fixed;
-  width: 80%;
-  bottom: 0;
+  width: 100%;
   font-size: 1.25rem;
   line-height: 2rem;
   background-color: var(--color-background-soft);
-  z-index: 1;
+  overflow: hidden;
 }
 
 .file_box {

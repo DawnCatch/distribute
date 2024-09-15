@@ -144,4 +144,4 @@ interface Union {
   fans: number[]
   groups: Relation[]
 }
-export type { Profile, Message, Content, Relation }
+export type { Profile, Message, Content, Relation, Union }

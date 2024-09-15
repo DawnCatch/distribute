@@ -1,18 +1,37 @@
 <template>
   <div v-if="appStore.checkItem.id !== -1" class="chat_bar">
-    <div class="message_list" :style="messageListStyle">
-      <div @click="send">start</div>
+    <div class="tool_bar">
+      <div class="chat_text_box">
+        <div class="title_text">{{ appStore.checkItem.title }}</div>
+        <div class="detail_text">0 人</div>
+      </div>
+      <div class="option_box">
+        <Icon name="search" custom-class="icon" />
+        <Icon name="split" custom-class="icon" />
+        <Icon name="more" custom-class="icon" />
+      </div>
+    </div>
+    <Split direction :weight="0.125" />
+    <ScrollBox class="message_list" :style="messageListStyle">
       <div v-for="(item, index) in group" :key="index" class="message_content">
         <div class="time_stamp">
           {{ getTime(item) }}
         </div>
         <Message
-          v-for="messages in item as Record<number, MessageModel[]>"
-          :key="messages"
+          v-for="(messages, key) in item as Record<number, MessageModel[]>"
+          :key
           :messages="messages"
         />
       </div>
-    </div>
+    </ScrollBox>
+    <!-- <div class="message_list" :style="messageListStyle">
+      <div v-for="(item, index) in group" :key="index" class="message_content">
+        <div class="time_stamp">
+          {{ getTime(item) }}
+        </div>
+        <Message v-for="(messages, key) in item as Record<number, MessageModel[]>" :key :messages="messages" />
+      </div>
+    </div> -->
     <ChatoptionBar ref="chatOptionBar" />
   </div>
 </template>
@@ -25,6 +44,9 @@ import { useElementSize } from '@vueuse/core'
 
 import Message from './Message.vue'
 import ChatoptionBar from './ChatOptionBar.vue'
+import Icon from '../Icon.vue'
+import Split from '../Split.vue'
+import ScrollBox from '../ScrollBox.vue'
 
 const appStore = useAppStore()
 
@@ -40,7 +62,7 @@ const group = computed(() => {
 })
 
 function send() {
-  mitt.emit('rtc:request', appStore.relations[appStore.index].userId)
+  mitt.emit('rtc:request', appStore.checkItem.id)
 }
 
 function getTime(item: Record<number, MessageModel[]>) {
@@ -55,6 +77,7 @@ function getTime(item: Record<number, MessageModel[]>) {
     else result += `${minutes}`
     return result
   }
+  return ''
 }
 
 const chatOptionBar = ref()
@@ -68,11 +91,18 @@ const messageListStyle = computed(() => {
 </script>
 
 <style scoped>
+/*
+临界30rem
+*/
 .chat_bar {
   position: relative;
   background-color: var(--color-background-pro);
   height: 100%;
-  width: 80%;
+  width: 0;
+  flex: 1;
+  border-left: 5px var(--color-background-soft);
+  display: flex;
+  flex-direction: column;
 }
 
 .chat_title {
@@ -83,11 +113,13 @@ const messageListStyle = computed(() => {
 
 .message_list {
   width: 100%;
-  height: calc(100% - 3rem);
+  height: 0;
+  /* height: calc(100% - 3rem); */
   overflow: auto;
+  flex: 1;
 }
 
-.message_list::-webkit-scrollbar {
+/* .message_list::-webkit-scrollbar {
   width: 0.5rem;
   height: 0.5rem;
 }
@@ -98,11 +130,33 @@ const messageListStyle = computed(() => {
 
 .message_list:hover::-webkit-scrollbar-thumb {
   background: #ccc;
-}
+} */
 
 .message_content {
   display: flex;
   flex-direction: column;
+}
+
+.tool_bar {
+  display: flex;
+  padding: 0.5rem;
+}
+
+.chat_text_box {
+  margin-left: 0.5rem;
+}
+
+.option_box {
+  display: flex;
+  margin-left: auto;
+  align-items: center;
+}
+
+.icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+  margin-left: 1rem;
 }
 
 .time_stamp {

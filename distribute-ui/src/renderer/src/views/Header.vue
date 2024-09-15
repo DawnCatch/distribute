@@ -1,8 +1,5 @@
 <template>
   <div data-tauri-drag-region class="title_bar">
-    <div v-if="appStore.checkItem.id !== -1" class="chat_title">
-      {{ appStore.checkItem.title }}
-    </div>
     <div class="window_tool">
       <div class="option" @click.left="windowMinimize">
         <Icon name="minimize" custom-class="option_icon" />
@@ -19,11 +16,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useAppStore } from '../stores/appStore'
 
 import Icon from '../components/Icon.vue'
-
-const appStore = useAppStore()
 
 const maxState = ref(false)
 

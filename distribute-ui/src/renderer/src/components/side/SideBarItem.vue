@@ -47,12 +47,15 @@ function select() {
 </script>
 
 <style scoped>
+* {
+  user-select: none;
+}
+
 .profile_box {
   display: flex;
   width: 100%;
   padding: 0.5rem;
   cursor: pointer;
-  background-color: var(--color-slde-bar-item-background);
 }
 
 .profile_box:hover {
@@ -66,7 +69,7 @@ function select() {
 
 .avatar {
   display: flex;
-  width: 25%;
+  width: 3.5rem;
   overflow: hidden;
 }
 
@@ -83,7 +86,7 @@ function select() {
 }
 
 .detail_box {
-  width: 70%;
+  flex: 1;
 }
 
 .top_box,
