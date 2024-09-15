@@ -58,4 +58,9 @@ class RelationController {
     fun listOwnApplication(
         request: HttpServletRequest,
     ) = relationService.listOwnApplication(request)
+
+    @RequestMapping("/list/union")
+    fun listUnion(
+        request: HttpServletRequest,
+    ) = relationService.listUnion(request)
 }

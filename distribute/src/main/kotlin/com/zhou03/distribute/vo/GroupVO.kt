@@ -4,7 +4,7 @@ import com.zhou03.distribute.domain.Group
 import com.zhou03.distribute.util.toMilliSecond
 
 data class GroupVO(
-    val id: Int,
+    val groupId: Int,
     val title: String,
     val visible: Boolean,
     val createDate: Long,

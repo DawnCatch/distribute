@@ -1,0 +1,206 @@
+/* color palette from <https://github.com/vuejs/theme> */
+:root {
+  --vt-c-white: #ffffff;
+  --vt-c-white-soft: #f8f8f8;
+  --vt-c-white-mute: #f2f2f2;
+
+  --vt-c-black: #181818;
+  --vt-c-black-soft: #222222;
+  --vt-c-black-mute: #282828;
+  --vt-c-black-pro: #323232;
+
+  --vt-c-indigo: #2c3e50;
+
+  --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
+  --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
+  --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
+  --vt-c-divider-dark-2: rgba(84, 84, 84, 0.48);
+
+  --vt-c-text-light-1: var(--vt-c-indigo);
+  --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
+  --vt-c-text-dark-1: var(--vt-c-white);
+  --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
+}
+
+:root {
+  --color-background: var(--vt-c-white);
+  --color-background-soft: var(--vt-c-white-soft);
+  --color-background-mute: var(--vt-c-white-mute);
+
+  --color-border: var(--vt-c-divider-light-2);
+  --color-border-hover: var(--vt-c-divider-light-1);
+
+  --color-button: var(--vt-c-white);
+  --color-button-disable: #4d4d4d;
+  --color-button-hover: var(--vt-c-divider-light-1);
+
+  --color-edit: #888888;
+  --color-edit-focus: #3a7afe;
+
+  --color-heading: var(--vt-c-text-light-1);
+  --color-text: var(--vt-c-black-soft);
+  --section-gap: 160px;
+
+  --color-toast-tip-background-mute: rgba(187, 187, 187, 1);
+  --color-toast-tip-background-soft: rgba(198, 225, 247, 1);
+
+  --color-slde-bar-item-background: var(--color-background-soft);
+  --color-slde-bar-item-background-hover: rgba(241, 241, 241, 1);
+  --color-slde-bar-item-background-focus: rgba(65, 159, 217, 1);
+
+  --color-scrollbar-background: rgba(229, 229, 229, 1);
+  --color-scrollbar-thumb-background: rgba(146, 146, 146, 1);
+
+  --color-border-edit-text-border: rgba(241, 241, 241, 1);
+  --color-border-edit-text-background: var(--color-border-edit-text-border);
+  --color-border-edit-text-background-focus: var(--color-background-soft);
+  --color-border-edit-text-icon: var(--color-toast-tip-background-mute);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: #000000;
+    --color-background-soft: var(--vt-c-black-soft);
+    --color-background-mute: var(--vt-c-black-mute);
+    --color-background-pro: var(--vt-c-black-pro);
+
+    --color-border: var(--vt-c-divider-dark-2);
+    --color-border-hover: var(--vt-c-divider-dark-1);
+
+    --color-button: #181818;
+    --color-button-disable: #4d4d4d;
+    --color-button-hover: var(--vt-c-divider-dark-1);
+
+    --color-edit: #888888;
+    --color-edit-focus: #3a7afe;
+
+    --color-warning: #e92539;
+
+    --color-heading: var(--vt-c-text-dark-1);
+    --color-text: var(--vt-c-white-soft);
+    --section-gap: 160px;
+
+    --color-toast-tip-background-mute: rgba(77, 87, 98, 1);
+    --color-toast-tip-background-soft: rgba(64, 130, 188, 1);
+
+    --color-slde-bar-item-background-hover: rgba(32, 43, 54, 1);
+    --color-slde-bar-item-background-focus: rgba(43, 82, 120, 1);
+  }
+}
+
+html {
+  height: 100%;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  font-weight: normal;
+}
+
+:root {
+  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+
+  color: var(--color-text);
+  background-color: var(--color-background);
+
+  transition:
+    color 0.5s,
+    background-color 0.5s;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  height: 100%;
+}
+
+#app {
+  height: 100%;
+}
+
+/* 代码高亮 */
+.hljs-keyword {
+  color: aqua;
+}
+
+.hljs-number {
+  color: beige;
+}
+
+.hljs-string {
+  color: #c3602d;
+}
+
+/* 形参类型 */
+.hljs-built_in {
+  color: #47b09b;
+}
+
+/* 函数名 */
+.function_ {
+  color: #dcdcaa;
+}
+
+/* 代码块-start */
+pre {
+  width: 100%;
+  background-color: var(--color-background-mute);
+}
+
+details {
+  width: 100%;
+}
+
+span[data-line-num]::before {
+  content: attr(data-line-num);
+  background-color: var(--color-background-pro);
+  color: gray;
+  user-select: none;
+  text-align: center;
+  display: inline-block;
+  width: 18;
+  padding: 0 0.75rem;
+  margin-right: 0.5rem;
+  box-sizing: content-box;
+  position: sticky;
+  left: 0;
+}
+
+code {
+  display: block;
+  width: 100%;
+  overflow: auto;
+}
+
+code::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+code::-webkit-scrollbar-thumb {
+  border-radius: 1rem;
+}
+
+code:hover::-webkit-scrollbar-thumb {
+  background: #ccc;
+}
+
+summary {
+  padding-left: 0.6rem;
+  border-bottom: 1px solid var(--color-background-pro);
+  user-select: none;
+}
+/* 代码块-end */
+
+/* 删除线 */
+delete {
+  text-decoration: line-through;
+}

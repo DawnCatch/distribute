@@ -61,19 +61,21 @@ object ChatUtil {
     }
 
     fun sendMessage(message: MessageVO, targets: List<Int>) {
-        sessionsMap.forEach { (userId, sessions) ->
-            if (userId in targets || userId == message.from) {
-                val it = sessions.iterator()
-                while (it.hasNext()) {
-                    val session = it.next()
-                    try {
-                        if (session.isOpen) session.sendMessage(message.to())
-                        else it.remove()
-                    } catch (e: Exception) {
-                        it.remove()
-                    }
+        targets.forEach { id ->
+            val sessions = sessionsMap[id]
+            if (sessions.isNullOrEmpty()) return@forEach
+            val it = sessions.iterator()
+            while (it.hasNext()) {
+                val session = it.next()
+                try {
+                    if (session.isOpen) session.sendMessage(message.to())
+                    else it.remove()
+                } catch (e: Exception) {
+                    it.remove()
                 }
             }
         }
     }
+
+    fun sendMessage(message: MessageVO, target: Int) = ChatUtil.sendMessage(message, listOf(target))
 }

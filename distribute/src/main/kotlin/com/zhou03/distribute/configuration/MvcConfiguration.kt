@@ -32,9 +32,8 @@ class MvcConfiguration : WebMvcConfigurer, ErrorPageRegistrar {
     }
 
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
-        println("${File(getProperty("user.dir")).parent}/distribute-ui/dist")
-        registry.addResourceHandler("/**").addResourceLocations("file:/www/wwwroot/phase/")
-            .addResourceLocations("file:${File(getProperty("user.dir")).parent}/distribute-ui/dist/")
+        registry.addResourceHandler("/**").addResourceLocations("file:/www/wwwroot/distribute/")
+            .addResourceLocations("file:${File(getProperty("user.dir")).parent}/distribute-ui/build/web/")
     }
 
     @Autowired
@@ -42,7 +41,7 @@ class MvcConfiguration : WebMvcConfigurer, ErrorPageRegistrar {
 
     override fun addInterceptors(registry: InterceptorRegistry) {
         registry.addInterceptor(loginInterceptor).addPathPatterns(
-            "/user/**", "/device/**", "/message/**", "/relation/**", "/group/**"
+            "/user/**", "/profile/**", "/device/**", "/message/**", "/relation/**", "/group/**","/search/**"
         ).excludePathPatterns("/user/login", "/user/register", "/device/check", "/message/key/**")
     }
 }

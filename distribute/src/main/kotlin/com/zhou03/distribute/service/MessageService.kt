@@ -52,21 +52,36 @@ class MessageServiceImpl : MessageService {
 
     override fun history(messageHistoryDTO: MessageHistoryDTO, request: HttpServletRequest): Result<List<MessageVO>?> {
         val token = request.getToken()
-        val from = if (messageHistoryDTO.from == "") 0L.toLocalDateTime() else messageHistoryDTO.from.toLocalDateTime()
-        val to = messageHistoryDTO.to.toLocalDateTime()
+        fun toLocalDateTime(str: String): LocalDateTime {
+            if (str == "") return 0L.toLocalDateTime()
+            return try {
+                str.toLong().toLocalDateTime()
+            } catch (e: Exception) {
+                str.toLocalDateTime()
+            }
+        }
+
+        val from = toLocalDateTime(messageHistoryDTO.from)
+        var to = toLocalDateTime(messageHistoryDTO.to)
+        if (to <= from) to = LocalDateTime.now()
         val groupIds = groupUserRelationDao.listByJoinAsOwn(token.userId).map { it.targetId }
         val messageDomains = messageDao.listByDateAsOwn(token.userId, groupIds, from, to)
-        val ids = messageDomains.map { it.id }
-        val messageObserversMap = messageObserverDao.listByMessageId(ids).groupBy { it.messageId }
+        val ownMessageIds = messageDomains.filter { it.from == token.userId }.map { it.id }
+        val otherMessageIds = messageDomains.filter { it.from != token.userId }.map { it.id }
+        val ownMessageObserversMap = messageObserverDao.listByMessageId(ownMessageIds).groupBy { it.messageId }
+        val otherMessageObserversMap = messageObserverDao.listByMessageId(otherMessageIds).groupBy { it.messageId }
         val messages = messageDomains.map {
             MessageVO.from(it)
         }
         messages.forEach { it ->
-            val messageObservers = messageObserversMap[it.id]
-            if (messageObservers.isNullOrEmpty()) {
+            val ownMessageObservers = ownMessageObserversMap[it.id]
+            val otherMessageObservers = otherMessageObserversMap[it.id]
+            if (ownMessageObservers.isNullOrEmpty() && otherMessageObservers.isNullOrEmpty()) {
                 it.observers = listOf()
-            } else {
-                it.observers = messageObservers.map { it.userId }
+            } else if (!ownMessageObservers.isNullOrEmpty()) {
+                it.observers = ownMessageObservers.map { it.userId }
+            } else if (!otherMessageObservers.isNullOrEmpty()) {
+                it.observers = otherMessageObservers.map { it.userId }
             }
         }
         return success(messages)
@@ -170,16 +185,24 @@ class MessageServiceImpl : MessageService {
         }
         try {
             if (message.type) {
-                val relations = groupUserRelationDao.listByTargetId(message.to)
-                val relationIds = relations.map { it.userId }
-                if (token.userId !in relationIds) return error("权限错误")
+                if (!groupUserRelationDao.isMember(token.userId, message.to)) return error("权限错误")
                 messageObserverDao.addOrUpdate(messageObserver)
                 ChatUtil.sendMessage(
                     MessageVO(
                         message.id, true, token.userId, message.to, Content(
                             ContentType.OBSERVER, ""
                         )
-                    ), relationIds
+                    ), token.userId
+                )
+
+                if (!groupUserRelationDao.isMember(token.userId, message.to)) return error("权限错误")
+                messageObserverDao.addOrUpdate(messageObserver)
+                ChatUtil.sendMessage(
+                    MessageVO(
+                        message.id, true, token.userId, message.to, Content(
+                            ContentType.OBSERVER, ""
+                        )
+                    ), listOf(message.from)
                 )
             } else {
                 if (token.userId !in listOf(message.from, message.to)) return error("权限错误")

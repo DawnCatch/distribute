@@ -4,10 +4,7 @@ import com.zhou03.distribute.domain.User
 import com.zhou03.distribute.domain.Users
 import com.zhou03.distribute.util.aesDecrypt
 import jakarta.servlet.http.Cookie
-import org.ktorm.dsl.and
-import org.ktorm.dsl.eq
-import org.ktorm.dsl.or
-import org.ktorm.dsl.update
+import org.ktorm.dsl.*
 import org.springframework.stereotype.Component
 
 @Component
@@ -53,4 +50,7 @@ class UserDao : BaseDao<User, Users>(Users) {
             where { (it.email eq "") }
         }
     }
+
+    fun likeByUsernameOrEmail(title: String) =
+        findList { (it.username like "%${title}%") or (it.email like "%${title}%") }
 }

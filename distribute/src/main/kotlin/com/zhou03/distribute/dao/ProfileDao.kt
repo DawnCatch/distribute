@@ -11,5 +11,5 @@ class ProfileDao : BaseDao<Profile, Profiles>(Profiles) {
 
     fun getById(id: Int) = findOne { it.id eq id }
 
-    fun listById(ids: List<Int>) = findList { (it.id inList ids) }
+    fun listById(ids: List<Int>) = if (ids.isNotEmpty()) findList { (it.id inList ids) } else listOf()
 }

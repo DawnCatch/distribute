@@ -1,0 +1,65 @@
+{
+  "id": "4552076",
+  "name": "distribute",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "1262104",
+      "name": "search",
+      "font_class": "search",
+      "unicode": "e6f2",
+      "unicode_decimal": 59122
+    },
+    {
+      "icon_id": "7834345",
+      "name": "plus",
+      "font_class": "plus",
+      "unicode": "e8fe",
+      "unicode_decimal": 59646
+    },
+    {
+      "icon_id": "34452987",
+      "name": "down",
+      "font_class": "down",
+      "unicode": "e839",
+      "unicode_decimal": 59449
+    },
+    {
+      "icon_id": "11150496",
+      "name": "avatar",
+      "font_class": "avatar",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "1649166",
+      "name": "最小化",
+      "font_class": "minimize",
+      "unicode": "e67a",
+      "unicode_decimal": 59002
+    },
+    {
+      "icon_id": "715320",
+      "name": "close",
+      "font_class": "close",
+      "unicode": "e667",
+      "unicode_decimal": 58983
+    },
+    {
+      "icon_id": "999124",
+      "name": "缩小",
+      "font_class": "narrow",
+      "unicode": "e6d3",
+      "unicode_decimal": 59091
+    },
+    {
+      "icon_id": "999125",
+      "name": "放大",
+      "font_class": "enlarge",
+      "unicode": "e6d4",
+      "unicode_decimal": 59092
+    }
+  ]
+}

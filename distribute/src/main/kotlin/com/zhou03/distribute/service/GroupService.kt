@@ -102,4 +102,6 @@ class GroupServiceImpl : GroupService {
         val group = groupDao.getById(id) ?: return error("查无此项")
         return success(GroupVO.from(group))
     }
+
+
 }
