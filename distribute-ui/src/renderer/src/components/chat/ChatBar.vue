@@ -14,14 +14,11 @@
     <Split direction :weight="0.125" />
     <ScrollBox class="message_list" :style="messageListStyle">
       <div v-for="(item, index) in group" :key="index" class="message_content">
+        {{ item }}
         <div class="time_stamp">
           {{ time(item) }}
         </div>
-        <Message
-          v-for="(messages, key) in item as Record<number, MessageModel[]>"
-          :key
-          :messages="messages"
-        />
+        <Message v-for="(messages, key) in item as Record<number, MessageModel[]>" :key :messages="messages" />
       </div>
     </ScrollBox>
     <ChatoptionBar ref="chatOptionBar" />
@@ -53,11 +50,26 @@ const group = computed(() => {
   const { type, id } = appStore.current
   try {
     const result = appStore.messageGroup[type ? 1 : 0][id]
-    return result
+    return reverseData(result)
   } catch (e) {
     return {}
   }
 })
+
+function reverseData(data: Record<number, MessageModel[][]>): Record<number, MessageModel[][]> {
+  const reversedData: Record<number, MessageModel[][]> = {}
+
+  for (const key in data) {
+    if (Array.isArray(data[key])) {
+      reversedData[key] = data[key]
+        .slice()
+        .reverse()
+        .map((arr) => arr.reverse())
+    }
+  }
+
+  return reversedData
+}
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function send() {
