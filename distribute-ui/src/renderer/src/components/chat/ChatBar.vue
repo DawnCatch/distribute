@@ -17,7 +17,11 @@
         <div class="time_stamp">
           {{ time(item) }}
         </div>
-        <Message v-for="(messages, key) in item as Record<number, MessageModel[]>" :key :messages="messages" />
+        <Message
+          v-for="(messages, key) in item as Record<number, MessageModel[]>"
+          :key
+          :messages="messages"
+        />
       </div>
     </ScrollBox>
     <ChatoptionBar ref="chatOptionBar" />
@@ -33,7 +37,6 @@
 <script setup lang="ts">
 import { Message as MessageModel, useAppStore } from '../../stores/appStore'
 import { computed, nextTick, ref, watch } from 'vue'
-import mitt from '../../utils/mitt'
 import { useElementSize } from '@vueuse/core'
 import { getTime } from '@renderer/utils/utils'
 
@@ -55,10 +58,9 @@ const group = computed(() => {
   }
 })
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function send() {
-  mitt.emit('rtc:request', appStore.ownId)
-}
+// function send() {
+//   mitt.emit('rtc:request', appStore.ownId)
+// }
 
 function time(item: Record<number, MessageModel[]>) {
   for (const key in item) {

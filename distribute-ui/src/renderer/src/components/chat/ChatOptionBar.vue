@@ -1,7 +1,7 @@
 <template>
   <div ref="chatOptionBar" class="chat_option_bar" tabindex="0">
     <div class="file_box">
-      <Icon name="link-0" custom-class="chat_option_bar_icon"/>
+      <Icon name="link-0" custom-class="chat_option_bar_icon" />
     </div>
     <div class="input_box">
       <textarea

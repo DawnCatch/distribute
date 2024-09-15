@@ -1,7 +1,14 @@
 <template>
   <div class="edit_content" :class="{ focus: focused }">
     <form @onsubmit.prevent>
-      <input ref="inputRef" :type="type" :value="modelValue" autocomplete="off" :placeholder @input="handleInput" />
+      <input
+        ref="inputRef"
+        :type="type"
+        :value="modelValue"
+        autocomplete="off"
+        :placeholder
+        @input="handleInput"
+      />
     </form>
     <div class="option_button" @click="clear">
       <Icon name="close" custom-class="clear" />
@@ -84,7 +91,7 @@ input {
   padding: 0;
   outline: none;
   width: 100%;
-  color: var(--color-text)
+  color: var(--color-text);
 }
 
 .option_button {
