@@ -169,7 +169,6 @@ watch(
   border: 1px solid var(--color-background-pro);
   padding: 0.15rem 0.5rem;
   margin: 0.25rem auto;
-  z-index: 1;
 }
 
 .tips_box {

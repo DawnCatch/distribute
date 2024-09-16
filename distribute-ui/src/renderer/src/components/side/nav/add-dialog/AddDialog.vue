@@ -11,10 +11,11 @@
       </TabBar>
     </template>
     <template #content>
-      <div v-for="(item, index) in searchResult.filter((it) => it.type === type)" :key="index">
-        {{ item }}
-        <Avatar />
-      </div>
+      <AddDialogSearchItem
+        v-for="item in searchResult.filter((it) => it.type === type)"
+        :key="`${item.type}:${item.id}`"
+        :item
+      />
     </template>
   </ScrollDialog>
 </template>
@@ -23,12 +24,12 @@
 import ScrollDialog from '@renderer/components/ScrollDialog.vue'
 import TabBar from '@renderer/components/tab/TabBar.vue'
 import BorderEditText from '@renderer/components/BorderEditText.vue'
+import AddDialogSearchItem from './AddDialogSearchItem.vue'
 
 import mitt from '@renderer/utils/mitt'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { watchDebounced } from '@vueuse/core'
 import { http } from '@renderer/utils/http'
-import Avatar from '@renderer/components/Avatar.vue'
 
 const active = ref(0)
 const list = [
@@ -89,13 +90,6 @@ function search(value: string) {
 }
 </script>
 
-<script lang="ts">
-interface SearchResultItem {
-  type: boolean
-  id: number
-}
-</script>
-
 <style scoped>
 .add_dialog {
   z-index: 2;
@@ -110,15 +104,14 @@ interface SearchResultItem {
   text-align: center;
 }
 
-.list-enter-active,
-.list-leave-active {
-  transition: all 0.1s;
+.search_item {
+  display: flex;
 }
 
-.list-enter,
-.list-leave-to {
-  opacity: 0;
-  transform: translateX(30px);
+.avatar {
+  display: flex;
+  width: 3.5rem;
+  overflow: hidden;
 }
 </style>
 

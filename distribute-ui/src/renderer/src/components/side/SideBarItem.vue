@@ -1,6 +1,6 @@
 <template>
   <div class="profile_box" :class="{ focus: isFocus }" @click="select">
-    <Avatar class="avatar" :class="type ? 'group' : 'user'" />
+    <Avatar class="avatar" :type />
     <div class="space"></div>
     <div class="detail_box">
       <div class="top_box">

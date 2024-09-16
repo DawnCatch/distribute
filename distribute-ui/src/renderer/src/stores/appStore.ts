@@ -3,10 +3,12 @@ import { defineStore } from 'pinia'
 export const useAppStore = defineStore('app', {
   state: () => ({
     ownId: -1,
-    profiles: [] as Profile[],
+    userProfiles: [] as UserProfile[],
+    groupProfiles: [] as GroupProfile[],
     follows: [] as number[],
     fans: [] as number[],
     groups: [] as number[],
+    applications: [] as number[],
     relations: [] as Relation[],
     messages: [] as Message[],
     messageMap: [] as Message[][][],
@@ -17,20 +19,49 @@ export const useAppStore = defineStore('app', {
     }
   }),
   actions: {
-    addProfile(profile: Profile) {
-      const index = this.profiles.findIndex((it) => it.userId === profile.userId)
+    addFollows(id: number) {
+      if (this.follows.includes(id)) return
+      this.follows.push(id)
+    },
+    removeFollows(id: number) {
+      const index = this.follows.findIndex((it) => it === id)
+      if (index === -1) return
+      this.follows.splice(index, 1)
+    },
+    addApplication(id: number) {
+      if (this.applications.includes(id)) return
+      this.applications.push(id)
+    },
+    removeApplication(id: number) {
+      const index = this.applications.findIndex((it) => it === id)
+      if (index === -1) return
+      this.applications.splice(index, 1)
+    },
+    addUserProfile(userProfile: UserProfile) {
+      const index = this.userProfiles.findIndex((it) => it.userId === userProfile.userId)
       if (index === -1) {
-        this.profiles.push(profile)
+        this.userProfiles.push(userProfile)
       } else {
-        this.profiles[index] = profile
+        this.userProfiles.splice(index, 1, userProfile)
       }
     },
-    setOwn(profile: Profile) {
-      this.ownId = profile.userId
-      this.addProfile(profile)
+    setOwn(userProfile: UserProfile) {
+      this.ownId = userProfile.userId
+      this.addUserProfile(userProfile)
     },
-    addProfiles(profiles: Profile[]) {
-      profiles.forEach((it) => this.addProfile(it))
+    addUserProfiles(userProfiles: UserProfile[]) {
+      userProfiles.forEach((it) => this.addUserProfile(it))
+    },
+    addGroupProfile(groupProfile: GroupProfile) {
+      const index = this.groupProfiles.findIndex((it) => it.groupId === groupProfile.groupId)
+      if (index === -1) {
+        this.groupProfiles.push(groupProfile)
+      } else {
+        this.groupProfiles.splice(index, 1, groupProfile)
+      }
+    },
+    addGroupProfiles(groupProfiles: GroupProfile[]) {
+      groupProfiles.forEach((it) => this.addGroupProfile(it))
     },
     addRelation(relation: Relation) {
       const index = this.relations.findIndex(
@@ -49,7 +80,8 @@ export const useAppStore = defineStore('app', {
       this.follows = union.follows.map((it) => it.id)
       this.fans = union.fans
       this.groups = union.groups.map((it) => it.id)
-      this.addRelations(union.follows.concat(union.groups))
+      this.applications = union.applications.map((it) => it.id)
+      this.addRelations(union.follows.concat(union.groups).concat(union.applications))
     },
     getRelation(type: boolean, id: number): Relation | undefined {
       return this.relations.find((it) => it.type === type && it.id === id)
@@ -135,9 +167,9 @@ export const useAppStore = defineStore('app', {
         })
       return result
     },
-    profile() {
-      return (id: number): Profile | undefined => {
-        return this.profiles.find((it) => it.userId === id)
+    userProfile() {
+      return (id: number): UserProfile | undefined => {
+        return this.userProfiles.find((it) => it.userId === id)
       }
     },
     relation() {
@@ -159,7 +191,7 @@ export const useAppStore = defineStore('app', {
       const { type, id } = this.current
       const relation = this.relation(type, id) ?? { type, id, title: '', path: '/' }
       if (!type) {
-        const profile = this.profile(id) ?? { userId: id, nickname: '' }
+        const profile = this.userProfile(id) ?? { userId: id, nickname: '' }
         return {
           type,
           id,
@@ -183,14 +215,99 @@ export const useAppStore = defineStore('app', {
       if (data.title !== '') return data.title
       return data.nickname
     },
-    own(): Profile {
-      const profile = this.profile(this.ownId) ?? { userId: this.ownId, nickname: '*None' }
+    own(): UserProfile {
+      const profile = this.userProfile(this.ownId) ?? { userId: this.ownId, nickname: '*None' }
       return profile
+    },
+    profiles(state): Profile[] {
+      let result = [] as Profile[]
+      const userIds = [
+        ...new Set([...state.follows, ...state.fans, ...state.userProfiles.map((it) => it.userId)])
+      ]
+      result = result.concat(
+        userIds.map((id) => {
+          const profile = state.userProfiles.find((it) => it.userId === id)
+          let relation = '!'
+          if (state.follows.filter((value) => state.fans.includes(value)).includes(id)) {
+            relation = '='
+          } else if (state.follows.includes(id)) {
+            relation = '>'
+          } else if (state.fans.includes(id)) {
+            relation = '<'
+          }
+          return {
+            type: false,
+            id,
+            title: profile?.nickname ?? 'None',
+            relation
+          }
+        })
+      )
+      const groupIds = [
+        ...new Set([
+          ...state.groups,
+          ...state.applications,
+          ...state.groupProfiles.map((it) => it.groupId)
+        ])
+      ]
+      result = result.concat(
+        groupIds.map((id) => {
+          const profile = state.groupProfiles.find((it) => it.groupId === id)
+          let relation = '!'
+          if (state.groups.includes(id)) {
+            relation = '='
+          } else if (state.applications.includes(id)) {
+            relation = '>'
+          }
+          return {
+            type: true,
+            id,
+            title: profile?.title ?? 'None',
+            relation
+          }
+        })
+      )
+      return result
+    },
+    profile() {
+      return (type: boolean, id: number): Profile => {
+        if (type) {
+          const profile = this.groupProfiles.find((it) => it.groupId === id)
+          let relation = '!'
+          if (this.groups.includes(id)) {
+            relation = '='
+          } else if (this.applications.includes(id)) {
+            relation = '>'
+          }
+          return {
+            type,
+            id,
+            title: profile?.title ?? 'None',
+            relation
+          }
+        } else {
+          const profile = this.userProfiles.find((it) => it.userId === id)
+          let relation = '!'
+          if (this.frients.includes(id)) {
+            relation = '='
+          } else if (this.follows.includes(id)) {
+            relation = '>'
+          } else if (this.fans.includes(id)) {
+            relation = '<'
+          }
+          return {
+            type,
+            id,
+            title: profile?.nickname ?? 'None',
+            relation
+          }
+        }
+      }
     }
   }
 })
 
-interface Profile {
+interface UserProfile {
   userId: number
   nickname: string
 }
@@ -221,6 +338,7 @@ interface Union {
   follows: Relation[]
   fans: number[]
   groups: Relation[]
+  applications: Relation[]
 }
 
 interface ProfileData {
@@ -231,4 +349,18 @@ interface ProfileData {
   path: string
 }
 
-export type { Profile, Message, Content, Relation, Union }
+interface GroupProfile {
+  groupId: number
+  title: string
+  visible: boolean
+  createDate: number
+}
+
+interface Profile {
+  type: boolean
+  id: number
+  title: string
+  relation: string
+}
+
+export type { UserProfile, GroupProfile, Message, Content, Relation, Union, Profile }

@@ -46,7 +46,7 @@ import SearchBox from './search/SearchBox.vue'
 import ScrollBox from '../ScrollBox.vue'
 import NavigationDialog from './nav/NavigationDialog.vue'
 import SignDialog from './SignDialog.vue'
-import AddDialog from './nav/AddDialog.vue'
+import AddDialog from './nav/add-dialog/AddDialog.vue'
 
 const text = ref('')
 

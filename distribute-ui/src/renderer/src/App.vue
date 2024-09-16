@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, watch } from 'vue'
 
-import { Profile, useAppStore, Message, Union } from './stores/appStore'
+import { UserProfile, useAppStore, Message, Union } from './stores/appStore'
 import { RouterView } from 'vue-router'
 import Header from './views/Header.vue'
 import { http } from './utils/http'
@@ -17,7 +17,7 @@ onMounted(() => {
     url: '/user/reconnect'
   }).then((res) => {
     if (res.status) {
-      appStore.setOwn(res.data as Profile)
+      appStore.setOwn(res.data as UserProfile)
     }
   })
 })

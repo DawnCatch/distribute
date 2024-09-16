@@ -31,7 +31,7 @@ const appStore = useAppStore()
 const props = defineProps({
   scroll: {
     type: Function,
-    default: () => { }
+    default: () => {}
   },
   fold: {
     type: Boolean,
