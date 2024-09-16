@@ -1,9 +1,10 @@
 <template>
   <Dialog
+    class="sign_dialog"
     mask
     :visible="visible"
     transition="sign"
-    custom-class="dialog_content"
+    custom-class="sign_dialog_content"
     @click-mask-listen="close"
   >
     <ReverseSwitchPage v-model="active" :page-num="2" class="sign_box">
@@ -40,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, reactive, ref, watch } from 'vue'
+import { onMounted, onUnmounted, reactive, ref } from 'vue'
 
 import { Profile, useAppStore } from '../../stores/appStore'
 
@@ -110,17 +111,6 @@ function close() {
   user.password = ''
 }
 
-watch(
-  visible,
-  (newValue) => {
-    mitt.emit('SignDialog:visible', newValue)
-  },
-  {
-    immediate: false,
-    deep: false
-  }
-)
-
 const active = ref(0)
 </script>
 
@@ -132,6 +122,10 @@ interface User {
 </script>
 
 <style scoped>
+.sign_dialog {
+  z-index: 2;
+}
+
 .sign_box {
   margin: auto;
   width: 19rem;
@@ -188,7 +182,7 @@ p {
 </style>
 
 <style>
-.dialog_content {
+.sign_dialog_content {
   margin: auto;
 }
 

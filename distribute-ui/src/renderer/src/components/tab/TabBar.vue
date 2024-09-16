@@ -1,10 +1,11 @@
 <template>
-  <div class="tab_bar">
+  <div ref="tabBarRef" class="tab_bar">
     <div ref="tabListRef" class="tab_list" @scroll="handleScroll">
       <div
         v-for="(item, index) in list as Item[]"
         :key="index"
         class="tab_item"
+        :class="{ flex: flex }"
         @click="select(index)"
       >
         <div ref="tabItemRef">
@@ -17,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { useScroll } from '@vueuse/core'
+import { useElementVisibility, useScroll } from '@vueuse/core'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 
 const props = defineProps({
@@ -32,6 +33,10 @@ const props = defineProps({
   duration: {
     type: Number,
     default: 0.25
+  },
+  flex: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -40,6 +45,14 @@ const emit = defineEmits(['update:modelValue'])
 function select(index: number) {
   emit('update:modelValue', index)
 }
+
+const tabBarRef = ref<HTMLElement | null>()
+const visible = useElementVisibility(tabBarRef)
+
+watch(visible, (newVal) => {
+  if (!newVal) return
+  setLine()
+})
 
 const currentIndex = ref(0)
 
@@ -127,6 +140,11 @@ function handleScroll() {
 
 .tab_item {
   padding: 0.5rem 0.5rem 0.25rem 0.5rem;
+}
+
+.flex {
+  flex: 1;
+  text-align: center;
 }
 
 .line {

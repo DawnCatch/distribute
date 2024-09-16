@@ -19,7 +19,7 @@
     </div>
     <div class="device_list" :class="{ device_list_visible: deviceListVisible }"></div>
     <div class="option_list">
-      <NavigationOptionItem title="添&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp加">
+      <NavigationOptionItem title="添&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp加" @click="openAddDialog">
         <Icon name="invite" custom-class="navigation_icon" />
       </NavigationOptionItem>
       <NavigationOptionItem title="收&nbsp&nbsp藏&nbsp&nbsp夹">
@@ -105,6 +105,11 @@ const toggleDark = useToggle(isDark)
 function changeTheme() {
   setTimeout(() => toggleDark(), 150)
   return true
+}
+
+function openAddDialog() {
+  close()
+  mitt.emit('AddDialog:open', true)
 }
 </script>
 

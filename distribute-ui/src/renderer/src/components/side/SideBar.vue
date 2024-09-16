@@ -3,7 +3,7 @@
     <div class="top_bar">
       <div
         class="avatar_box"
-        :class="{ avatar_navigation: navigationDialogVisible, avatar_sign: signDialogVisible }"
+        :class="{ avatar_navigation: navigationDialogVisible, avatar_dialog: signDialogVisible }"
       >
         <img
           v-if="appStore.isLogin"
@@ -28,24 +28,25 @@
     </ScrollBox>
     <NavigationDialog />
     <SignDialog />
+    <AddDialog />
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { useFocusWithin } from '@vueuse/core'
 
 import { useAppStore } from '../../stores/appStore'
+import mitt from '../../utils/mitt'
 
 import Icon from '../Icon.vue'
 import SideBarItem from './SideBarItem.vue'
 import BorderEditText from '../BorderEditText.vue'
 import SearchBox from './search/SearchBox.vue'
 import ScrollBox from '../ScrollBox.vue'
-
 import NavigationDialog from './nav/NavigationDialog.vue'
 import SignDialog from './SignDialog.vue'
-import mitt from '../../utils/mitt'
-import { useFocusWithin } from '@vueuse/core'
+import AddDialog from './nav/AddDialog.vue'
 
 const text = ref('')
 
@@ -53,14 +54,10 @@ onMounted(() => {
   mitt.on('NavigationDialog:visible', (visible) => {
     navigationDialogVisible.value = visible as boolean
   })
-  mitt.on('SignDialog:visible', (visible) => {
-    signDialogVisible.value = visible as boolean
-  })
 })
 
 onUnmounted(() => {
   mitt.off('NavigationDialog:visible')
-  mitt.off('SignDialog:visible')
 })
 
 const appStore = useAppStore()
@@ -115,7 +112,7 @@ const searchFocus = computed(() => {
   overflow: hidden;
   transition: all 0.5s;
   cursor: pointer;
-  z-index: 3;
+  z-index: 2;
 }
 
 .toast_btn {
@@ -137,10 +134,6 @@ const searchFocus = computed(() => {
   scale: 1.5;
   top: 1rem;
   left: 1rem;
-}
-
-.avatar_sign {
-  z-index: 1;
 }
 
 .avatar_default {

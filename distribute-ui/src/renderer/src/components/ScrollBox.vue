@@ -1,5 +1,6 @@
 <template>
   <div ref="scrollBoxRef" class="scroll_box" @scroll="handleScroll">
+    <div v-show="fold && scrollTop !== 0" class="fold_line"></div>
     <slot></slot>
     <div class="scroll_content">
       <div ref="scrollBarRef" class="scroll_bar">
@@ -26,6 +27,17 @@ const scrollThumbHeight = ref(0)
 const isHovered = useElementHover(scrollBoxRef)
 
 const appStore = useAppStore()
+
+const props = defineProps({
+  scroll: {
+    type: Function,
+    default: () => { }
+  },
+  fold: {
+    type: Boolean,
+    default: false
+  }
+})
 
 watch(
   isHovered,
@@ -54,6 +66,12 @@ function handleScroll() {
   nextTick(() => {
     if (scrollBoxRef.value && scrollBarRef.value && isHovered.value) {
       const scrollableElement = scrollBoxRef.value
+
+      props.scroll({
+        clientHeight: scrollableElement.clientHeight,
+        scrollTop: scrollableElement.scrollTop
+      })
+
       if (scrollableElement.scrollHeight > scrollableElement.clientHeight) {
         scrollVisible.value = true
       }
@@ -70,7 +88,6 @@ function handleScroll() {
 }
 
 function scrollToBottom() {
-  // scrollBoxRef.value!.scrollTo({ top: 99999 })
   scrollBoxRef.value!.scrollTo({ top: scrollBoxRef.value!.scrollHeight })
 }
 
@@ -83,6 +100,14 @@ defineExpose({
 .scroll_box {
   overflow-y: auto;
   position: relative;
+}
+
+.fold_line {
+  position: sticky;
+  width: 100%;
+  top: 0;
+  height: 1px;
+  background-color: var(--color-scrollbar-background);
 }
 
 .scroll_box::-webkit-scrollbar {
