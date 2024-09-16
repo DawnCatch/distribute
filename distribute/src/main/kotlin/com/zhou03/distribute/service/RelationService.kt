@@ -9,6 +9,7 @@ import com.zhou03.distribute.domain.GroupUserRelation
 import com.zhou03.distribute.domain.UserRelation
 import com.zhou03.distribute.dto.relation.RelationApplicationDTO
 import com.zhou03.distribute.dto.relation.RelationHandleDTO
+import com.zhou03.distribute.util.ChatUtil
 import com.zhou03.distribute.util.getToken
 import com.zhou03.distribute.util.toLocalDateTime
 import com.zhou03.distribute.vo.*
@@ -86,6 +87,7 @@ class RelationServiceImpl : RelationService {
                 this.date = 0L.toLocalDateTime()
                 flushChanges()
             }
+            ChatUtil.sendMessage()
             return error("取消成功")
         }
         val group = groupDao.getById(relationFollowDTO.targetId) ?: return error("查无此项")

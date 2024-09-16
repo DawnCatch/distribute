@@ -87,6 +87,9 @@ export const useAppStore = defineStore('app', {
       return this.relations.find((it) => it.type === type && it.id === id)
     },
     addMessage(message: Message) {
+      if (message.from === 0) {
+        return
+      }
       const index = this.messages.findIndex((it) => it.id === message.id)
       if (index === -1) {
         this.messages.push(message)
@@ -101,6 +104,9 @@ export const useAppStore = defineStore('app', {
         this.messages[index] = message
       }
     },
+    handleSystemNotice() {
+
+    }m
     addMessages(messages: Message[]) {
       messages.forEach((it) => this.addMessage(it))
     },
