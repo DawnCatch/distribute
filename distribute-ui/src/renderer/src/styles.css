@@ -28,6 +28,8 @@
   --color-background-mute: var(--vt-c-white-mute);
   --color-background-pro: var(--vt-c-white-mute);
 
+  --color-background-shadow: #ada4a4;
+
   --color-border: var(--vt-c-divider-light-2);
   --color-border-hover: var(--vt-c-divider-light-1);
 

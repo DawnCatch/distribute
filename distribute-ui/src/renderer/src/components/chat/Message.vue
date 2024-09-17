@@ -1,8 +1,7 @@
 <template>
   <div class="message_bar" :class="{ reverse: reverse }">
     <div v-if="!reverse" class="avatar_box">
-      <img v-if="appStore.currentTitle" src="../../assets/avatar.jpg" alt="avatar" />
-      <Icon v-else name="avatar" custom-class="avatar_default" />
+      <img src="../../assets/avatar.jpg" alt="avatar" />
     </div>
     <div class="message_box">
       <div
@@ -23,7 +22,6 @@
     </div>
     <div v-if="reverse" class="avatar_box">
       <img v-if="appStore.isLogin" src="../../assets/avatar.jpg" alt="avatar" />
-      <Icon v-else name="avatar" custom-class="avatar_default" />
     </div>
   </div>
 </template>
@@ -51,7 +49,7 @@ const reverse = computed(() => {
   const { type, id } = appStore.current
   const { from, to } = props.messages[0] as Message
   if (type) {
-    return from === appStore.ownId
+    return from === appStore.own.userId
   } else {
     return to === id
   }
@@ -63,7 +61,7 @@ function md2Ele(item: Content) {
 
 function onElementVisibility(state: boolean, message: Message) {
   if (reverse.value) return
-  if (state && !message.observers.includes(appStore.ownId)) {
+  if (state && !message.observers.includes(appStore.own.userId)) {
     http({
       url: '/message/read',
       data: {

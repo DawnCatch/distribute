@@ -80,9 +80,10 @@ class GroupServiceImpl : GroupService {
         if (groupDeleteDTO.userId == token.userId) return error("不能将所有权转给自己")
         if (!groupUserRelationDao.isMaster(token.userId, groupDeleteDTO.id)) return error("权限错误")
         val group = groupDao.getById(groupDeleteDTO.id) ?: return error("权限错误")
-        val members = groupUserRelationDao.listByTargetId(group.id)
+        val members = groupUserRelationDao.listMemberByTargetId(group.id)
         val member = members.find { groupDeleteDTO.userId == it.userId }
         if (member != null) {
+
             member.apply {
                 this.role = GroupRole.MASTER
             }

@@ -14,7 +14,7 @@
         <Icon v-else name="avatar" custom-class="avatar_default" @click="openSignDialog" />
       </div>
       <div class="toast_btn">
-        <Icon name="toast" custom-class="side_bar_icon" />
+        <Icon name="toast-0" custom-class="side_bar_icon" />
       </div>
     </div>
     <div ref="searchBoxRef" class="search_input_box">
@@ -24,7 +24,7 @@
       <SearchBox />
     </div>
     <ScrollBox class="session_list" :class="{ visible: !searchFocus }">
-      <SideBarItem v-for="(item, index) in appStore.ownRelations" :key="index" :item="item" />
+      <SideBarItem v-for="(item, index) in relationStore.ownRelations" :key="index" :item="item" />
     </ScrollBox>
     <NavigationDialog />
     <SignDialog />
@@ -37,6 +37,7 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useFocusWithin } from '@vueuse/core'
 
 import { useAppStore } from '../../stores/appStore'
+import { useRelationStore } from '@renderer/stores/relationStore'
 import mitt from '../../utils/mitt'
 
 import Icon from '../Icon.vue'
@@ -61,6 +62,7 @@ onUnmounted(() => {
 })
 
 const appStore = useAppStore()
+const relationStore = useRelationStore()
 
 const navigationDialogVisible = ref(false)
 const signDialogVisible = ref(false)
@@ -107,7 +109,7 @@ const searchFocus = computed(() => {
   left: 0;
   height: 3rem;
   width: 3rem;
-  background-color: aquamarine;
+  background-color: var(--color-background-pro);
   border-radius: 50%;
   overflow: hidden;
   transition: all 0.5s;

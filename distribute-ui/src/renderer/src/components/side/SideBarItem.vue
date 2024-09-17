@@ -5,7 +5,7 @@
     <div class="detail_box">
       <div class="top_box">
         <div class="title">
-          {{ item.title }}
+          {{ relation?.nickname }}
         </div>
         <div class="date">{{ date }}</div>
       </div>
@@ -21,10 +21,13 @@
 import Avatar from '@renderer/components/Avatar.vue'
 
 import { Message, Relation, useAppStore } from '../../stores/appStore'
+import { useRelationStore } from '../../stores/relationStore'
+
 import { computed, ref, watch } from 'vue'
 import { getTime } from '@renderer/utils/utils'
 
 const appStore = useAppStore()
+const relationStore = useRelationStore()
 
 const props = defineProps({
   item: {
@@ -32,6 +35,21 @@ const props = defineProps({
     required: true
   }
 })
+
+const relation = computed(() => {
+  const { type, id } = props.item
+  return relationStore.relation(type, id)
+})
+
+watch(
+  relation,
+  (newVal) => {
+    if (newVal !== undefined) return
+    const { type, id } = props.item
+    relationStore.getRelation(type, id)
+  },
+  { immediate: true }
+)
 
 const type = computed(() => {
   return (props.item as Relation).type
@@ -69,7 +87,7 @@ watch(
     } catch (e) {
       return
     }
-    const ownId = appStore.ownId
+    const ownId = appStore.own.userId
     let index = 0
     let len = 0
     if (messages.length === 0) return

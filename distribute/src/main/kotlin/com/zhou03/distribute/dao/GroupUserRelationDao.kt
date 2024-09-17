@@ -8,6 +8,8 @@ import org.ktorm.dsl.and
 import org.ktorm.dsl.eq
 import org.ktorm.dsl.inList
 import org.ktorm.dsl.notEq
+import org.ktorm.entity.mapColumnsNotNull
+import org.ktorm.entity.toList
 import org.springframework.stereotype.Component
 
 @Component
@@ -34,27 +36,34 @@ class GroupUserRelationDao : BaseDao<GroupUserRelation, GroupUserRelations>(Grou
         (it.status eq true) and (it.userId eq userId) and (it.targetId eq targetId) and (it.role eq GroupRole.MASTER)
     } != 0
 
-    fun listUserIdByGroupAsManager(groupId: Int) = findList {
+    fun listUserIdByGroupAsManager(groupId: Int) = findEntitySequence {
         (it.targetId eq groupId) and (it.role inList listOf(
             GroupRole.MANAGER, GroupRole.MASTER
         ))
-    }.map { it.userId }
+    }.mapColumnsNotNull { it.userId }
 
-    fun listByJoinAsOwn(userId: Int) = findList { (it.status eq true) and (it.userId eq userId) }
+    fun listByJoinAsOwn(userId: Int) =
+        findEntitySequence { (it.status eq true) and (it.userId eq userId) }.mapColumnsNotNull { it.id }
 
     fun listByPendingAsOwn(userId: Int) =
-        findList { (it.status eq false) and (it.date notEq 0L.toLocalDateTime()) and (it.userId eq userId) }
+        findEntitySequence { (it.status eq false) and (it.date notEq 0L.toLocalDateTime()) and (it.userId eq userId) }.mapColumnsNotNull { it.id }
 
-    fun listByMeAsAManager(userId: Int) = findList {
+    fun listByMeAsAManager(userId: Int) = findEntitySequence {
         (it.status eq true) and (it.userId eq userId) and (it.role inList listOf(
             GroupRole.MANAGER, GroupRole.MASTER
         ))
-    }
+    }.mapColumnsNotNull { it.targetId }
 
-    fun listByTargetId(id: Int) = findList { (it.status eq true) and (it.targetId eq id) }
+    fun listMemberIdByTargetIdSequence(id: Int) = findEntitySequence { (it.status eq true) and (it.targetId eq id) }
+
+    fun listMemberByTargetId(id: Int) = listMemberIdByTargetIdSequence(id).toList()
+
+    fun listMemberIdByTargetId(id: Int) = listMemberIdByTargetIdSequence(id).mapColumnsNotNull { it.userId }
+
+    fun countMemberByTargetId(id: Int) = count { (it.status eq true) and (it.targetId eq id) }
 
     fun listPending(groupIds: List<Int>) =
-        if (groupIds.isNotEmpty()) findList { (it.status eq false) and (it.date notEq 0L.toLocalDateTime()) and (it.targetId inList groupIds) }
+        if (groupIds.isNotEmpty()) findEntitySequence { (it.status eq false) and (it.date notEq 0L.toLocalDateTime()) and (it.targetId inList groupIds) }.mapColumnsNotNull { it.id }
         else listOf()
 
     fun getApplicationAsOwn(userId: Int, targetId: Int) =

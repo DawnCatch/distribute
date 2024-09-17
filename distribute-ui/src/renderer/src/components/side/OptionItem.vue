@@ -29,7 +29,7 @@ const props = defineProps({
   },
   use: {
     type: Function,
-    default: (_: NavigationOptionItemEvent) => true
+    default: (_: OptionItemEvent) => true
   }
 })
 
@@ -66,7 +66,7 @@ const { play } = useAnimate(
 </script>
 
 <script lang="ts">
-interface NavigationOptionItemEvent {
+interface OptionItemEvent {
   value: string
 }
 </script>
