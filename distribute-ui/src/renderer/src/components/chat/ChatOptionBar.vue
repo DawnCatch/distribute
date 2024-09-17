@@ -4,28 +4,12 @@
       <Icon name="link-0" custom-class="chat_option_bar_icon" />
     </div>
     <div class="input_box">
-      <textarea
-        ref="textarea"
-        v-model="input"
-        class="input"
-        placeholder="输入消息..."
-        @keydown="handleKeyCode($event)"
-        @keydown.tab="handleKeyCode($event)"
-      />
-      <div
-        v-show="mode === Mode.DOCK && preview"
-        ref="dock"
-        v-dompurify-html="preview"
-        class="preview_box dock"
-      ></div>
+      <textarea ref="textarea" v-model="input" class="input" placeholder="输入消息..." @keydown="handleKeyCode($event)"
+        @keydown.tab="handleKeyCode($event)" />
+      <div v-show="mode === Mode.DOCK && preview" ref="dock" v-dompurify-html="preview" class="preview_box dock"></div>
     </div>
-    <div
-      v-show="focused && mode === Mode.FLOAT && preview"
-      ref="perviewBox"
-      v-dompurify-html="preview"
-      class="preview_box float"
-      :style="style"
-    ></div>
+    <div v-show="focused && mode === Mode.FLOAT && preview" ref="perviewBox" v-dompurify-html="preview"
+      class="preview_box float" :style="style"></div>
   </div>
 </template>
 
@@ -129,11 +113,6 @@ enum Mode {
   background-color: var(--color-background-mute);
 }
 
-.chat_option_bar_icon {
-  height: 1.75em;
-  width: 1.75rem;
-}
-
 .input_box {
   display: flex;
   margin: 0.5rem;
@@ -199,5 +178,12 @@ enum Mode {
   background-color: var(--color-background-mute);
   border: 1px solid var(--color-background);
   position: fixed;
+}
+</style>
+
+<style>
+.chat_option_bar_icon {
+  height: 1.75em;
+  width: 1.75rem;
 }
 </style>

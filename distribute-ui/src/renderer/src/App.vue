@@ -2,6 +2,7 @@
 import { onMounted, watch } from 'vue'
 
 import { UserProfile, useAppStore, Message, Union } from './stores/appStore'
+import { useRelationStore } from './stores/relationStore'
 import { RouterView } from 'vue-router'
 import Header from './views/Header.vue'
 import { http } from './utils/http'
@@ -9,6 +10,7 @@ import socket from './utils/socket'
 import mitt from './utils/mitt'
 
 const appStore = useAppStore()
+const relationStore = useRelationStore()
 
 onMounted(() => {
   http({
@@ -41,19 +43,13 @@ watch(
       url: '/relation/list/union'
     }).then((res) => {
       if (res.status) {
-        appStore.setUnion(res.data as Union)
+        relationStore.setUnion(res.data as Union)
       }
     })
     socket()
     mitt.on('on-message', (value) => {
       const message = value as Message
       appStore.addMessage(message as Message)
-      // if (message.from !== appStore.ownId) {
-      //   notification({
-      //     title: `收到一条来自${appStore.relations.filter((it) => it.id === message.from && it.type === message.type)[0].title}的消息`,
-      //     body: message.content.value
-      //   })
-      // }
     })
   },
   {

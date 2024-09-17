@@ -1,30 +1,34 @@
 <template>
-  <div v-if="appStore.isLogin && appStore.current.id !== -1" class="chat_bar">
+  <div v-if="appStore.isLogin && appStore.current.id !== -1" class="chat_box">
     <div class="tool_bar">
       <div class="chat_text_box">
-        <div class="title_text">{{ appStore.currentTitle }}</div>
-        <div class="detail_text">0 人</div>
+        <div class="title_text">{{ appStore.currentItem?.nickname }}</div>
+        <div v-if="appStore.current.type" class="detail_text">{{ members }} 人</div>
       </div>
       <div class="option_box">
-        <Icon name="search" custom-class="chat_icon" />
-        <Icon name="split" custom-class="chat_icon" />
-        <Icon name="more" custom-class="chat_icon" />
+        <div class="icon_box">
+          <Icon name="search" custom-class="chat_icon" />
+        </div>
+        <div class="icon_box">
+          <Icon name="split" custom-class="chat_icon" @click="reversalChatDetail" />
+        </div>
       </div>
     </div>
     <Split direction :weight="0.125" />
-    <ScrollBox ref="scrollRef" class="message_list" :style="messageListStyle">
-      <div v-for="(item, index) in group" :key="index" class="message_content">
-        <div class="time_stamp">
-          {{ time(item) }}
-        </div>
-        <Message
-          v-for="(messages, key) in item as Record<number, MessageModel[]>"
-          :key
-          :messages="messages"
-        />
+    <div class="chat_content">
+      <div class="chat_user_area">
+        <ScrollBox ref="scrollRef" class="message_list">
+          <div v-for="(item, index) in group" :key="index" class="message_content">
+            <div class="time_stamp">
+              {{ time(item) }}
+            </div>
+            <Message v-for="(messages, key) in item as Record<number, MessageModel[]>" :key :messages="messages" />
+          </div>
+        </ScrollBox>
+        <ChatoptionBar ref="chatOptionBar" />
       </div>
-    </ScrollBox>
-    <ChatoptionBar ref="chatOptionBar" />
+      <ChatDetail v-show="chatDetailVisible" />
+    </div>
   </div>
   <div v-else-if="appStore.isLogin" class="tips_box">
     <div class="tips">选择一个对话开始聊天</div>
@@ -37,7 +41,6 @@
 <script setup lang="ts">
 import { Message as MessageModel, useAppStore } from '../../stores/appStore'
 import { computed, nextTick, ref, watch } from 'vue'
-import { useElementSize } from '@vueuse/core'
 import { getTime } from '@renderer/utils/utils'
 
 import Message from './Message.vue'
@@ -45,8 +48,13 @@ import ChatoptionBar from './ChatOptionBar.vue'
 import Icon from '../Icon.vue'
 import Split from '../Split.vue'
 import ScrollBox from '../ScrollBox.vue'
+import ChatDetail from './ChatDetail.vue'
+
+import { useRelationStore } from '@renderer/stores/relationStore'
+import { reactify } from '@vueuse/core';
 
 const appStore = useAppStore()
+const relationStore = useRelationStore()
 
 const group = computed(() => {
   const { type, id } = appStore.current
@@ -56,6 +64,14 @@ const group = computed(() => {
   } catch (e) {
     return {}
   }
+})
+
+const members = computed(() => {
+  const { type, id } = appStore.current
+  if (!type) return []
+  const members = relationStore.members(id)
+  if (members === undefined) relationStore.getMember(id)
+  return members
 })
 
 // function send() {
@@ -70,13 +86,6 @@ function time(item: Record<number, MessageModel[]>) {
 }
 
 const chatOptionBar = ref()
-const { height } = useElementSize(chatOptionBar)
-
-const messageListStyle = computed(() => {
-  return {
-    height: `calc(100% - ${height.value}px)`
-  }
-})
 
 const scrollRef = ref<InstanceType<typeof ScrollBox> | null>()
 
@@ -89,13 +98,18 @@ watch(
   },
   { deep: true }
 )
+
+const chatDetailVisible = ref(false)
+function reversalChatDetail() {
+  chatDetailVisible.value = !chatDetailVisible.value
+}
 </script>
 
 <style scoped>
 /*
 临界30rem
 */
-.chat_bar {
+.chat_box {
   position: relative;
   height: 100%;
   width: 0;
@@ -113,24 +127,24 @@ watch(
 
 .message_list {
   width: 100%;
-  height: 0;
   overflow: auto;
   flex: 1;
   background-color: var(--color-chat-message-list-background);
 }
 
-/* .message_list::-webkit-scrollbar {
-  width: 0.5rem;
-  height: 0.5rem;
+.chat_content {
+  width: 100%;
+  height: 0;
+  display: flex;
+  flex: 1;
 }
 
-.message_list::-webkit-scrollbar-thumb {
-  border-radius: 1rem;
+.chat_user_area {
+  display: flex;
+  flex-direction: column;
+  width: 0;
+  flex: 1;
 }
-
-.message_list:hover::-webkit-scrollbar-thumb {
-  background: #ccc;
-} */
 
 .message_content {
   display: flex;
@@ -139,7 +153,9 @@ watch(
 
 .tool_bar {
   display: flex;
+  align-items: center;
   padding: 0.5rem;
+  height: 3.5rem;
 }
 
 .chat_text_box {
@@ -152,11 +168,15 @@ watch(
   align-items: center;
 }
 
-.chat_icon {
-  width: 1.25rem;
-  height: 1.25rem;
+.icon_box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  margin: 0 0.5rem;
   cursor: pointer;
-  margin-left: 1rem;
+  border-radius: 1rem;
 }
 
 .time_stamp {
@@ -184,5 +204,11 @@ watch(
   padding: 0.5rem 1rem;
   border-radius: 1rem;
   background-color: var(--color-background-mute);
+}
+</style>
+<style>
+.chat_icon {
+  width: 1.25rem;
+  height: 1.25rem;
 }
 </style>

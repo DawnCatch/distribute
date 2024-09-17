@@ -9,6 +9,7 @@ import com.zhou03.distribute.domain.GroupUserRelation
 import com.zhou03.distribute.domain.UserRelation
 import com.zhou03.distribute.dto.relation.RelationApplicationDTO
 import com.zhou03.distribute.dto.relation.RelationHandleDTO
+import com.zhou03.distribute.dto.relation.RelationQueryDTO
 import com.zhou03.distribute.util.ChatUtil
 import com.zhou03.distribute.util.getToken
 import com.zhou03.distribute.util.toLocalDateTime
@@ -20,25 +21,29 @@ import java.time.LocalDateTime
 
 interface RelationService {
 
+    fun getRelation(relationQueryDTO: RelationQueryDTO, request: HttpServletRequest): Result<RelationVO?>
+
     fun userFollow(relationFollowDTO: RelationApplicationDTO, request: HttpServletRequest): Result<Nothing?>
 
-    fun groupApplication(relationFollowDTO: RelationApplicationDTO, request: HttpServletRequest): Result<Nothing?>
+    fun groupApplication(relationApplicationDTO: RelationApplicationDTO, request: HttpServletRequest): Result<Nothing?>
 
-    fun listGroupPendingHandle(request: HttpServletRequest): Result<List<PendRelationVO>?>
+    fun listGroupPendingHandle(request: HttpServletRequest): Result<List<Int>?>
 
     fun handle(relationHandleDTO: RelationHandleDTO, request: HttpServletRequest): Result<Nothing?>
 
-    fun listFollow(request: HttpServletRequest): Result<List<RelationVO>?>
+    fun listFollow(request: HttpServletRequest): Result<List<Int>?>
 
-    fun listFan(request: HttpServletRequest): Result<List<RelationVO>?>
+    fun listFan(request: HttpServletRequest): Result<List<Int>?>
 
-    fun listGroup(request: HttpServletRequest): Result<List<RelationVO>?>
+    fun listGroup(request: HttpServletRequest): Result<List<Int>?>
 
-    fun listOwnApplication(request: HttpServletRequest): Result<List<RelationVO>?>
+    fun listOwnApplication(request: HttpServletRequest): Result<List<Int>?>
 
     fun listUnion(request: HttpServletRequest): Result<RelationUnionVO?>
 
-    fun listProfileIdByGroup(groupId: Int, request: HttpServletRequest): Result<List<Int>?>
+    fun listMemberByGroup(groupId: Int, request: HttpServletRequest): Result<List<Int>?>
+
+    fun getLenOfMemberByGroup(groupId: Int, request: HttpServletRequest): Result<Int?>
 }
 
 @Service
@@ -55,6 +60,22 @@ class RelationServiceImpl : RelationService {
 
     @Autowired
     lateinit var groupDao: GroupDao
+
+    override fun getRelation(relationQueryDTO: RelationQueryDTO, request: HttpServletRequest): Result<RelationVO?> {
+        val token = request.getToken()
+        val relationVO: RelationVO
+        if (relationQueryDTO.type) {
+            val relation = groupUserRelationDao.getById(relationQueryDTO.id) ?: return error("查无此项")
+            val group = groupDao.getById(relation.targetId) ?: return error("查无此项")
+            relationVO = RelationVO.from(relation, group)
+        } else {
+            val relation =
+                userRelationDao.getByTargetIdAsOwn(relationQueryDTO.id, token.userId)
+            val profile = profileDao.getById(relationQueryDTO.id) ?: return error("查无此项")
+            relationVO = RelationVO.from(relation, profile)
+        }
+        return success(relationVO)
+    }
 
     override fun userFollow(
         relationFollowDTO: RelationApplicationDTO,
@@ -79,13 +100,13 @@ class RelationServiceImpl : RelationService {
     }
 
     override fun groupApplication(
-        relationFollowDTO: RelationApplicationDTO,
+        relationApplicationDTO: RelationApplicationDTO,
         request: HttpServletRequest,
     ): Result<Nothing?> {
         val token = request.getToken()
-        if (groupUserRelationDao.isRelation(token.userId, relationFollowDTO.targetId)) return error("已存在联系")
-        var relation = groupUserRelationDao.getApplicationAsOwn(token.userId, relationFollowDTO.targetId)
-        val group = groupDao.getById(relationFollowDTO.targetId) ?: return error("查无此项")
+        if (groupUserRelationDao.isRelation(token.userId, relationApplicationDTO.targetId)) return error("已存在联系")
+        var relation = groupUserRelationDao.getApplicationAsOwn(token.userId, relationApplicationDTO.targetId)
+        val group = groupDao.getById(relationApplicationDTO.targetId) ?: return error("查无此项")
         val ids = groupUserRelationDao.listUserIdByGroupAsManager(group.id)
         if (!group.visible) return error("权限错误")
         if (relation != null) {
@@ -98,7 +119,7 @@ class RelationServiceImpl : RelationService {
         }
         relation = GroupUserRelation().apply {
             this.userId = token.userId
-            this.targetId = relationFollowDTO.targetId
+            this.targetId = relationApplicationDTO.targetId
             this.status = false
             this.path = "/"
             this.nickname = group.title
@@ -109,11 +130,11 @@ class RelationServiceImpl : RelationService {
         return success(message = "申请成功")
     }
 
-    override fun listGroupPendingHandle(request: HttpServletRequest): Result<List<PendRelationVO>?> {
+    override fun listGroupPendingHandle(request: HttpServletRequest): Result<List<Int>?> {
         val token = request.getToken()
-        val managedGroupIds = groupUserRelationDao.listByMeAsAManager(token.userId).map { it.targetId }
+        val managedGroupIds = groupUserRelationDao.listByMeAsAManager(token.userId)
         val pendingRelations = groupUserRelationDao.listPending(managedGroupIds)
-        return success(pendingRelations.map { PendRelationVO.from(it) })
+        return success(pendingRelations)
     }
 
     override fun handle(relationHandleDTO: RelationHandleDTO, request: HttpServletRequest): Result<Nothing?> {
@@ -136,48 +157,52 @@ class RelationServiceImpl : RelationService {
         return success(null, "处理完毕")
     }
 
-    override fun listFollow(request: HttpServletRequest): Result<List<RelationVO>?> {
+    override fun listFollow(request: HttpServletRequest): Result<List<Int>?> {
         val token = request.getToken()
         val follows = userRelationDao.listFollowAsOwn(token.userId)
-        return success(follows.map { RelationVO(false, it.targetId, it.nickname, it.path) })
+        return success(follows)
     }
 
-    override fun listFan(request: HttpServletRequest): Result<List<RelationVO>?> {
+    override fun listFan(request: HttpServletRequest): Result<List<Int>?> {
         val token = request.getToken()
         val fans = userRelationDao.listFanAsOwn(token.userId)
-        return success(fans.map { RelationVO(false, it.userId, it.nickname, it.path) })
+        return success(fans)
     }
 
-    override fun listGroup(request: HttpServletRequest): Result<List<RelationVO>?> {
+    override fun listGroup(request: HttpServletRequest): Result<List<Int>?> {
         val token = request.getToken()
         val groups = groupUserRelationDao.listByJoinAsOwn(token.userId)
-        return success(groups.map { RelationVO(true, it.targetId, it.nickname, it.path) })
+        return success(groups)
     }
 
-    override fun listOwnApplication(request: HttpServletRequest): Result<List<RelationVO>?> {
+    override fun listOwnApplication(request: HttpServletRequest): Result<List<Int>?> {
         val token = request.getToken()
         val applications = groupUserRelationDao.listByPendingAsOwn(token.userId)
-        return success(applications.map { RelationVO(true, it.targetId, it.nickname, it.path) })
+        return success(applications)
     }
 
     override fun listUnion(request: HttpServletRequest): Result<RelationUnionVO?> {
         val token = request.getToken()
-        val follows =
-            userRelationDao.listFollowAsOwn(token.userId).map { RelationVO(false, it.targetId, it.nickname, it.path) }
-        val fans = userRelationDao.listFanAsOwn(token.userId).map { it.userId }
+        val follows = userRelationDao.listFollowAsOwn(token.userId)
+        val fans = userRelationDao.listFanAsOwn(token.userId)
         val groups = groupUserRelationDao.listByJoinAsOwn(token.userId)
-            .map { RelationVO(true, it.targetId, it.nickname, it.path) }
         val applications = groupUserRelationDao.listByPendingAsOwn(token.userId)
-            .map { RelationVO(true, it.targetId, it.nickname, it.path) }
-        val managedGroupIds = groupUserRelationDao.listByMeAsAManager(token.userId).map { it.targetId }
-        val pends = groupUserRelationDao.listPending(managedGroupIds).map { PendRelationVO.from(it) }
+        val managedGroupIds = groupUserRelationDao.listByMeAsAManager(token.userId)
+        val pends = groupUserRelationDao.listPending(managedGroupIds)
         return success(RelationUnionVO(follows, fans, groups, applications, pends))
     }
 
-    override fun listProfileIdByGroup(groupId: Int, request: HttpServletRequest): Result<List<Int>?> {
+    override fun listMemberByGroup(groupId: Int, request: HttpServletRequest): Result<List<Int>?> {
         val token = request.getToken()
         if (!groupUserRelationDao.isMember(token.userId, groupId)) return error("权限错误")
-        val relations = groupUserRelationDao.listByTargetId(groupId)
-        return success(relations.map { it.userId })
+        val relations = groupUserRelationDao.listMemberIdByTargetId(groupId)
+        return success(relations)
+    }
+
+    override fun getLenOfMemberByGroup(groupId: Int, request: HttpServletRequest): Result<Int?> {
+        val token = request.getToken()
+        if (!groupUserRelationDao.isMember(token.userId, groupId)) return error("权限错误")
+        val len = groupUserRelationDao.countMemberByTargetId(groupId)
+        return success(len)
     }
 }

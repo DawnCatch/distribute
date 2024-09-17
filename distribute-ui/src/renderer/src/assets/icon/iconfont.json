@@ -6,6 +6,34 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "16135818",
+      "name": "exit",
+      "font_class": "exit-1",
+      "unicode": "e75c",
+      "unicode_decimal": 59228
+    },
+    {
+      "icon_id": "39793611",
+      "name": "058_回收",
+      "font_class": "delete",
+      "unicode": "e720",
+      "unicode_decimal": 59168
+    },
+    {
+      "icon_id": "5387730",
+      "name": "通知中心",
+      "font_class": "toast-2",
+      "unicode": "eb43",
+      "unicode_decimal": 60227
+    },
+    {
+      "icon_id": "26528662",
+      "name": "通知",
+      "font_class": "toast-1",
+      "unicode": "e6a2",
+      "unicode_decimal": 59042
+    },
+    {
       "icon_id": "1444698",
       "name": "group",
       "font_class": "path",
@@ -15,7 +43,7 @@
     {
       "icon_id": "21243071",
       "name": "通知",
-      "font_class": "toast",
+      "font_class": "toast-0",
       "unicode": "e650",
       "unicode_decimal": 58960
     },
@@ -29,7 +57,7 @@
     {
       "icon_id": "6050540",
       "name": "exit",
-      "font_class": "exit",
+      "font_class": "exit-0",
       "unicode": "e622",
       "unicode_decimal": 58914
     },

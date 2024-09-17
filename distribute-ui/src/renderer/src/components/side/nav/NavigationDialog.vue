@@ -19,26 +19,21 @@
     </div>
     <div class="device_list" :class="{ device_list_visible: deviceListVisible }"></div>
     <div class="option_list">
-      <NavigationOptionItem title="添&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp加" @click="openAddDialog">
+      <OptionItem title="添&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp加" @click="openAddDialog">
         <Icon name="invite" custom-class="navigation_icon" />
-      </NavigationOptionItem>
-      <NavigationOptionItem title="收&nbsp&nbsp藏&nbsp&nbsp夹">
+      </OptionItem>
+      <OptionItem title="收&nbsp&nbsp藏&nbsp&nbsp夹">
         <Icon name="mark" custom-class="navigation_icon" />
-      </NavigationOptionItem>
-      <NavigationOptionItem
-        title="夜间模式"
-        :default-value="isDark"
-        type="switch"
-        :use="changeTheme"
-      >
+      </OptionItem>
+      <OptionItem title="夜间模式" :default-value="isDark" type="switch" :use="changeTheme">
         <Icon name="night" custom-class="navigation_icon" />
-      </NavigationOptionItem>
-      <NavigationOptionItem title="设置">
+      </OptionItem>
+      <OptionItem title="设置">
         <Icon name="setting" custom-class="navigation_icon" />
-      </NavigationOptionItem>
-      <NavigationOptionItem title="退出登录" :use="signOut">
-        <Icon name="exit" custom-class="navigation_icon" />
-      </NavigationOptionItem>
+      </OptionItem>
+      <OptionItem title="退出登录" :use="signOut">
+        <Icon name="exit-0" custom-class="navigation_icon" />
+      </OptionItem>
     </div>
   </Dialog>
 </template>
@@ -50,7 +45,7 @@ import { useAppStore } from '../../../stores/appStore'
 
 import Dialog from '../../Dialog.vue'
 import Icon from '../../Icon.vue'
-import NavigationOptionItem from './NavigationOptionItem.vue'
+import OptionItem from '../OptionItem.vue'
 
 import mitt from '../../../utils/mitt'
 import { useDark, useToggle } from '@vueuse/core'

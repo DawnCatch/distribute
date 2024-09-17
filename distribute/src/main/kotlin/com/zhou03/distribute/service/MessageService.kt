@@ -64,7 +64,7 @@ class MessageServiceImpl : MessageService {
         val from = toLocalDateTime(messageHistoryDTO.from)
         var to = toLocalDateTime(messageHistoryDTO.to)
         if (to <= from) to = LocalDateTime.now()
-        val groupIds = groupUserRelationDao.listByJoinAsOwn(token.userId).map { it.targetId }
+        val groupIds = groupUserRelationDao.listByJoinAsOwn(token.userId)
         val messageDomains = messageDao.listByDateAsOwn(token.userId, groupIds, from, to)
         val ownMessageIds = messageDomains.filter { it.from == token.userId }.map { it.id }
         val otherMessageIds = messageDomains.filter { it.from != token.userId }.map { it.id }
@@ -136,7 +136,7 @@ class MessageServiceImpl : MessageService {
             "错误格式"
         )
         val token = request.getToken()
-        val ids = groupUserRelationDao.listByTargetId(messageSendDTO.to).map { it.userId }
+        val ids = groupUserRelationDao.listMemberIdByTargetId(messageSendDTO.to)
         if (ids.isEmpty() || token.userId !in ids) return error(
             "发送失败"
         )
@@ -158,7 +158,7 @@ class MessageServiceImpl : MessageService {
             "错误格式"
         )
         val device = deviceDao.check(key) ?: return error("验证失败")
-        val ids = groupUserRelationDao.listByTargetId(messageSendDTO.to).map { it.userId }
+        val ids = groupUserRelationDao.listMemberIdByTargetId(messageSendDTO.to)
         if (ids.isEmpty() || device.userId !in ids) return error(
             "发送失败"
         )

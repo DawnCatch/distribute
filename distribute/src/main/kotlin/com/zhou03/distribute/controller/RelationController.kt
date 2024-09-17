@@ -2,9 +2,11 @@ package com.zhou03.distribute.controller
 
 import com.zhou03.distribute.dto.relation.RelationApplicationDTO
 import com.zhou03.distribute.dto.relation.RelationHandleDTO
+import com.zhou03.distribute.dto.relation.RelationQueryDTO
 import com.zhou03.distribute.service.RelationService
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -15,6 +17,12 @@ class RelationController {
 
     @Autowired
     lateinit var relationService: RelationService
+
+    @RequestMapping("/get")
+    fun getRelation(
+        @RequestBody relationQueryDTO: RelationQueryDTO,
+        request: HttpServletRequest,
+    ) = relationService.getRelation(relationQueryDTO, request)
 
     @RequestMapping("/user/follow")
     fun userApplication(
@@ -63,4 +71,16 @@ class RelationController {
     fun listUnion(
         request: HttpServletRequest,
     ) = relationService.listUnion(request)
+
+    @RequestMapping("/get/member/{groupId}")
+    fun getMember(
+        @PathVariable("groupId") groupId: Int,
+        request: HttpServletRequest,
+    ) = relationService.listMemberByGroup(groupId, request)
+
+    @RequestMapping("/len/member/{groupId}")
+    fun lenMember(
+        @PathVariable("groupId") groupId: Int,
+        request: HttpServletRequest,
+    ) = relationService.getLenOfMemberByGroup(groupId, request)
 }

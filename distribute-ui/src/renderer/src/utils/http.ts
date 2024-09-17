@@ -1,6 +1,7 @@
 import { getToken, setToken } from './secure'
 import { ip, port, security } from './env'
 import { AxiosRequestConfig } from 'axios'
+import { useRelationStore } from '@renderer/stores/relationStore'
 
 interface HttpResponse {
   status: boolean
@@ -31,5 +32,43 @@ const http = (options = {} as AxiosRequestConfig): Promise<HttpResponse> => {
   })
 }
 
-export { http }
+function follow(id: number) {
+  http({
+    method: 'POST',
+    url: '/relation/user/follow',
+    data: {
+      targetId: id
+    }
+  }).then((res) => {
+    if (!res.status) return
+    const relationStore = useRelationStore()
+    const message = res.message
+    if (message === '关注成功') {
+      relationStore.addFollows(id)
+    } else if (message === '取消关注') {
+      relationStore.removeFollows(id)
+    }
+  })
+}
+
+function application(id: number) {
+  http({
+    method: 'POST',
+    url: '/relation/group/application',
+    data: {
+      targetId: id
+    }
+  }).then((res) => {
+    if (!res.status) return
+    const relationStore = useRelationStore()
+    const message = res.message
+    if (message === '申请成功') {
+      relationStore.addFollows(id)
+    } else if (message === '取消成功') {
+      relationStore.removeFollows(id)
+    }
+  })
+}
+
+export { http, follow, application }
 export type { HttpResponse }
