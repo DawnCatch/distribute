@@ -13,7 +13,6 @@
 defineProps({
   visible: {
     type: Boolean,
-    default: false,
     required: true
   },
   mask: {
@@ -48,7 +47,7 @@ function close() {
   background-color: blur(black, 0.5);
   overflow: hidden;
   pointer-events: v-bind("visible ? '' : 'none'");
-  z-index: 2;
+  z-index: 1;
 }
 
 .masking {

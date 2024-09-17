@@ -5,4 +5,5 @@ data class RelationUnionVO(
     val fans: List<Int>,
     val groups: List<RelationVO>,
     val applications: List<RelationVO>,
+    val pends: List<PendRelationVO>,
 )

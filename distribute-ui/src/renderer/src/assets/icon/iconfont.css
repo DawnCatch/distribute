@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 4552076 */
-  src: url('iconfont.woff2?t=1726306392723') format('woff2'),
-       url('iconfont.woff?t=1726306392723') format('woff'),
-       url('iconfont.ttf?t=1726306392723') format('truetype');
+  src: url('iconfont.woff2?t=1726419859540') format('woff2'),
+       url('iconfont.woff?t=1726419859540') format('woff'),
+       url('iconfont.ttf?t=1726419859540') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,66 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-path:before {
+  content: "\e791";
+}
+
+.icon-toast:before {
+  content: "\e650";
+}
+
+.icon-night:before {
+  content: "\e6e4";
+}
+
+.icon-exit:before {
+  content: "\e622";
+}
+
+.icon-invite:before {
+  content: "\e683";
+}
+
+.icon-person:before {
+  content: "\e60c";
+}
+
+.icon-date:before {
+  content: "\e697";
+}
+
+.icon-more:before {
+  content: "\e66b";
+}
+
+.icon-group:before {
+  content: "\e613";
+}
+
+.icon-mark:before {
+  content: "\e64d";
+}
+
+.icon-sort:before {
+  content: "\e7f1";
+}
+
+.icon-link-0:before {
+  content: "\e659";
+}
+
+.icon-link-1:before {
+  content: "\e678";
+}
+
+.icon-split:before {
+  content: "\e8bf";
+}
+
+.icon-setting:before {
+  content: "\e87e";
 }
 
 .icon-search:before {

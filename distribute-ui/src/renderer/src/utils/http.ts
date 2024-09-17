@@ -1,10 +1,10 @@
 import { getToken, setToken } from './secure'
 import { ip, port, security } from './env'
-import { AxiosRequestConfig, AxiosResponse } from 'axios'
+import { AxiosRequestConfig } from 'axios'
 
 interface HttpResponse {
   status: boolean
-  headers: AxiosResponse
+  message: string
   data: Record<string, any>
 }
 

@@ -1,5 +1,6 @@
 <template>
   <div ref="scrollBoxRef" class="scroll_box" @scroll="handleScroll">
+    <div v-show="fold && scrollTop !== 0" class="fold_line"></div>
     <slot></slot>
     <div class="scroll_content">
       <div ref="scrollBarRef" class="scroll_bar">
@@ -10,11 +11,13 @@
 </template>
 
 <script setup lang="ts">
-import { useElementHover } from '@vueuse/core'
+import { useAppStore } from '@renderer/stores/appStore'
+import { useElementHover, useElementVisibility } from '@vueuse/core'
 import { ref, watch, nextTick } from 'vue'
 
 const scrollBoxRef = ref<HTMLElement | null>()
 const scrollBarRef = ref<HTMLElement | null>()
+const visibled = useElementVisibility(scrollBarRef)
 const scrollThumbRef = ref<HTMLElement | null>()
 
 const scrollVisible = ref(false)
@@ -22,6 +25,19 @@ const scrollTop = ref(0)
 const scrollThumbTop = ref(0)
 const scrollThumbHeight = ref(0)
 const isHovered = useElementHover(scrollBoxRef)
+
+const appStore = useAppStore()
+
+const props = defineProps({
+  scroll: {
+    type: Function,
+    default: () => {}
+  },
+  fold: {
+    type: Boolean,
+    default: false
+  }
+})
 
 watch(
   isHovered,
@@ -34,10 +50,28 @@ watch(
   }
 )
 
+watch(visibled, (newVal) => {
+  if (newVal) handleScroll()
+})
+
+watch(
+  () => appStore.current,
+  () => {
+    scrollVisible.value = false
+  },
+  { deep: true }
+)
+
 function handleScroll() {
   nextTick(() => {
     if (scrollBoxRef.value && scrollBarRef.value && isHovered.value) {
       const scrollableElement = scrollBoxRef.value
+
+      props.scroll({
+        clientHeight: scrollableElement.clientHeight,
+        scrollTop: scrollableElement.scrollTop
+      })
+
       if (scrollableElement.scrollHeight > scrollableElement.clientHeight) {
         scrollVisible.value = true
       }
@@ -52,12 +86,28 @@ function handleScroll() {
     }
   })
 }
+
+function scrollToBottom() {
+  scrollBoxRef.value!.scrollTo({ top: scrollBoxRef.value!.scrollHeight })
+}
+
+defineExpose({
+  scrollToBottom
+})
 </script>
 
 <style scoped>
 .scroll_box {
   overflow-y: auto;
   position: relative;
+}
+
+.fold_line {
+  position: sticky;
+  width: 100%;
+  top: 0;
+  height: 1px;
+  background-color: var(--color-scrollbar-background);
 }
 
 .scroll_box::-webkit-scrollbar {

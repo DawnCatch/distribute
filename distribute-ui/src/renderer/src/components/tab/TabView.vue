@@ -44,7 +44,7 @@ function animation() {
     const currentIndex = element.offsetLeft / width.value
     const targetIndex = i - props.modelValue
     element.style.transform = `translateX(${(targetIndex - currentIndex) * 100}%)`
-    element.style.transitionDuration = '1s'
+    element.style.transitionDuration = '500ms'
   }
 }
 </script>

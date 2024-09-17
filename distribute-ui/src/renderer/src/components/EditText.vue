@@ -75,13 +75,13 @@ function handleInput(e: Event) {
   top: 0;
 }
 
-.edit_content:focus-within>.placeholder_text {
+.edit_content:focus-within > .placeholder_text {
   font-size: 0.75rem;
   top: 0;
   color: var(--color-edit-focus);
 }
 
-.edit_content:focus-within>.placeholder_text_focus {
+.edit_content:focus-within > .placeholder_text_focus {
   color: var(--color-edit-focus);
 }
 
@@ -119,7 +119,7 @@ input:focus {
   transition: all 0.3s;
 }
 
-.edit_content:focus-within>.line_box>.line {
+.edit_content:focus-within > .line_box > .line {
   width: 100%;
 }
 

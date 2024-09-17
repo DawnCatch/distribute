@@ -1,6 +1,7 @@
 package com.zhou03.distribute.util
 
 import com.zhou03.distribute.dao.MessageDao
+import com.zhou03.distribute.vo.Content
 import com.zhou03.distribute.vo.MessageVO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -41,6 +42,30 @@ object ChatUtil {
     @Autowired
     fun setMessageDao(messageDao: MessageDao) {
         this.messageDao = messageDao
+    }
+
+    fun notice(content: Content, id: Int) {
+        val message = MessageVO(0, false, 0, id, content)
+        sessionsMap.forEach { (userId, sessions) ->
+            if (userId == id) {
+                val it = sessions.iterator()
+                while (it.hasNext()) {
+                    val session = it.next()
+                    try {
+                        if (session.isOpen) session.sendMessage(message.to())
+                        else it.remove()
+                    } catch (e: Exception) {
+                        it.remove()
+                    }
+                }
+            }
+        }
+    }
+
+    fun notice(content: Content, ids: List<Int>) {
+        ids.forEach { id ->
+            notice(content, id)
+        }
     }
 
     fun sendMessage(message: MessageVO) {

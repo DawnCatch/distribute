@@ -95,7 +95,7 @@ onMounted(() => {
     const userId = message.from
     const content = message.content
     if (content.type.indexOf('RTC') === -1) return
-    if (userId === appStore.profile.userId) {
+    if (userId === appStore.ownId) {
       if (content.type === 'RTC:REQ' && !wait) {
         console.log('wait')
       }

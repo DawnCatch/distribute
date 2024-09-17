@@ -1,6 +1,8 @@
 <template>
   <div ref="chatOptionBar" class="chat_option_bar" tabindex="0">
-    <div class="file_box">文件</div>
+    <div class="file_box">
+      <Icon name="link-0" custom-class="chat_option_bar_icon" />
+    </div>
     <div class="input_box">
       <textarea
         ref="textarea"
@@ -39,6 +41,7 @@ import {
 import { http } from '../../utils/http'
 import markdown from '../../utils/markdown'
 import { useAppStore } from '../../stores/appStore'
+import Icon from '../Icon.vue'
 
 const appStore = useAppStore()
 
@@ -53,9 +56,9 @@ const { focused } = useFocusWithin(chatOptionBar)
 function handleKeyCode(event: KeyboardEvent) {
   if (event.key === 'Enter' && event.ctrlKey && input.value !== '') {
     http({
-      url: `/message/${appStore.checkItem.type ? 'group' : 'user'}/send`,
+      url: `/message/${appStore.current.type ? 'group' : 'user'}/send`,
       data: {
-        to: appStore.checkItem.id,
+        to: appStore.current.id,
         content: {
           type: 'TEXT',
           value: input.value
@@ -107,14 +110,28 @@ enum Mode {
   width: 100%;
   font-size: 1.25rem;
   line-height: 2rem;
-  background-color: var(--color-background-soft);
   overflow: hidden;
 }
 
 .file_box {
-  height: 3rem;
-  width: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.5rem;
+  width: 2.5rem;
   padding: 0.5rem;
+  border-radius: 50%;
+  margin: 0.25rem;
+  cursor: pointer;
+}
+
+.file_box:hover {
+  background-color: var(--color-background-mute);
+}
+
+.chat_option_bar_icon {
+  height: 1.75em;
+  width: 1.75rem;
 }
 
 .input_box {

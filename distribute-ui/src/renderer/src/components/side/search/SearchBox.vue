@@ -5,7 +5,7 @@
         <div class="tab_item">{{ title.title }}</div>
       </template>
     </TabBar>
-    <TabView class="tab_view" v-model="active" :list>
+    <TabView v-model="active" class="tab_view" :list>
       <template #page="{ data }">
         <div v-if="data.index === 0">page1</div>
         <div v-else-if="data.index === 1">page2</div>
@@ -18,8 +18,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-import TabBar from '../tab/TabBar.vue'
-import TabView from '../tab/TabView.vue'
+import TabBar from '../../tab/TabBar.vue'
+import TabView from '../../tab/TabView.vue'
 
 const list = ref([
   {

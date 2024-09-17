@@ -68,6 +68,7 @@ defineExpose({
   border: 2px var(--color-border-edit-text-border) solid;
   padding: 0.25rem 0.5rem;
   border-radius: 20px;
+  height: 2rem;
   width: 100%;
   position: relative;
   display: flex;
@@ -90,6 +91,7 @@ input {
   padding: 0;
   outline: none;
   width: 100%;
+  color: var(--color-text);
 }
 
 .option_button {
