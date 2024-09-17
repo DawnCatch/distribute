@@ -34,6 +34,12 @@ class GroupUserRelationDao : BaseDao<GroupUserRelation, GroupUserRelations>(Grou
         (it.status eq true) and (it.userId eq userId) and (it.targetId eq targetId) and (it.role eq GroupRole.MASTER)
     } != 0
 
+    fun listUserIdByGroupAsManager(groupId: Int) = findList {
+        (it.targetId eq groupId) and (it.role inList listOf(
+            GroupRole.MANAGER, GroupRole.MASTER
+        ))
+    }.map { it.userId }
+
     fun listByJoinAsOwn(userId: Int) = findList { (it.status eq true) and (it.userId eq userId) }
 
     fun listByPendingAsOwn(userId: Int) =
@@ -51,7 +57,8 @@ class GroupUserRelationDao : BaseDao<GroupUserRelation, GroupUserRelations>(Grou
         if (groupIds.isNotEmpty()) findList { (it.status eq false) and (it.date notEq 0L.toLocalDateTime()) and (it.targetId inList groupIds) }
         else listOf()
 
-    fun getApplicationAsOwn(userId: Int,targetId: Int) = findOne { (it.userId eq userId) and (it.targetId eq targetId) and (it.date notEq 0L.toLocalDateTime()) }
+    fun getApplicationAsOwn(userId: Int, targetId: Int) =
+        findOne { (it.userId eq userId) and (it.targetId eq targetId) and (it.date notEq 0L.toLocalDateTime()) }
 
     fun getByUserIdAndTargetId(userId: Int, targetId: Int) =
         findOne { (it.userId eq userId) and (it.targetId eq targetId) }

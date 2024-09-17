@@ -62,6 +62,12 @@ object ChatUtil {
         }
     }
 
+    fun notice(content: Content, ids: List<Int>) {
+        ids.forEach { id ->
+            notice(content, id)
+        }
+    }
+
     fun sendMessage(message: MessageVO) {
         sessionsMap.forEach { (userId, sessions) ->
             if (userId == message.to || userId == message.from) {

@@ -4,6 +4,7 @@ import com.zhou03.distribute.domain.UserRelation
 import com.zhou03.distribute.domain.UserRelations
 import org.ktorm.dsl.and
 import org.ktorm.dsl.eq
+import org.ktorm.entity.sequenceOf
 import org.springframework.stereotype.Component
 
 @Component

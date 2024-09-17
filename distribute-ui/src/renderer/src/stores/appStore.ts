@@ -9,6 +9,8 @@ export const useAppStore = defineStore('app', {
     fans: [] as number[],
     groups: [] as number[],
     applications: [] as number[],
+    pends: [] as number[],
+    pendRelations: [] as PendRelation[],
     relations: [] as Relation[],
     messages: [] as Message[],
     messageMap: [] as Message[][][],
@@ -28,6 +30,15 @@ export const useAppStore = defineStore('app', {
       if (index === -1) return
       this.follows.splice(index, 1)
     },
+    addFans(id: number) {
+      if (this.fans.includes(id)) return
+      this.fans.push(id)
+    },
+    removeFans(id: number) {
+      const index = this.fans.findIndex((it) => it === id)
+      if (index === -1) return
+      this.fans.splice(index, 1)
+    },
     addApplication(id: number) {
       if (this.applications.includes(id)) return
       this.applications.push(id)
@@ -36,6 +47,15 @@ export const useAppStore = defineStore('app', {
       const index = this.applications.findIndex((it) => it === id)
       if (index === -1) return
       this.applications.splice(index, 1)
+    },
+    addPend(id: number) {
+      if (this.pends.includes(id)) return
+      this.pends.push(id)
+    },
+    removePend(id: number) {
+      const index = this.pends.findIndex((it) => it === id)
+      if (index === -1) return
+      this.pends.splice(index, 1)
     },
     addUserProfile(userProfile: UserProfile) {
       const index = this.userProfiles.findIndex((it) => it.userId === userProfile.userId)
@@ -76,20 +96,33 @@ export const useAppStore = defineStore('app', {
     addRelations(relations: Relation[]) {
       relations.forEach((it) => this.addRelation(it))
     },
+    addPendRelation(pendRelation: PendRelation) {
+      const index = this.pendRelations.findIndex((it) => it.id === pendRelation.id)
+      if (index === -1) {
+        this.pendRelations.push(pendRelation)
+      } else {
+        this.pendRelations[index] = pendRelation
+      }
+    },
+    addPendRelations(pendRelations: PendRelation[]) {
+      pendRelations.forEach((it) => {
+        this.addPendRelation(it)
+      })
+    },
     setUnion(union: Union) {
       this.follows = union.follows.map((it) => it.id)
       this.fans = union.fans
       this.groups = union.groups.map((it) => it.id)
       this.applications = union.applications.map((it) => it.id)
       this.addRelations(union.follows.concat(union.groups).concat(union.applications))
+      this.pends = union.pends.map((it) => it.id)
+      this.addPendRelations(union.pends)
     },
     getRelation(type: boolean, id: number): Relation | undefined {
       return this.relations.find((it) => it.type === type && it.id === id)
     },
     addMessage(message: Message) {
-      if (message.from === 0) {
-        return
-      }
+      if (message.from === 0) return this.handleSystemNotice(message)
       const index = this.messages.findIndex((it) => it.id === message.id)
       if (index === -1) {
         this.messages.push(message)
@@ -104,9 +137,29 @@ export const useAppStore = defineStore('app', {
         this.messages[index] = message
       }
     },
-    handleSystemNotice() {
-
-    }m
+    handleSystemNotice(message: Message) {
+      const { content } = message
+      const { type, value } = content
+      const args = type.split(':')
+      if (args[0] === 'RELATION') {
+        if (args[1] === 'FANS') {
+          const id = Number(value.slice(1))
+          if (value[0] === '+') {
+            this.addFans(id)
+          } else {
+            this.removeFans(id)
+          }
+        } else if (args[1] === 'PENDING') {
+          const id = Number(value.slice(1))
+          if (value[0] === '+') {
+            this.addPend(id)
+          } else {
+            this.removePend(id)
+          }
+        }
+      }
+      console.log(content)
+    },
     addMessages(messages: Message[]) {
       messages.forEach((it) => this.addMessage(it))
     },
@@ -149,7 +202,7 @@ export const useAppStore = defineStore('app', {
     },
     frients(state) {
       return state.follows.filter((value) => state.fans.includes(value))
-    },
+    }, 
     ownRelations(): Relation[] {
       const result = [] as Relation[]
       this.frients
@@ -325,6 +378,12 @@ interface Relation {
   path: string
 }
 
+interface PendRelation {
+  id: number
+  userId: number
+  groupId: number
+}
+
 interface Content {
   type: string
   value: string
@@ -345,6 +404,7 @@ interface Union {
   fans: number[]
   groups: Relation[]
   applications: Relation[]
+  pends: PendRelation[]
 }
 
 interface ProfileData {

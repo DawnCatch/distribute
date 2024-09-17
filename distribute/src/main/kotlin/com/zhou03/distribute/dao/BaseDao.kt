@@ -72,6 +72,12 @@ abstract class BaseDao<E : Entity<E>, T : Table<E>>(private val tableObject: T) 
         return database.sequenceOf(tableObject).filter(predicate).toList()
     }
 
+    open fun findEntitySequence(
+        predicate: (T) -> ColumnDeclaring<Boolean>,
+    ): EntitySequence<E, T> {
+        return database.sequenceOf(tableObject).filter(predicate)
+    }
+
     open fun findAll(): List<E> {
         return database.sequenceOf(tableObject).toList()
     }

@@ -7,7 +7,6 @@ import Header from './views/Header.vue'
 import { http } from './utils/http'
 import socket from './utils/socket'
 import mitt from './utils/mitt'
-import notification from './utils/notification'
 
 const appStore = useAppStore()
 
@@ -49,12 +48,12 @@ watch(
     mitt.on('on-message', (value) => {
       const message = value as Message
       appStore.addMessage(message as Message)
-      if (message.from !== appStore.ownId) {
-        notification({
-          title: `收到一条来自${appStore.relations.filter((it) => it.id === message.from && it.type === message.type)[0].title}的消息`,
-          body: message.content.value
-        })
-      }
+      // if (message.from !== appStore.ownId) {
+      //   notification({
+      //     title: `收到一条来自${appStore.relations.filter((it) => it.id === message.from && it.type === message.type)[0].title}的消息`,
+      //     body: message.content.value
+      //   })
+      // }
     })
   },
   {

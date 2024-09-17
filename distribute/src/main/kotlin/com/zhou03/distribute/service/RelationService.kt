@@ -72,6 +72,9 @@ class RelationServiceImpl : RelationService {
             this.date = LocalDateTime.now()
         }
         userRelationDao.addOrUpdate(relation)
+        ChatUtil.notice(
+            Content("RELATION:FANS", "${if (status) "+" else "-"}${token.userId}"), relationFollowDTO.targetId
+        )
         return success(message = if (status) "关注成功" else "取消关注")
     }
 
@@ -82,16 +85,17 @@ class RelationServiceImpl : RelationService {
         val token = request.getToken()
         if (groupUserRelationDao.isRelation(token.userId, relationFollowDTO.targetId)) return error("已存在联系")
         var relation = groupUserRelationDao.getApplicationAsOwn(token.userId, relationFollowDTO.targetId)
+        val group = groupDao.getById(relationFollowDTO.targetId) ?: return error("查无此项")
+        val ids = groupUserRelationDao.listUserIdByGroupAsManager(group.id)
+        if (!group.visible) return error("权限错误")
         if (relation != null) {
             relation.apply {
                 this.date = 0L.toLocalDateTime()
                 flushChanges()
             }
-            ChatUtil.sendMessage()
+            ChatUtil.notice(Content("RELATION:PENDING", "-${relation.id}"), ids)
             return error("取消成功")
         }
-        val group = groupDao.getById(relationFollowDTO.targetId) ?: return error("查无此项")
-        if (!group.visible) return error("权限错误")
         relation = GroupUserRelation().apply {
             this.userId = token.userId
             this.targetId = relationFollowDTO.targetId
@@ -101,6 +105,7 @@ class RelationServiceImpl : RelationService {
             this.date = LocalDateTime.now()
         }
         groupUserRelationDao.addOrUpdate(relation)
+        ChatUtil.notice(Content("RELATION:PENDING", "+${relation.id}"), ids)
         return success(message = "申请成功")
     }
 
@@ -164,7 +169,9 @@ class RelationServiceImpl : RelationService {
             .map { RelationVO(true, it.targetId, it.nickname, it.path) }
         val applications = groupUserRelationDao.listByPendingAsOwn(token.userId)
             .map { RelationVO(true, it.targetId, it.nickname, it.path) }
-        return success(RelationUnionVO(follows, fans, groups, applications))
+        val managedGroupIds = groupUserRelationDao.listByMeAsAManager(token.userId).map { it.targetId }
+        val pends = groupUserRelationDao.listPending(managedGroupIds).map { PendRelationVO.from(it) }
+        return success(RelationUnionVO(follows, fans, groups, applications, pends))
     }
 
     override fun listProfileIdByGroup(groupId: Int, request: HttpServletRequest): Result<List<Int>?> {
