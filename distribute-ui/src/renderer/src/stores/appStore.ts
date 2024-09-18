@@ -73,7 +73,6 @@ export const useAppStore = defineStore('app', {
           }
         }
       }
-      console.log(content)
     },
     addMessages(messages: Message[]) {
       messages.forEach((it) => this.addMessage(it))

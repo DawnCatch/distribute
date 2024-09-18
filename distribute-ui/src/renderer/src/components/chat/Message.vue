@@ -1,6 +1,6 @@
 <template>
   <div class="message_bar" :class="{ reverse: reverse }">
-    <Avatar v-if="!reverse" class="avatar_box" :src="appStore.currentItem?.avatarUrl" />
+    <Avatar v-if="!reverse" :src="appStore.currentItem?.avatarUrl" class="avatar_box" />
     <div class="message_box">
       <AutoContent
         v-for="(message, index) in messages as Message[]"

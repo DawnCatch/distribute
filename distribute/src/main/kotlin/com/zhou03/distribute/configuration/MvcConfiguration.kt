@@ -33,7 +33,7 @@ class MvcConfiguration : WebMvcConfigurer, ErrorPageRegistrar {
 
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         registry.addResourceHandler("/**").addResourceLocations("file:/www/wwwroot/distribute/")
-            .addResourceLocations("file:D:/data/")
+//            .addResourceLocations("file:D:/data/")
     }
 
     @Autowired

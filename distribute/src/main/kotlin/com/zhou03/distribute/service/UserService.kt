@@ -72,6 +72,7 @@ class UserServiceImpl : UserService {
             this.changeAuth(Auth.USER)
         }
         profileDao.addOrUpdate(profile)
+        response.addHeader("Access-Control-Expose-Headers","Authorization")
         response.setHeader(SUBJECT, TokenUtil.genAccessToken(Token.from(user)))
         return success(ProfileVO.from(profile))
     }

@@ -145,7 +145,7 @@ class MessageServiceImpl : MessageService {
             )
         ) return error("发生失败")
         val fileNames = upload(fileSavePath, messageFileSendDTO.files)
-        if (fileNames.isEmpty()) return error("发送失败")
+        if (fileNames.isEmpty()) return error("文件转存失败")
         val content = Content("FILE", fileNames.joinToString(","))
         val messageDomain = Message().apply {
             type = false
@@ -212,7 +212,7 @@ class MessageServiceImpl : MessageService {
             "发送失败"
         )
         val fileNames = upload(fileSavePath, messageFileSendDTO.files)
-        if (fileNames.isEmpty()) return error("发送失败")
+        if (fileNames.isEmpty()) return error("文件转存失败")
         val content = Content("FILE", fileNames.joinToString(","))
         val messageDomain = Message().apply {
             type = true
