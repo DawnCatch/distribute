@@ -8,9 +8,9 @@
         </div>
         <div class="button_box">
           <div class="space"></div>
-          <div @click="close">取消</div>
-          <div v-if="!isWait" @click="commit">下一步</div>
-          <div v-else>处理中...</div>
+          <div class="button" @click="close">取消</div>
+          <div class="button" v-if="!isWait" @click="commit">下一步</div>
+          <div class="button" v-else>处理中...</div>
         </div>
       </div>
     </template>
@@ -132,5 +132,10 @@ watch(groupId, (newVal) => {
 
 .space {
   flex: 1;
+}
+
+.button {
+  margin: 0 1rem;
+  cursor: pointer;
 }
 </style>

@@ -49,9 +49,7 @@ class MessageController {
     fun groupFileSend(
         messageFileSendDTO: MessageFileSendDTO,
         request: HttpServletRequest,
-    ) {
-
-    }
+    ) = messageService.groupFileSend(messageFileSendDTO, request)
 
     @RequestMapping("/key/user/send/{key}")
     fun userSend(

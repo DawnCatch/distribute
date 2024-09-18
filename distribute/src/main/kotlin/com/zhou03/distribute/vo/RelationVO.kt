@@ -16,8 +16,15 @@ data class RelationVO(
     val path: String,
 ) {
     companion object {
-        fun from(relation: GroupUserRelation, group: Group) = RelationVO(
-            relation.id, true, group.id, group.title, relation.nickname, group.avatarUrl, relation.role, relation.path
+        fun from(relation: GroupUserRelation?, group: Group) = RelationVO(
+            relation?.id ?: 0,
+            true,
+            group.id,
+            group.title,
+            relation?.nickname ?: "",
+            group.avatarUrl,
+            relation?.role ?: "",
+            relation?.path ?: "/"
         )
 
         fun from(relation: UserRelation?, profile: Profile) = RelationVO(

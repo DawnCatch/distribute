@@ -5,28 +5,12 @@
       <input id="upload" type="file" accept="image/*,.pdf" multiple @change="handleFileChange" />
     </label>
     <div class="input_box">
-      <textarea
-        ref="textarea"
-        v-model="input"
-        class="input"
-        placeholder="输入消息..."
-        @keydown="handleKeyCode($event)"
-        @keydown.tab="handleKeyCode($event)"
-      />
-      <div
-        v-show="mode === Mode.DOCK && preview"
-        ref="dock"
-        v-dompurify-html="preview"
-        class="preview_box dock"
-      ></div>
+      <textarea ref="textarea" v-model="input" class="input" placeholder="输入消息..." @keydown="handleKeyCode($event)"
+        @keydown.tab="handleKeyCode($event)" />
+      <div v-show="mode === Mode.DOCK && preview" ref="dock" v-dompurify-html="preview" class="preview_box dock"></div>
     </div>
-    <div
-      v-show="focused && mode === Mode.FLOAT && preview"
-      ref="perviewBox"
-      v-dompurify-html="preview"
-      class="preview_box float"
-      :style="style"
-    ></div>
+    <div v-show="focused && mode === Mode.FLOAT && preview" ref="perviewBox" v-dompurify-html="preview"
+      class="preview_box float" :style="style"></div>
   </div>
 </template>
 
@@ -60,7 +44,7 @@ function handleKeyCode(event: KeyboardEvent) {
       method: 'POST',
       url: `/message/${appStore.current.type ? 'group' : 'user'}/send`,
       data: {
-        to: appStore.current.id,
+        to: appStore.currentItem?.targetId,
         content: {
           type: 'TEXT',
           value: input.value
@@ -109,7 +93,7 @@ function handleFileChange(e: Event) {
     files.push(file)
   }
   const data = new FormData()
-  data.append('to', `${appStore.current.id}`)
+  data.append('to', `${appStore.currentItem?.targetId}`)
   files.forEach((it) => {
     data.append('files', it)
   })
