@@ -31,13 +31,13 @@ const visibled = useElementVisibility(searchItemRef)
 
 const relation = computed(() => {
   const { type, id } = props.item
-  return relationStore.relation(type, id)
+  return relationStore.relationByTarget(type, id)
 })
 
 watchEffect(() => {
   if (relation.value !== undefined || !visibled) return
   const { type, id } = props.item
-  relationStore.getRelation(type, id)
+  relationStore.getRelationByTarget(type, id)
 })
 
 const link = computed(() => {

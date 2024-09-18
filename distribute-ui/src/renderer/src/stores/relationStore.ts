@@ -21,25 +21,34 @@ export const useRelationStore = defineStore('relation', {
       this.fans = union.fans
       this.groups = union.groups
       this.applications = union.applications
-      this.pends = union.applications
+      this.pends = union.pends
     },
-    addFollows(id: number) {
+    addFollow(id: number) {
       if (this.follows.includes(id)) return
       this.follows.push(id)
     },
-    removeFollows(id: number) {
+    removeFollow(id: number) {
       const index = this.follows.findIndex((it) => it === id)
       if (index === -1) return
       this.follows.splice(index, 1)
     },
-    addFans(id: number) {
+    addFan(id: number) {
       if (this.fans.includes(id)) return
       this.fans.push(id)
     },
-    removeFans(id: number) {
+    removeFan(id: number) {
       const index = this.fans.findIndex((it) => it === id)
       if (index === -1) return
       this.fans.splice(index, 1)
+    },
+    addGroup(id: number) {
+      if (this.groups.includes(id)) return
+      this.groups.push(id)
+    },
+    removeGroup(id: number) {
+      const index = this.groups.findIndex((it) => it === id)
+      if (index === -1) return
+      this.groups.splice(index, 1)
     },
     addApplication(id: number) {
       if (this.applications.includes(id)) return
@@ -73,10 +82,29 @@ export const useRelationStore = defineStore('relation', {
         if (type) this.getMember(res.data.targetId)
       })
     },
+    getRelationByTarget(type: boolean, id: number) {
+      http({
+        method: 'POST',
+        url: '/relation/get/target',
+        data: {
+          type,
+          id
+        }
+      }).then((res) => {
+        if (!res.status) return
+        this.addRelation(res.data as Relation)
+        if (type) this.getMember(res.data.targetId)
+      })
+    },
     addRelation(relation: Relation) {
-      const index = this.relations.findIndex(
-        (it) => it.id === relation.id && it.type === relation.type
-      )
+      let index = -1
+      if (relation.id === 0) {
+        index = this.relations.findIndex(
+          (it) => it.targetId === relation.targetId && it.type === relation.type
+        )
+      } else {
+        index = this.relations.findIndex((it) => it.id === relation.id && it.type === relation.type)
+      }
       if (index === -1) {
         this.relations.push(relation)
       } else {
@@ -141,22 +169,23 @@ export const useRelationStore = defineStore('relation', {
     },
     relation() {
       return (type: boolean, id: number): Relation | undefined => {
-        let result: Relation | undefined
-        if (type) {
-          result = this.relations.find((it) => it.type === type && it.id === id)
-        } else {
-          result = this.relations.find((it) => it.type === type && it.targetId === id)
-        }
-        return result
+        return this.relations.find((it) => it.type === type && it.id === id)
+      }
+    },
+    relationByTarget() {
+      return (type: boolean, id: number): Relation | undefined => {
+        return this.relations.find((it) => it.type === type && it.targetId === id)
       }
     },
     link() {
       return (type: boolean, id: number) => {
         if (type) {
           let relation = '!'
+          const profile = this.relations.find((it) => it.type === type && it.targetId === id)
+          if (!profile) return relation
           if (this.groups.includes(id)) {
             relation = '='
-          } else if (this.applications.includes(id)) {
+          } else if (this.applications.includes(profile.id)) {
             relation = '>'
           }
           return relation
@@ -175,27 +204,3 @@ export const useRelationStore = defineStore('relation', {
     }
   }
 })
-
-interface Union {
-  follows: number[]
-  fans: number[]
-  groups: number[]
-  applications: number[]
-  pends: number[]
-}
-
-interface Relation {
-  id: number
-  type: boolean
-  targetId: number
-  title: string
-  nickname: string
-  avatarUrl: string
-  role: string
-  path: string
-}
-
-interface RelationQuery {
-  type: boolean
-  id: number
-}

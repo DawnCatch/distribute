@@ -45,17 +45,29 @@ export const useAppStore = defineStore('app', {
       const { type, value } = content
       const args = type.split(':')
       if (args[0] === 'RELATION') {
-        if (args[1] === 'FANS') {
-          const id = Number(value.slice(1))
-          if (value[0] === '+') {
-            relationStore.addFans(id)
+        const symbol = value[0]
+        const id = Number(value.slice(1))
+        if (args[1] === 'FAN') {
+          if (symbol === '+') {
+            relationStore.addFan(id)
           } else {
-            relationStore.removeFans(id)
+            relationStore.removeFan(id)
+          }
+        } else if (args[1] === 'GROUP') {
+          if (symbol === '+') {
+            relationStore.addGroup(id)
+          } else {
+            relationStore.removeGroup(id)
           }
         } else if (args[1] === 'PENDING') {
-          const id = Number(value.slice(1))
-          if (value[0] === '+') {
+          if (symbol === '+') {
             relationStore.addPend(id)
+          } else {
+            relationStore.removePend(id)
+          }
+        } else if (args[1] === 'APPLICATION') {
+          if (symbol === '+') {
+            relationStore.addApplication(id)
           } else {
             relationStore.removePend(id)
           }
@@ -115,51 +127,9 @@ export const useAppStore = defineStore('app', {
     currentItem(): Relation | undefined {
       const relationStore = useRelationStore()
       const { type, id } = this.current
-      const result = relationStore.relation(type, id)
-      if (result === undefined) relationStore.getRelation(type, id)
+      const result = relationStore.relationByTarget(type, id)
+      if (result === undefined) relationStore.getRelationByTarget(type, id)
       return result
     }
   }
 })
-
-interface UserProfile {
-  userId: number
-  nickname: string
-  avatarUrl: string
-}
-
-interface Relation {
-  id: number
-  type: boolean
-  targetId: number
-  title: string
-  avatarUrl: string
-  nickname: string
-  role: string
-  path: string
-}
-
-interface Content {
-  type: string
-  value: string
-}
-
-interface Message {
-  id: number
-  type: boolean
-  from: number
-  to: number
-  content: Content
-  date: number
-  observers: number[]
-}
-
-interface Union {
-  follows: number[]
-  fans: number[]
-  groups: number[]
-  applications: number[]
-  pends: number[]
-}
-
-export type { UserProfile, Message, Content, Relation, Union }

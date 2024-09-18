@@ -23,7 +23,7 @@
               {{ time(item) }}
             </div>
             <Message
-              v-for="(messages, key) in item as Record<number, MessageModel[]>"
+              v-for="(messages, key) in item as Record<number, Message[]>"
               :key
               :messages="messages"
             />
@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { Message as MessageModel, useAppStore } from '../../stores/appStore'
+import { useAppStore } from '../../stores/appStore'
 import { computed, nextTick, ref, watch } from 'vue'
 import { getTime } from '@renderer/utils/utils'
 
@@ -84,7 +84,7 @@ const members = computed(() => {
 //   mitt.emit('rtc:request', appStore.ownId)
 // }
 
-function time(item: Record<number, MessageModel[]>) {
+function time(item: Record<number, Message[]>) {
   for (const key in item) {
     return getTime(item[key][0].date)
   }

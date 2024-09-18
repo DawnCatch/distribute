@@ -2,16 +2,10 @@
   <div class="side_bar">
     <div class="top_bar">
       <div class="avatar_box" :class="{ avatar_navigation: navigationDialogVisible, avatar_dialog: signDialogVisible }">
-        <!-- <img
-          v-if="appStore.isLogin"
-          src="../../assets/avatar.jpg"
-          alt="avatar"
-          @click="openNavigation"
-        /> -->
         <Avatar v-if="appStore.isLogin" :src="appStore.own.avatarUrl" @click="openNavigation" />
         <Icon v-else name="avatar" custom-class="avatar_default" @click="openSignDialog" />
       </div>
-      <div class="toast_btn">
+      <div class="toast_btn" @click="openToastDialog">
         <Icon name="toast-0" custom-class="side_bar_icon" />
       </div>
     </div>
@@ -29,6 +23,7 @@
     <AddDialog />
     <SettingDialog />
     <CreateGroupDialog />
+    <ToastDialog />
   </div>
 </template>
 
@@ -51,6 +46,7 @@ import AddDialog from './nav/add-dialog/AddDialog.vue'
 import SettingDialog from './nav/SettingDialog.vue'
 import Avatar from '../Avatar.vue'
 import CreateGroupDialog from './nav/CreateGroupDialog.vue'
+import ToastDialog from './toast-dialog/ToastDialog.vue'
 
 const text = ref('')
 
@@ -76,6 +72,10 @@ function openNavigation() {
 
 function openSignDialog() {
   mitt.emit('SignDialog:open')
+}
+
+function openToastDialog() {
+  mitt.emit('ToastDialog:open')
 }
 
 const searchRef = ref<InstanceType<typeof BorderEditText> | null>()

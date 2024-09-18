@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { useAppStore, Message } from '../../stores/appStore'
+import { useAppStore } from '../../stores/appStore'
 
 import { computed } from 'vue'
 

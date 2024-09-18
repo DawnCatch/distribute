@@ -1,6 +1,10 @@
 <template>
-  <Dialog mask :visible="visible" transition="sign"
-    :custom-class="dialogContentState.scroll ? 'scroll_dialog_full' : 'scroll_dialog'">
+  <Dialog
+    mask
+    :visible="visible"
+    transition="sign"
+    :custom-class="dialogContentState.scroll ? 'scroll_dialog_full' : 'scroll_dialog'"
+  >
     <div class="dialog_content" :style="dialogContentStyle">
       <div ref="topBarRef" class="top_bar">
         <div class="tool_bar" :class="{ default_tool_bar: title !== '' }">

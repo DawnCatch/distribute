@@ -14,7 +14,7 @@ import { onMounted, ref } from 'vue'
 import mitt from '../../utils/mitt'
 import { createAnswer, createPeer } from '../../utils/rtc'
 import { http } from '../../utils/http'
-import { Message, useAppStore } from '../../stores/appStore'
+import { useAppStore } from '../../stores/appStore'
 
 const appStore = useAppStore()
 
