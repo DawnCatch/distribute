@@ -48,7 +48,7 @@ watch(
     const { type, id } = props.item
     relationStore.getRelationByTarget(type, id)
   },
-  { immediate: true }
+  { immediate: true, deep: true }
 )
 
 const type = computed(() => {

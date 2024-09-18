@@ -1,7 +1,10 @@
 <template>
   <div class="side_bar">
     <div class="top_bar">
-      <div class="avatar_box" :class="{ avatar_navigation: navigationDialogVisible, avatar_dialog: signDialogVisible }">
+      <div
+        class="avatar_box"
+        :class="{ avatar_navigation: navigationDialogVisible, avatar_dialog: signDialogVisible }"
+      >
         <Avatar v-if="appStore.isLogin" :src="appStore.own.avatarUrl" @click="openNavigation" />
         <Icon v-else name="avatar" custom-class="avatar_default" @click="openSignDialog" />
       </div>
