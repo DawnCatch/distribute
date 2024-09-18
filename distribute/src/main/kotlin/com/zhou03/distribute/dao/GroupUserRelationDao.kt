@@ -17,6 +17,8 @@ class GroupUserRelationDao : BaseDao<GroupUserRelation, GroupUserRelations>(Grou
 
     fun getById(id: Int) = findOne { it.id eq id }
 
+    fun getByTargetIdAsOwn(targetId: Int, userId: Int) = findOne { (it.userId eq userId) and (it.targetId eq targetId) }
+
     fun isRelation(userId: Int, targetId: Int) =
         count { (it.status eq true) and (it.userId eq userId) and (it.targetId eq targetId) } != 0
 

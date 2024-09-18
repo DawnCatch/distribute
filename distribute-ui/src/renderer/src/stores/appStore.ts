@@ -5,7 +5,8 @@ export const useAppStore = defineStore('app', {
   state: () => ({
     own: {
       userId: -1,
-      nickname: 'None'
+      nickname: 'None',
+      avatarUrl: ''
     } as UserProfile,
     messages: [] as Message[],
     messageMap: [] as Message[][][],
@@ -18,6 +19,9 @@ export const useAppStore = defineStore('app', {
   actions: {
     setOwn(userProfile: UserProfile) {
       this.own = userProfile
+    },
+    setAvatar(url: string) {
+      this.own.avatarUrl = url
     },
     addMessage(message: Message) {
       if (message.from === 0) return this.handleSystemNotice(message)
@@ -122,6 +126,7 @@ export const useAppStore = defineStore('app', {
 interface UserProfile {
   userId: number
   nickname: string
+  avatarUrl: string
 }
 
 interface Relation {

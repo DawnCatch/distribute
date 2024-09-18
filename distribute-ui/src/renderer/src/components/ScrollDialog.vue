@@ -1,10 +1,6 @@
 <template>
-  <Dialog
-    mask
-    :visible="visible"
-    transition="sign"
-    :custom-class="dialogContentState.scroll ? 'scroll_dialog_full' : 'scroll_dialog'"
-  >
+  <Dialog mask :visible="visible" transition="sign"
+    :custom-class="dialogContentState.scroll ? 'scroll_dialog_full' : 'scroll_dialog'">
     <div class="dialog_content" :style="dialogContentStyle">
       <div ref="topBarRef" class="top_bar">
         <div class="tool_bar" :class="{ default_tool_bar: title !== '' }">
@@ -117,7 +113,7 @@ function caculation() {
     const topBarHeight = topBarRef.value.clientHeight
     const scrollContentHeight = scrollContentRef.value.clientHeight
     const { height } = workArea.value
-    if (scrollContentHeight > height - screenPadding * 2) {
+    if (scrollContentHeight + topBarHeight > height - screenPadding) {
       dialogContentState.scroll = true
       dialogContentState.height = height - screenPadding
       dialogContentState.bottomBorder = false
@@ -175,10 +171,6 @@ watch(scrollContentHeight, () => {
 .scroll_box {
   width: 100%;
   flex: 1;
-}
-
-.scroll_content {
-  padding: 0 1rem;
 }
 </style>
 

@@ -43,7 +43,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, reactive, ref } from 'vue'
 
-import { Profile, useAppStore } from '../../stores/appStore'
+import { UserProfile, useAppStore } from '../../stores/appStore'
 
 import Dialog from '../Dialog.vue'
 import EditText from '../EditText.vue'
@@ -79,7 +79,7 @@ function login() {
     data: user
   }).then((res) => {
     if (res.status) {
-      appStore.setOwn(res.data as Profile)
+      appStore.setOwn(res.data as UserProfile)
       close()
     }
     loginButton.value?.release()
@@ -94,7 +94,7 @@ function register() {
     data: user
   }).then((res) => {
     if (res.status) {
-      appStore.setOwn(res.data as Profile)
+      appStore.setOwn(res.data as UserProfile)
       close()
     }
     registerButton.value?.release()

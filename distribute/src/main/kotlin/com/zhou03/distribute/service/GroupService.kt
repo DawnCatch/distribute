@@ -5,17 +5,16 @@ import com.zhou03.distribute.dao.GroupUserRelationDao
 import com.zhou03.distribute.domain.Group
 import com.zhou03.distribute.domain.GroupRole
 import com.zhou03.distribute.domain.GroupUserRelation
-import com.zhou03.distribute.dto.group.GroupCreateDTO
-import com.zhou03.distribute.dto.group.GroupDeleteDTO
-import com.zhou03.distribute.dto.group.GroupInviteDTO
-import com.zhou03.distribute.dto.group.GroupModifyDTO
+import com.zhou03.distribute.dto.group.*
 import com.zhou03.distribute.util.getToken
+import com.zhou03.distribute.util.upload
 import com.zhou03.distribute.vo.GroupVO
 import com.zhou03.distribute.vo.Result
 import com.zhou03.distribute.vo.error
 import com.zhou03.distribute.vo.success
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
@@ -30,6 +29,8 @@ interface GroupService {
     fun invite(groupInviteDTO: GroupInviteDTO, request: HttpServletRequest): Result<String?>
 
     fun get(id: Int, request: HttpServletRequest): Result<GroupVO?>
+
+    fun uploadAvatar(groupUploadAvatarDTO: GroupUploadAvatarDTO, request: HttpServletRequest): Result<String?>
 }
 
 @Service
@@ -40,6 +41,9 @@ class GroupServiceImpl : GroupService {
 
     @Autowired
     lateinit var groupUserRelationDao: GroupUserRelationDao
+
+    @Value("\${file-save-path}")
+    lateinit var fileSavePath: String
 
     override fun create(groupCreateDTO: GroupCreateDTO, request: HttpServletRequest): Result<GroupVO?> {
         val token = request.getToken()
@@ -104,5 +108,19 @@ class GroupServiceImpl : GroupService {
         return success(GroupVO.from(group))
     }
 
-
+    override fun uploadAvatar(
+        groupUploadAvatarDTO: GroupUploadAvatarDTO,
+        request: HttpServletRequest,
+    ): Result<String?> {
+        val token = request.getToken()
+        val filename = upload(fileSavePath, groupUploadAvatarDTO.file) ?: return error("更换失败")
+        if (!groupUserRelationDao.isManager(token.userId, groupUploadAvatarDTO.id)) return error("权限错误")
+        val group = groupDao.getById(groupUploadAvatarDTO.id) ?: return error("查无此项")
+        if (group.avatarUrl !== "") com.zhou03.distribute.util.delete(fileSavePath, group.avatarUrl)
+        group.apply {
+            avatarUrl = filename
+            flushChanges()
+        }
+        return success(filename)
+    }
 }

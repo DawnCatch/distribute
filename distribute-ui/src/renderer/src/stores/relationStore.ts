@@ -70,8 +70,8 @@ export const useRelationStore = defineStore('relation', {
       }).then((res) => {
         if (!res.status) return
         this.addRelation(res.data as Relation)
+        if (type) this.getMember(res.data.targetId)
       })
-      if (type) this.getMember(id)
     },
     addRelation(relation: Relation) {
       const index = this.relations.findIndex(
@@ -88,16 +88,29 @@ export const useRelationStore = defineStore('relation', {
     },
     getMember(id: number) {
       http({
-        // url: `/relation/get/member/${id}`
         url: `/relation/len/member/${id}`
       }).then((res) => {
         if (!res.status) return
         this.membersGroup[id] = Number(res.data)
       })
     },
+    getGroups() {
+      http({
+        url: '/relation/list/group'
+      }).then((res) => {
+        if (!res.status) return
+        this.groups = res.data
+      })
+    },
     setCurrent(type: boolean, id: number) {
       this.current.type = type
       this.current.id = id
+    },
+    setGroupAvatar(id: number, url: string) {
+      if (id === -1 || url === '') return
+      const index = this.relations.findIndex((it) => it.type && it.targetId === id)
+      if (index === -1) return
+      this.relations[index].avatarUrl = url
     }
   },
   getters: {
@@ -177,6 +190,7 @@ interface Relation {
   targetId: number
   title: string
   nickname: string
+  avatarUrl: string
   role: string
   path: string
 }

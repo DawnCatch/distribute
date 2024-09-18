@@ -1,5 +1,6 @@
 package com.zhou03.distribute.controller
 
+import com.zhou03.distribute.dto.message.MessageFileSendDTO
 import com.zhou03.distribute.dto.message.MessageHistoryDTO
 import com.zhou03.distribute.dto.message.MessageReadDTO
 import com.zhou03.distribute.dto.message.MessageSendDTO
@@ -30,11 +31,25 @@ class MessageController {
         request: HttpServletRequest,
     ) = messageService.userSend(messageSendDTO, request)
 
+
+    @RequestMapping("/user/file/send")
+    fun userFileSend(
+        messageFileSendDTO: MessageFileSendDTO,
+        request: HttpServletRequest,
+    ) = messageService.userFileSend(messageFileSendDTO, request)
+
     @RequestMapping("/group/send")
     fun groupSend(
         @RequestBody messageSendDTO: MessageSendDTO,
         request: HttpServletRequest,
     ) = messageService.groupSend(messageSendDTO, request)
+
+
+    @RequestMapping("/group/file/send")
+    fun groupFileSend(
+        messageFileSendDTO: MessageFileSendDTO,
+        request: HttpServletRequest,
+    ) = messageService.groupFileSend(messageFileSendDTO, request)
 
     @RequestMapping("/key/user/send/{key}")
     fun userSend(

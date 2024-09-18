@@ -11,15 +11,31 @@ data class RelationVO(
     val targetId: Int,
     val title: String,
     val nickname: String,
+    val avatarUrl: String,
     val role: String,
     val path: String,
 ) {
     companion object {
-        fun from(relation: GroupUserRelation, group: Group) =
-            RelationVO(relation.id, true, group.id, group.title, relation.nickname, relation.role, relation.path)
+        fun from(relation: GroupUserRelation?, group: Group) = RelationVO(
+            relation?.id ?: 0,
+            true,
+            group.id,
+            group.title,
+            relation?.nickname ?: "",
+            group.avatarUrl,
+            relation?.role ?: "",
+            relation?.path ?: "/"
+        )
 
         fun from(relation: UserRelation?, profile: Profile) = RelationVO(
-            relation?.id ?: 0, false, profile.id, profile.nickname, relation?.nickname ?: "", "", relation?.path ?: "/"
+            relation?.id ?: 0,
+            false,
+            profile.id,
+            profile.nickname,
+            relation?.nickname ?: "",
+            profile.avatarUrl,
+            "",
+            relation?.path ?: "/"
         )
     }
 }

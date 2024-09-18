@@ -24,6 +24,12 @@ class RelationController {
         request: HttpServletRequest,
     ) = relationService.getRelation(relationQueryDTO, request)
 
+    @RequestMapping("/get/target")
+    fun getRelationByTarget(
+        @RequestBody relationQueryDTO: RelationQueryDTO,
+        request: HttpServletRequest,
+    ) = relationService.getRelationByTargetId(relationQueryDTO, request)
+
     @RequestMapping("/user/follow")
     fun userApplication(
         @RequestBody relationApplicationDTO: RelationApplicationDTO,

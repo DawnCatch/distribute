@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MultipartFile
 
 @RequestMapping("/profile")
 @RestController
@@ -27,4 +28,10 @@ class ProfileController {
         @RequestBody profileListByIdDTO: ProfileListByIdDTO,
         request: HttpServletRequest,
     ) = profileService.listById(profileListByIdDTO, request)
+
+    @RequestMapping("/upload/avatar")
+    fun uploadAvatar(
+        file: MultipartFile,
+        request: HttpServletRequest,
+    ) = profileService.uploadAvatar(file, request)
 }

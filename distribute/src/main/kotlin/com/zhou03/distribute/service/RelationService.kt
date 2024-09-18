@@ -23,6 +23,8 @@ interface RelationService {
 
     fun getRelation(relationQueryDTO: RelationQueryDTO, request: HttpServletRequest): Result<RelationVO?>
 
+    fun getRelationByTargetId(relationQueryDTO: RelationQueryDTO, request: HttpServletRequest): Result<RelationVO?>
+
     fun userFollow(relationFollowDTO: RelationApplicationDTO, request: HttpServletRequest): Result<Nothing?>
 
     fun groupApplication(relationApplicationDTO: RelationApplicationDTO, request: HttpServletRequest): Result<Nothing?>
@@ -69,8 +71,22 @@ class RelationServiceImpl : RelationService {
             val group = groupDao.getById(relation.targetId) ?: return error("查无此项")
             relationVO = RelationVO.from(relation, group)
         } else {
-            val relation =
-                userRelationDao.getByTargetIdAsOwn(relationQueryDTO.id, token.userId)
+            val relation = userRelationDao.getByTargetIdAsOwn(relationQueryDTO.id, token.userId)
+            val profile = profileDao.getById(relationQueryDTO.id) ?: return error("查无此项")
+            relationVO = RelationVO.from(relation, profile)
+        }
+        return success(relationVO)
+    }
+
+    override fun getRelationByTargetId(relationQueryDTO: RelationQueryDTO, request: HttpServletRequest): Result<RelationVO?> {
+        val token = request.getToken()
+        val relationVO: RelationVO
+        if (relationQueryDTO.type) {
+            val relation = groupUserRelationDao.getByTargetIdAsOwn(relationQueryDTO.id, token.userId)
+            val group = groupDao.getById(relationQueryDTO.id) ?: return error("查无此项")
+            relationVO = RelationVO.from(relation, group)
+        } else {
+            val relation = userRelationDao.getByTargetIdAsOwn(relationQueryDTO.id, token.userId)
             val profile = profileDao.getById(relationQueryDTO.id) ?: return error("查无此项")
             relationVO = RelationVO.from(relation, profile)
         }

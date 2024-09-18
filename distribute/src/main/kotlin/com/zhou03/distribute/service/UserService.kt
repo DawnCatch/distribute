@@ -54,6 +54,7 @@ class UserServiceImpl : UserService {
         val profile = profileDao.getById(user.id) ?: Profile().apply {
             nickname = user.username
         }
+        response.addHeader("Access-Control-Expose-Headers","Authorization")
         response.setHeader(SUBJECT, TokenUtil.genAccessToken(Token.from(user)))
         return success(ProfileVO.from(profile))
     }

@@ -11,11 +11,10 @@
       </TabBar>
     </template>
     <template #content>
-      <AddDialogSearchItem
-        v-for="item in searchResult.filter((it) => it.type === type)"
-        :key="`${item.type}:${item.id}`"
-        :item
-      />
+      <div class="seatch_item_list">
+        <AddDialogSearchItem v-for="item in searchResult.filter((it) => it.type === type)"
+          :key="`${item.type}:${item.id}`" :item />
+      </div>
     </template>
   </ScrollDialog>
 </template>
@@ -112,6 +111,10 @@ function search(value: string) {
   display: flex;
   width: 3.5rem;
   overflow: hidden;
+}
+
+.seatch_item_list {
+  padding: 0 1rem;
 }
 </style>
 
