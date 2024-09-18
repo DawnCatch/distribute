@@ -38,7 +38,7 @@ const props = defineProps({
 
 const relation = computed(() => {
   const { type, id } = props.item
-  return relationStore.relation(type, id)
+  return relationStore.relationByTarget(type, id)
 })
 
 watch(
@@ -46,7 +46,7 @@ watch(
   (newVal) => {
     if (newVal !== undefined) return
     const { type, id } = props.item
-    relationStore.getRelation(type, id)
+    relationStore.getRelationByTarget(type, id)
   },
   { immediate: true }
 )

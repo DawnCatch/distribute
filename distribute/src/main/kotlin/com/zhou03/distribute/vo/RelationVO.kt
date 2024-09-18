@@ -8,6 +8,7 @@ import com.zhou03.distribute.domain.UserRelation
 data class RelationVO(
     val id: Int,
     val type: Boolean,
+    val userId: Int,
     val targetId: Int,
     val title: String,
     val nickname: String,
@@ -19,6 +20,7 @@ data class RelationVO(
         fun from(relation: GroupUserRelation?, group: Group) = RelationVO(
             relation?.id ?: 0,
             true,
+            relation?.userId ?: 0,
             group.id,
             group.title,
             relation?.nickname ?: "",
@@ -30,6 +32,7 @@ data class RelationVO(
         fun from(relation: UserRelation?, profile: Profile) = RelationVO(
             relation?.id ?: 0,
             false,
+            relation?.userId ?: 0,
             profile.id,
             profile.nickname,
             relation?.nickname ?: "",

@@ -12,8 +12,11 @@
     </template>
     <template #content>
       <div class="seatch_item_list">
-        <AddDialogSearchItem v-for="item in searchResult.filter((it) => it.type === type)"
-          :key="`${item.type}:${item.id}`" :item />
+        <AddDialogSearchItem
+          v-for="item in searchResult.filter((it) => it.type === type)"
+          :key="`${item.type}:${item.id}`"
+          :item
+        />
       </div>
     </template>
   </ScrollDialog>

@@ -64,21 +64,23 @@ class RelationServiceImpl : RelationService {
     lateinit var groupDao: GroupDao
 
     override fun getRelation(relationQueryDTO: RelationQueryDTO, request: HttpServletRequest): Result<RelationVO?> {
-        val token = request.getToken()
         val relationVO: RelationVO
         if (relationQueryDTO.type) {
             val relation = groupUserRelationDao.getById(relationQueryDTO.id) ?: return error("查无此项")
             val group = groupDao.getById(relation.targetId) ?: return error("查无此项")
             relationVO = RelationVO.from(relation, group)
         } else {
-            val relation = userRelationDao.getByTargetIdAsOwn(relationQueryDTO.id, token.userId)
+            val relation = userRelationDao.getById(relationQueryDTO.id) ?: return error("查无此项")
             val profile = profileDao.getById(relationQueryDTO.id) ?: return error("查无此项")
             relationVO = RelationVO.from(relation, profile)
         }
         return success(relationVO)
     }
 
-    override fun getRelationByTargetId(relationQueryDTO: RelationQueryDTO, request: HttpServletRequest): Result<RelationVO?> {
+    override fun getRelationByTargetId(
+        relationQueryDTO: RelationQueryDTO,
+        request: HttpServletRequest,
+    ): Result<RelationVO?> {
         val token = request.getToken()
         val relationVO: RelationVO
         if (relationQueryDTO.type) {
@@ -110,7 +112,7 @@ class RelationServiceImpl : RelationService {
         }
         userRelationDao.addOrUpdate(relation)
         ChatUtil.notice(
-            Content("RELATION:FANS", "${if (status) "+" else "-"}${token.userId}"), relationFollowDTO.targetId
+            Content("RELATION:FAN", "${if (status) "+" else "-"}${token.userId}"), relationFollowDTO.targetId
         )
         return success(message = if (status) "关注成功" else "取消关注")
     }
@@ -155,7 +157,7 @@ class RelationServiceImpl : RelationService {
 
     override fun handle(relationHandleDTO: RelationHandleDTO, request: HttpServletRequest): Result<Nothing?> {
         val token = request.getToken()
-        val relation = groupUserRelationDao.getById(relationHandleDTO.id) ?: return error("处理失败")
+        val relation = groupUserRelationDao.getById(relationHandleDTO.id) ?: return error("查无此项")
         if (!groupUserRelationDao.isManager(
                 token.userId, relation.targetId
             )
@@ -164,12 +166,23 @@ class RelationServiceImpl : RelationService {
                 relation.userId, relation.targetId
             )
         ) return error(message = "已存在联系")
-        relation.apply {
-            this.status = true
-            this.date = LocalDateTime.now()
-            this.role = GroupRole.MEMBER
-            flushChanges()
+        if (relationHandleDTO.status) {
+            relation.apply {
+                this.status = true
+                this.date = LocalDateTime.now()
+                this.role = GroupRole.MEMBER
+                flushChanges()
+            }
+            ChatUtil.notice(Content("RELATION:GROUP", "-${relation.targetId}"), relation.userId)
+        } else {
+            relation.apply {
+                this.date = 0L.toLocalDateTime()
+                flushChanges()
+            }
         }
+        ChatUtil.notice(Content("RELATION:APPLICATION", "-${relation.id}"), relation.userId)
+        val ids = groupUserRelationDao.listUserIdByGroupAsManager(relation.targetId)
+        ChatUtil.notice(Content("RELATION:PENDING", "-${relation.id}"), ids)
         return success(null, "处理完毕")
     }
 

@@ -70,9 +70,9 @@ function follow(id: number) {
     const message = res.message
     const { type, id: currentId } = appStore.current
     if (message === '关注成功') {
-      relationStore.addFollows(id)
+      relationStore.addFollow(id)
     } else if (message === '取消关注') {
-      relationStore.removeFollows(id)
+      relationStore.removeFollow(id)
       if (!type && id === currentId) appStore.setCurrent(false, -1)
     }
   })
@@ -90,9 +90,9 @@ function application(id: number) {
     const relationStore = useRelationStore()
     const message = res.message
     if (message === '申请成功') {
-      relationStore.addFollows(id)
+      relationStore.addGroup(id)
     } else if (message === '取消成功') {
-      relationStore.removeFollows(id)
+      relationStore.addGroup(id)
     }
   })
 }

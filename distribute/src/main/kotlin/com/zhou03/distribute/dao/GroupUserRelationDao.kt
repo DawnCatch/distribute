@@ -45,7 +45,7 @@ class GroupUserRelationDao : BaseDao<GroupUserRelation, GroupUserRelations>(Grou
     }.mapColumnsNotNull { it.userId }
 
     fun listByJoinAsOwn(userId: Int) =
-        findEntitySequence { (it.status eq true) and (it.userId eq userId) }.mapColumnsNotNull { it.id }
+        findEntitySequence { (it.status eq true) and (it.userId eq userId) }.mapColumnsNotNull { it.targetId }
 
     fun listByPendingAsOwn(userId: Int) =
         findEntitySequence { (it.status eq false) and (it.date notEq 0L.toLocalDateTime()) and (it.userId eq userId) }.mapColumnsNotNull { it.id }
