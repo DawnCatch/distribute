@@ -65,13 +65,17 @@ watch(isHover, (newVal) => {
 
 function handle() {
   if (!relation.value) return
+  const id = relation.value.id
   http({
     method: 'POST',
     url: '/relation/handle',
     data: {
-      id: relation.value?.id,
+      id: id,
       status: mode.value
     }
+  }).then((res) => {
+    if (!res.status) return
+    relationStore.removePend(id)
   })
 }
 

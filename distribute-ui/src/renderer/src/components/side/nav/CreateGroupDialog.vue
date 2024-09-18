@@ -4,13 +4,13 @@
       <div class="content">
         <div class="form">
           <Avatar class="avatar" :src="avatarUrl" edit @check-file="handleFile" />
-          <EditText v-model="groupName" class="edit" placeholder="用户名" />
+          <EditText v-model="groupName" class="edit" placeholder="群组名称" />
         </div>
         <div class="button_box">
           <div class="space"></div>
           <div class="button" @click="close">取消</div>
-          <div class="button" v-if="!isWait" @click="commit">下一步</div>
-          <div class="button" v-else>处理中...</div>
+          <div v-if="!isWait" class="button" @click="commit">下一步</div>
+          <div v-else class="button">处理中...</div>
         </div>
       </div>
     </template>
@@ -83,7 +83,8 @@ function commit() {
       groupId.value = id
       relationStore.getGroups()
     }
-    isWait.value = true
+    isWait.value = false
+    close()
   })
 }
 
