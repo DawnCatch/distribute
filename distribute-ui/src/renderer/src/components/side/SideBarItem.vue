@@ -108,7 +108,8 @@ watch(
       text.value = '=> '
     }
     date.value = getTime(message.date)
-    text.value += message.content.value
+    if (message.content.type === 'FILE') text.value += '[文件]'
+    else text.value += message.content.value
     newsLen.value = len
   },
   {
@@ -180,6 +181,14 @@ watch(
 
 .date {
   font-size: small;
+}
+
+.message_text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 0;
+  flex: 1;
 }
 
 .message_len {

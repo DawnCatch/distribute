@@ -1,8 +1,8 @@
 <template>
   <div class="rtc_content">
-    {{ from }}{{ appStore.ownId }}
+    {{ from }}{{ appStore.own.userId }}
     <div v-if="content.type === 'RTC:REQ'">
-      <template v-if="from !== appStore.ownId">
+      <template v-if="from !== appStore.own.userId">
         <div @click="agree">同意</div>
         <div @click="refuse">拒绝</div>
       </template>

@@ -4,6 +4,7 @@ import { electronAPI } from '@electron-toolkit/preload'
 // Custom APIs for renderer
 const api = {
   http: (option) => {
+    console.log(option.data)
     return new Promise((resolve, reject) => {
       const uuid = crypto.randomUUID()
       ipcRenderer.send('http', uuid, option)

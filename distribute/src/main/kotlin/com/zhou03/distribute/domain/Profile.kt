@@ -15,6 +15,8 @@ interface Profile : Entity<Profile> {
 
     var nickname: String
 
+    var avatarUrl: String
+
     var auth: Int
 
     fun changeAuth(auth: Int) = apply {
@@ -26,6 +28,7 @@ interface Profile : Entity<Profile> {
 object Profiles : Table<Profile>("t_profile") {
     val id = int("id").primaryKey().bindTo { it.id }
     val nickname = varchar("nickname").bindTo { it.nickname }
+    val avatarUrl = varchar("avatar_url").bindTo { it.avatarUrl }
     val auth = int("auth").bindTo { it.auth }
 }
 

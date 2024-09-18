@@ -1,15 +1,32 @@
 <template>
   <div ref="chatOptionBar" class="chat_option_bar" tabindex="0">
-    <div class="file_box">
+    <label class="file_box" @click="upload">
       <Icon name="link-0" custom-class="chat_option_bar_icon" />
-    </div>
+      <input id="upload" type="file" accept="image/*,.pdf" multiple @change="handleFileChange" />
+    </label>
     <div class="input_box">
-      <textarea ref="textarea" v-model="input" class="input" placeholder="输入消息..." @keydown="handleKeyCode($event)"
-        @keydown.tab="handleKeyCode($event)" />
-      <div v-show="mode === Mode.DOCK && preview" ref="dock" v-dompurify-html="preview" class="preview_box dock"></div>
+      <textarea
+        ref="textarea"
+        v-model="input"
+        class="input"
+        placeholder="输入消息..."
+        @keydown="handleKeyCode($event)"
+        @keydown.tab="handleKeyCode($event)"
+      />
+      <div
+        v-show="mode === Mode.DOCK && preview"
+        ref="dock"
+        v-dompurify-html="preview"
+        class="preview_box dock"
+      ></div>
     </div>
-    <div v-show="focused && mode === Mode.FLOAT && preview" ref="perviewBox" v-dompurify-html="preview"
-      class="preview_box float" :style="style"></div>
+    <div
+      v-show="focused && mode === Mode.FLOAT && preview"
+      ref="perviewBox"
+      v-dompurify-html="preview"
+      class="preview_box float"
+      :style="style"
+    ></div>
   </div>
 </template>
 
@@ -40,6 +57,7 @@ const { focused } = useFocusWithin(chatOptionBar)
 function handleKeyCode(event: KeyboardEvent) {
   if (event.key === 'Enter' && event.ctrlKey && input.value !== '') {
     http({
+      method: 'POST',
       url: `/message/${appStore.current.type ? 'group' : 'user'}/send`,
       data: {
         to: appStore.current.id,
@@ -77,6 +95,30 @@ watchDebounced(
   },
   { debounce: 500, maxWait: 1000 }
 )
+
+function upload() {
+  console.log('upload')
+}
+
+function handleFileChange(e: Event) {
+  if (!e.target) return
+  const target = e.target as HTMLInputElement
+  if (!target.files) return
+  const files = [] as File[]
+  for (const file of target.files) {
+    files.push(file)
+  }
+  const data = new FormData()
+  data.append('to', `${appStore.current.id}`)
+  files.forEach((it) => {
+    data.append('files', it)
+  })
+  http({
+    method: 'POST',
+    url: `/message/${appStore.current.type ? 'group' : 'user'}/file/send`,
+    data: data
+  })
+}
 </script>
 
 <script lang="ts">
@@ -111,6 +153,10 @@ enum Mode {
 
 .file_box:hover {
   background-color: var(--color-background-mute);
+}
+
+input {
+  display: none;
 }
 
 .input_box {

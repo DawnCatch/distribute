@@ -3,16 +3,15 @@ package com.zhou03.distribute.service
 import com.zhou03.distribute.dao.*
 import com.zhou03.distribute.domain.Message
 import com.zhou03.distribute.domain.MessageObserver
+import com.zhou03.distribute.dto.message.MessageFileSendDTO
 import com.zhou03.distribute.dto.message.MessageHistoryDTO
 import com.zhou03.distribute.dto.message.MessageReadDTO
 import com.zhou03.distribute.dto.message.MessageSendDTO
-import com.zhou03.distribute.util.ChatUtil
-import com.zhou03.distribute.util.getToken
-import com.zhou03.distribute.util.toJson
-import com.zhou03.distribute.util.toLocalDateTime
+import com.zhou03.distribute.util.*
 import com.zhou03.distribute.vo.*
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.sql.SQLIntegrityConstraintViolationException
 import java.time.LocalDateTime
@@ -25,9 +24,13 @@ interface MessageService {
 
     fun userSend(key: String, messageSendDTO: MessageSendDTO): Result<Nothing?>
 
+    fun userFileSend(messageFileSendDTO: MessageFileSendDTO, request: HttpServletRequest): Result<Nothing?>
+
     fun groupSend(messageSendDTO: MessageSendDTO, request: HttpServletRequest): Result<Nothing?>
 
     fun groupSend(key: String, messageSendDTO: MessageSendDTO): Result<Nothing?>
+
+    fun groupFileSend(messageFileSendDTO: MessageFileSendDTO, request: HttpServletRequest): Result<Nothing?>
 
     fun read(messageReadDTO: MessageReadDTO, request: HttpServletRequest): Result<Nothing?>
 }
@@ -49,6 +52,9 @@ class MessageServiceImpl : MessageService {
 
     @Autowired
     lateinit var messageObserverDao: MessageObserverDao
+
+    @Value("\${file-save-path}")
+    lateinit var fileSavePath: String
 
     override fun history(messageHistoryDTO: MessageHistoryDTO, request: HttpServletRequest): Result<List<MessageVO>?> {
         val token = request.getToken()
@@ -131,6 +137,29 @@ class MessageServiceImpl : MessageService {
         return success(message = "发送成功")
     }
 
+    override fun userFileSend(messageFileSendDTO: MessageFileSendDTO, request: HttpServletRequest): Result<Nothing?> {
+        if (messageFileSendDTO.validate()) return error("错误格式")
+        val token = request.getToken()
+        if (messageFileSendDTO.to != -1 && messageFileSendDTO.to != token.userId && !userRelationDao.isRelation(
+                token.userId, messageFileSendDTO.to
+            )
+        ) return error("发生失败")
+        val fileNames = upload(fileSavePath, messageFileSendDTO.files)
+        if (fileNames.isEmpty()) return error("发送失败")
+        val content = Content("FILE", fileNames.joinToString(","))
+        val messageDomain = Message().apply {
+            type = false
+            from = token.userId
+            to = messageFileSendDTO.to
+            this.content = toJson(content)
+            date = LocalDateTime.now()
+        }
+        messageDao.add(messageDomain)
+        val message = MessageVO.from(messageDomain)
+        ChatUtil.sendMessage(message)
+        return success(null, "发送成功")
+    }
+
     override fun groupSend(messageSendDTO: MessageSendDTO, request: HttpServletRequest): Result<Nothing?> {
         if (messageSendDTO.validate()) return error(
             "错误格式"
@@ -167,6 +196,29 @@ class MessageServiceImpl : MessageService {
             from = device.userId
             to = messageSendDTO.to
             content = toJson(messageSendDTO.content)
+            date = LocalDateTime.now()
+        }
+        messageDao.add(messageDomain)
+        val message = MessageVO.from(messageDomain)
+        ChatUtil.sendMessage(message, ids)
+        return success(message = "发送成功")
+    }
+
+    override fun groupFileSend(messageFileSendDTO: MessageFileSendDTO, request: HttpServletRequest): Result<Nothing?> {
+        if (messageFileSendDTO.validate()) return error("错误格式")
+        val token = request.getToken()
+        val ids = groupUserRelationDao.listMemberIdByTargetId(messageFileSendDTO.to)
+        if (ids.isEmpty() || token.userId !in ids) return error(
+            "发送失败"
+        )
+        val fileNames = upload(fileSavePath, messageFileSendDTO.files)
+        if (fileNames.isEmpty()) return error("发送失败")
+        val content = Content("FILE", fileNames.joinToString(","))
+        val messageDomain = Message().apply {
+            type = true
+            from = token.userId
+            to = messageFileSendDTO.to
+            this.content = toJson(content)
             date = LocalDateTime.now()
         }
         messageDao.add(messageDomain)

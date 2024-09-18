@@ -1,5 +1,6 @@
 package com.zhou03.distribute.domain
 
+import com.zhou03.distribute.domain.Profiles.bindTo
 import org.ktorm.database.Database
 import org.ktorm.entity.Entity
 import org.ktorm.entity.sequenceOf
@@ -17,12 +18,15 @@ interface Group : Entity<Group> {
 
     var visible: Boolean
 
+    var avatarUrl: String
+
     var status: Boolean
 }
 
 object Groups : Table<Group>("t_group") {
     val id = int("id").primaryKey().bindTo { it.id }
     val title = varchar("title").bindTo { it.title }
+    val avatarUrl = varchar("avatar_url").bindTo { it.avatarUrl }
     val createDate = datetime("create_date").bindTo { it.createDate }
     val visible = boolean("visible").bindTo { it.visible }
     val status = boolean("status").bindTo { it.status }

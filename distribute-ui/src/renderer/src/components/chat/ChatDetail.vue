@@ -14,7 +14,7 @@
       <OptionItem v-if="appStore.current.type" class="important" title="退出">
         <Icon name="exit" custom-class="chat_detail_icon" />
       </OptionItem>
-      <OptionItem v-else class="important" title="取消关注">
+      <OptionItem v-else class="important" title="取消关注" :use="exit">
         <Icon name="delete" custom-class="chat_detail_icon" />
       </OptionItem>
     </div>
@@ -31,16 +31,21 @@ import ScrollBox from '../ScrollBox.vue'
 import Avatar from '../Avatar.vue'
 import OptionItem from '../side/OptionItem.vue'
 import Icon from '../Icon.vue'
+import { follow } from '@renderer/utils/http'
 
 const appStore = useAppStore()
 const relationStore = useRelationStore()
 
-const members = computed(() => {
+computed(() => {
   const { type, id } = appStore.current
   if (!type) return 0
   const members = relationStore.members(id)
   return members
 })
+
+function exit() {
+  follow(appStore.current.id)
+}
 </script>
 
 <style scoped>

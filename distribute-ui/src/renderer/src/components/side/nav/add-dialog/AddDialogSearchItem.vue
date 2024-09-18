@@ -53,7 +53,7 @@ const options = {
     },
     {
       title: '退出群组',
-      work: (id: number) => { }
+      work: () => {}
     }
   ],
   '>': [
@@ -73,7 +73,7 @@ const options = {
     },
     {
       title: '同意邀请',
-      work: (id: number) => { }
+      work: () => {}
     }
   ],
   '!': [

@@ -1,20 +1,23 @@
 <template>
-  <span class="text_content">
-    {{ content.value }}
-  </span>
+  <div v-dompurify-html="html" class="content"></div>
 </template>
 
 <script setup lang="ts">
-defineProps({
+import markdown from '@renderer/utils/markdown';
+import { computed } from 'vue';
+
+const props = defineProps({
   content: {
     type: Object,
     required: true
-  },
-  from: {
-    type: Number,
-    required: true
   }
 })
+
+const html = computed(() => markdown.render(props.content.value))
 </script>
 
-<style scoped></style>
+<style scoped>
+.content {
+  width: 100%;
+}
+</style>

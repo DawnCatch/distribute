@@ -22,7 +22,11 @@
             <div class="time_stamp">
               {{ time(item) }}
             </div>
-            <Message v-for="(messages, key) in item as Record<number, MessageModel[]>" :key :messages="messages" />
+            <Message
+              v-for="(messages, key) in item as Record<number, MessageModel[]>"
+              :key
+              :messages="messages"
+            />
           </div>
         </ScrollBox>
         <ChatoptionBar ref="chatOptionBar" />
@@ -51,7 +55,6 @@ import ScrollBox from '../ScrollBox.vue'
 import ChatDetail from './ChatDetail.vue'
 
 import { useRelationStore } from '@renderer/stores/relationStore'
-import { reactify } from '@vueuse/core';
 
 const appStore = useAppStore()
 const relationStore = useRelationStore()
@@ -67,8 +70,11 @@ const group = computed(() => {
 })
 
 const members = computed(() => {
-  const { type, id } = appStore.current
+  const { type } = appStore.current
   if (!type) return []
+  const item = appStore.currentItem
+  if (!item) return []
+  const { targetId: id } = item
   const members = relationStore.members(id)
   if (members === undefined) relationStore.getMember(id)
   return members
@@ -91,17 +97,21 @@ const scrollRef = ref<InstanceType<typeof ScrollBox> | null>()
 
 watch(
   () => appStore.current,
-  () => {
-    nextTick(() => {
-      scrollRef.value && scrollRef.value.scrollToBottom()
-    })
-  },
+  () => toBottom,
   { deep: true }
 )
 
 const chatDetailVisible = ref(false)
 function reversalChatDetail() {
   chatDetailVisible.value = !chatDetailVisible.value
+}
+
+watch(group, toBottom, { deep: true })
+
+function toBottom() {
+  nextTick(() => {
+    scrollRef.value && scrollRef.value.scrollToBottom()
+  })
 }
 </script>
 

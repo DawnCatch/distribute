@@ -1,16 +1,14 @@
 <template>
   <div class="side_bar">
     <div class="top_bar">
-      <div
-        class="avatar_box"
-        :class="{ avatar_navigation: navigationDialogVisible, avatar_dialog: signDialogVisible }"
-      >
-        <img
+      <div class="avatar_box" :class="{ avatar_navigation: navigationDialogVisible, avatar_dialog: signDialogVisible }">
+        <!-- <img
           v-if="appStore.isLogin"
           src="../../assets/avatar.jpg"
           alt="avatar"
           @click="openNavigation"
-        />
+        /> -->
+        <Avatar v-if="appStore.isLogin" :src="appStore.own.avatarUrl" @click="openNavigation" />
         <Icon v-else name="avatar" custom-class="avatar_default" @click="openSignDialog" />
       </div>
       <div class="toast_btn">
@@ -29,6 +27,8 @@
     <NavigationDialog />
     <SignDialog />
     <AddDialog />
+    <SettingDialog />
+    <CreateGroupDialog />
   </div>
 </template>
 
@@ -48,6 +48,9 @@ import ScrollBox from '../ScrollBox.vue'
 import NavigationDialog from './nav/NavigationDialog.vue'
 import SignDialog from './SignDialog.vue'
 import AddDialog from './nav/add-dialog/AddDialog.vue'
+import SettingDialog from './nav/SettingDialog.vue'
+import Avatar from '../Avatar.vue'
+import CreateGroupDialog from './nav/CreateGroupDialog.vue'
 
 const text = ref('')
 

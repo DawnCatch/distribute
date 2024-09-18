@@ -22,13 +22,16 @@
       <OptionItem title="添&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp加" @click="openAddDialog">
         <Icon name="invite" custom-class="navigation_icon" />
       </OptionItem>
+      <OptionItem title="新建群组" @click="openCreateGroupDialog">
+        <Icon name="group-1" custom-class="navigation_icon" />
+      </OptionItem>
       <OptionItem title="收&nbsp&nbsp藏&nbsp&nbsp夹">
         <Icon name="mark" custom-class="navigation_icon" />
       </OptionItem>
       <OptionItem title="夜间模式" :default-value="isDark" type="switch" :use="changeTheme">
         <Icon name="night" custom-class="navigation_icon" />
       </OptionItem>
-      <OptionItem title="设置">
+      <OptionItem title="设置" :use="openSettingDialog">
         <Icon name="setting" custom-class="navigation_icon" />
       </OptionItem>
       <OptionItem title="退出登录" :use="signOut">
@@ -104,7 +107,17 @@ function changeTheme() {
 
 function openAddDialog() {
   close()
-  mitt.emit('AddDialog:open', true)
+  mitt.emit('AddDialog:open')
+}
+
+function openCreateGroupDialog() {
+  close()
+  mitt.emit('CreateGroupDialog:open')
+}
+
+function openSettingDialog() {
+  close()
+  mitt.emit('SettingDialog:open')
 }
 </script>
 

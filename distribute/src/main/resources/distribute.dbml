@@ -5,6 +5,7 @@ Table t_user {
   id int [primary key, increment]
   username varchar(30)
   password char(32)
+  avatar_url char(40)
   email char(64)
 
   indexes {
@@ -38,6 +39,7 @@ Table t_profile {
 Table t_group {
   id int [primary key, increment]
   title char(20)
+  avatar_url char(20)
   create_date datetime
   visible tinyint(1)
   status tinyint(1)
