@@ -181,9 +181,11 @@ export const useRelationStore = defineStore('relation', {
       return (type: boolean, id: number) => {
         if (type) {
           let relation = '!'
+          const profile = this.relations.find((it) => it.type === type && it.targetId === id)
+          if (!profile) return relation
           if (this.groups.includes(id)) {
             relation = '='
-          } else if (this.applications.includes(id)) {
+          } else if (this.applications.includes(profile.id)) {
             relation = '>'
           }
           return relation

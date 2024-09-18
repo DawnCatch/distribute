@@ -76,7 +76,7 @@ function handle() {
 }
 
 const detailBoxClass = computed(() => {
-  if (isHover.value && !mode.value) return "warning"
+  if (isHover.value && !mode.value) return 'warning'
   else return ''
 })
 </script>

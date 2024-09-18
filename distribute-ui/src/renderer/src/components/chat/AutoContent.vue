@@ -52,6 +52,7 @@ function onElementVisibility(state: boolean) {
   if (props.reverse) return
   if (state && !props.message.observers.includes(appStore.own.userId)) {
     http({
+      method: 'POST',
       url: '/message/read',
       data: {
         id: props.message.id

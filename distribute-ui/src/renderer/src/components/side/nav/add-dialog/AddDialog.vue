@@ -80,6 +80,7 @@ const searchResult = ref<SearchResultItem[]>([])
 function search(value: string) {
   if (value === '') return
   http({
+    method: 'POST',
     url: '/search/all',
     data: {
       title: value

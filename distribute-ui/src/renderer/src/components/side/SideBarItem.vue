@@ -1,6 +1,6 @@
 <template>
   <div class="profile_box" :class="{ focus: isFocus }" @click="select">
-    <Avatar class="avatar" :type />
+    <Avatar class="avatar" :src="relation?.avatarUrl" :type />
     <div class="space"></div>
     <div class="detail_box">
       <div class="top_box">
@@ -20,7 +20,7 @@
 <script setup lang="ts">
 import Avatar from '@renderer/components/Avatar.vue'
 
-import { Message, Relation, useAppStore } from '../../stores/appStore'
+import { useAppStore } from '../../stores/appStore'
 import { useRelationStore } from '../../stores/relationStore'
 
 import { computed, ref, watch } from 'vue'
@@ -143,6 +143,7 @@ watch(
 .avatar {
   display: flex;
   width: 3.5rem;
+  height: 3.5rem;
   overflow: hidden;
 }
 

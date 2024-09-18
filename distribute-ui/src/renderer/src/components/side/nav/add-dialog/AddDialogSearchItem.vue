@@ -1,6 +1,6 @@
 <template>
   <div ref="searchItemRef" class="search_item">
-    <Avatar class="avatar" :type="item.type" />
+    <Avatar class="avatar" :src="relation?.avatarUrl" :type="item.type" />
     <div class="title">{{ relation?.title ?? 'None' }}</div>
     <div class="option_box" @click="option.work(item.id)">
       <div>{{ option.title }}</div>
@@ -31,7 +31,7 @@ const visibled = useElementVisibility(searchItemRef)
 
 const relation = computed(() => {
   const { type, id } = props.item
-  return relationStore.relationBy(type, id)
+  return relationStore.relationByTarget(type, id)
 })
 
 watchEffect(() => {

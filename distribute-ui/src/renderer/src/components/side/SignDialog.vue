@@ -43,7 +43,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, reactive, ref } from 'vue'
 
-import { UserProfile, useAppStore } from '../../stores/appStore'
+import { useAppStore } from '../../stores/appStore'
 
 import Dialog from '../Dialog.vue'
 import EditText from '../EditText.vue'

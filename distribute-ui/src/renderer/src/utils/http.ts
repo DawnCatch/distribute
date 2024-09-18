@@ -89,10 +89,12 @@ function application(id: number) {
     if (!res.status) return
     const relationStore = useRelationStore()
     const message = res.message
+    const relationId = relationStore.relationByTarget(true, id)?.id
+    if (!relationId) return
     if (message === '申请成功') {
-      relationStore.addGroup(id)
+      relationStore.addApplication(relationId)
     } else if (message === '取消成功') {
-      relationStore.addGroup(id)
+      relationStore.removeApplication(relationId)
     }
   })
 }

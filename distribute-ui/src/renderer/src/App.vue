@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, watch } from 'vue'
 
-import { UserProfile, useAppStore, Message, Union } from './stores/appStore'
+import { useAppStore } from './stores/appStore'
 import { useRelationStore } from './stores/relationStore'
 import { RouterView } from 'vue-router'
 import Header from './views/Header.vue'

@@ -133,7 +133,7 @@ class RelationServiceImpl : RelationService {
                 flushChanges()
             }
             ChatUtil.notice(Content("RELATION:PENDING", "-${relation.id}"), ids)
-            return error("取消成功")
+            return success(message = "取消成功")
         }
         relation = GroupUserRelation().apply {
             this.userId = token.userId
