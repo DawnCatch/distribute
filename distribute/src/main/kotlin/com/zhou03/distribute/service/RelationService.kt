@@ -166,6 +166,7 @@ class RelationServiceImpl : RelationService {
                 relation.userId, relation.targetId
             )
         ) return error(message = "已存在联系")
+        var ids = groupUserRelationDao.listMemberIdByTargetId(relation.targetId)
         if (relationHandleDTO.status) {
             relation.apply {
                 this.status = true
@@ -173,6 +174,7 @@ class RelationServiceImpl : RelationService {
                 this.role = GroupRole.MEMBER
                 flushChanges()
             }
+            ChatUtil.notice(Content("RELATION:MEMBER", "${relation.targetId}"), ids)
             ChatUtil.notice(Content("RELATION:GROUP", "+${relation.targetId}"), relation.userId)
         } else {
             relation.apply {
@@ -181,7 +183,7 @@ class RelationServiceImpl : RelationService {
             }
         }
         ChatUtil.notice(Content("RELATION:APPLICATION", "-${relation.id}"), relation.userId)
-        val ids = groupUserRelationDao.listUserIdByGroupAsManager(relation.targetId)
+        ids = groupUserRelationDao.listUserIdByGroupAsManager(relation.targetId)
         ChatUtil.notice(Content("RELATION:PENDING", "-${relation.id}"), ids)
         return success(null, "处理完毕")
     }

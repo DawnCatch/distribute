@@ -1,8 +1,8 @@
 <template>
   <div ref="toastDialogItemRef" class="toast_dialog_item">
     <div class="avatar_box">
-      <Avatar class="avatar" type :src="relation?.avatarUrl" />
-      <div class="title_text">{{ profile?.title ?? 'None' }}</div>
+      <Avatar class="avatar" :src="profile?.avatarUrl" />
+      {{ profile?.title ?? 'None' }}
     </div>
     <div ref="detailBoxRef" class="detail_box" :class="detailBoxClass" @click="handle">
       <div v-if="isHover && mode">同意</div>
@@ -10,8 +10,8 @@
       <div v-else>申请加入</div>
     </div>
     <div class="avatar_box">
-      <Avatar class="avatar" :src="profile?.avatarUrl" />
-      {{ relation?.title ?? 'None' }}
+      <Avatar class="avatar" type :src="relation?.avatarUrl" />
+      <div class="title_text">{{ relation?.title ?? 'None' }}</div>
     </div>
   </div>
 </template>
@@ -39,8 +39,11 @@ const relation = computed(() => {
 })
 
 const profile = computed(() => {
+  console.log(relation.value)
   if (!relation.value) return undefined
-  return relationStore.relationByTarget(false, relation.value.userId)
+  const temp = relationStore.relationByTarget(false, relation.value.userId)
+  if (!temp) relationStore.getRelationByTarget(false, relation.value.userId)
+  return temp
 })
 
 const toastDialogItemRef = ref<HTMLElement | null>()

@@ -3,7 +3,7 @@
     <template #content>
       <div class="content">
         <div class="form">
-          <Avatar class="avatar" :src="avatarUrl" edit @check-file="handleFile" />
+          <Avatar class="avatar" type :src="avatarUrl" edit @check-file="handleFile" />
           <EditText v-model="groupName" class="edit" placeholder="群组名称" />
         </div>
         <div class="button_box">

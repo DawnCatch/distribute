@@ -76,7 +76,7 @@ const members = computed(() => {
   if (!item) return []
   const { targetId: id } = item
   const members = relationStore.members(id)
-  relationStore.getMember(id)
+  if (members === 0) relationStore.getMember(id)
   return members
 })
 

@@ -46,7 +46,12 @@ export const useAppStore = defineStore('app', {
       const args = type.split(':')
       if (args[0] === 'RELATION') {
         const symbol = value[0]
-        const id = Number(value.slice(1))
+        let id = 0
+        try {
+          id = Number(value.slice(1))
+        } catch (e) {
+          id = Number(value)
+        }
         if (args[1] === 'FAN') {
           if (symbol === '+') {
             relationStore.addFan(id)
@@ -71,6 +76,8 @@ export const useAppStore = defineStore('app', {
           } else {
             relationStore.removePend(id)
           }
+        } else if (args[1] === 'MEMBER') {
+          relationStore.getMember(id)
         }
       }
     },
