@@ -173,7 +173,7 @@ class RelationServiceImpl : RelationService {
                 this.role = GroupRole.MEMBER
                 flushChanges()
             }
-            ChatUtil.notice(Content("RELATION:GROUP", "-${relation.targetId}"), relation.userId)
+            ChatUtil.notice(Content("RELATION:GROUP", "+${relation.targetId}"), relation.userId)
         } else {
             relation.apply {
                 this.date = 0L.toLocalDateTime()
