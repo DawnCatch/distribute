@@ -61,7 +61,6 @@ export const useAppStore = defineStore('app', {
           }
         }
       }
-      console.log(content)
     },
     addMessages(messages: Message[]) {
       messages.forEach((it) => this.addMessage(it))
@@ -134,6 +133,7 @@ interface Relation {
   type: boolean
   targetId: number
   title: string
+  avatarUrl: string
   nickname: string
   role: string
   path: string

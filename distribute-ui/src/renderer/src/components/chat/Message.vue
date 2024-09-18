@@ -1,10 +1,13 @@
 <template>
   <div class="message_bar" :class="{ reverse: reverse }">
-    <div v-if="!reverse" class="avatar_box">
-      <img src="../../assets/avatar.jpg" alt="avatar" />
-    </div>
+    <Avatar v-if="!reverse" :src="appStore.currentItem?.avatarUrl" class="avatar_box" />
     <div class="message_box">
-      <AutoContent v-for="(message, index) in messages as Message[]" :key="index" :message :reverse />
+      <AutoContent
+        v-for="(message, index) in messages as Message[]"
+        :key="index"
+        :message
+        :reverse
+      />
     </div>
     <Avatar v-if="reverse" class="avatar_box" :src="appStore.own.avatarUrl" />
   </div>

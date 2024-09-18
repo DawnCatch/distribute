@@ -78,10 +78,12 @@ function commit() {
       visible: true
     }
   }).then((res) => {
-    if (!res.status) return
-    const { groupId: id } = res.data
-    groupId.value = id
-    relationStore.getGroups()
+    if (res.status) {
+      const { groupId: id } = res.data
+      groupId.value = id
+      relationStore.getGroups()
+    }
+    isWait.value = true
   })
 }
 
