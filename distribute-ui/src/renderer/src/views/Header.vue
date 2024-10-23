@@ -1,5 +1,5 @@
 <template>
-  <div data-tauri-drag-region class="title_bar">
+  <div class="title_bar">
     <div class="window_tool">
       <div class="option" @click.left="windowMinimize">
         <Icon name="minimize" custom-class="option_icon" />
